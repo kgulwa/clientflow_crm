@@ -1,40 +1,40 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.describe "Clients", type: :request do
+RSpec.describe 'Clients', type: :request do
   let(:user) { create(:user) }
 
-  describe "authentication" do
-    it "redirects unauthenticated users to the sign-in page" do
+  describe 'authentication' do
+    it 'redirects unauthenticated users to the sign-in page' do
       get clients_path
 
       expect(response).to redirect_to(new_user_session_path)
     end
   end
 
-  context "when the user is signed in" do
+  context 'when the user is signed in' do
     before do
       sign_in user
     end
 
-    describe "GET /clients" do
-      it "returns a successful response" do
+    describe 'GET /clients' do
+      it 'returns a successful response' do
         get clients_path
 
         expect(response).to have_http_status(:success)
       end
 
-      it "shows clients belonging to the signed-in user" do
+      it 'shows clients belonging to the signed-in user' do
         client = create(
           :client,
           user: user,
-          first_name: "Owned",
-          last_name: "Client"
+          first_name: 'Owned',
+          last_name: 'Client'
         )
 
         other_client = create(
           :client,
-          first_name: "Hidden",
-          last_name: "Client"
+          first_name: 'Hidden',
+          last_name: 'Client'
         )
 
         get clients_path
@@ -44,7 +44,7 @@ RSpec.describe "Clients", type: :request do
       end
     end
 
-    describe "GET /clients/:id" do
+    describe 'GET /clients/:id' do
       it "returns the signed-in user's client" do
         client = create(:client, user: user)
 
@@ -63,37 +63,37 @@ RSpec.describe "Clients", type: :request do
       end
     end
 
-    describe "POST /clients" do
+    describe 'POST /clients' do
       let(:valid_attributes) do
         {
-          first_name: "Jordan",
-          last_name: "Smith",
-          company_name: "Smith Holdings",
-          email: "jordan@example.com",
-          phone: "+27 82 555 0123",
-          status: "lead",
-          notes: "Requested a follow-up call."
+          first_name: 'Jordan',
+          last_name: 'Smith',
+          company_name: 'Smith Holdings',
+          email: 'jordan@example.com',
+          phone: '+27 82 555 0123',
+          status: 'lead',
+          notes: 'Requested a follow-up call.'
         }
       end
 
-      it "creates a client belonging to the signed-in user" do
+      it 'creates a client belonging to the signed-in user' do
         expect do
           post clients_path, params: { client: valid_attributes }
         end.to change(user.clients, :count).by(1)
 
-        expect(user.clients.last.email).to eq("jordan@example.com")
+        expect(user.clients.last.email).to eq('jordan@example.com')
       end
 
-      it "redirects to the created client" do
+      it 'redirects to the created client' do
         post clients_path, params: { client: valid_attributes }
 
         expect(response).to redirect_to(user.clients.last)
       end
 
-      it "does not create an invalid client" do
+      it 'does not create an invalid client' do
         expect do
           post clients_path, params: {
-            client: valid_attributes.merge(first_name: "")
+            client: valid_attributes.merge(first_name: '')
           }
         end.not_to change(Client, :count)
 
@@ -101,23 +101,23 @@ RSpec.describe "Clients", type: :request do
       end
     end
 
-    describe "PATCH /clients/:id" do
+    describe 'PATCH /clients/:id' do
       it "updates the signed-in user's client" do
         client = create(:client, user: user)
 
         patch client_path(client), params: {
           client: {
-            first_name: "Updated",
-            status: "active"
+            first_name: 'Updated',
+            status: 'active'
           }
         }
 
-        expect(client.reload.first_name).to eq("Updated")
+        expect(client.reload.first_name).to eq('Updated')
         expect(client).to be_active
       end
     end
 
-    describe "DELETE /clients/:id" do
+    describe 'DELETE /clients/:id' do
       it "deletes the signed-in user's client" do
         client = create(:client, user: user)
 

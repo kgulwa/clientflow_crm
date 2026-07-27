@@ -6,8 +6,7 @@ class ClientsController < ApplicationController
     @clients = current_user.clients.order(created_at: :desc)
   end
 
-  def show
-  end
+  def show; end
 
   def new
     @client = current_user.clients.new
@@ -17,18 +16,17 @@ class ClientsController < ApplicationController
     @client = current_user.clients.new(client_params)
 
     if @client.save
-      redirect_to @client, notice: "Client was created successfully."
+      redirect_to @client, notice: 'Client was created successfully.'
     else
       render :new, status: :unprocessable_entity
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @client.update(client_params)
-      redirect_to @client, notice: "Client was updated successfully."
+      redirect_to @client, notice: 'Client was updated successfully.'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +35,7 @@ class ClientsController < ApplicationController
   def destroy
     @client.destroy
 
-    redirect_to clients_path, notice: "Client was deleted successfully."
+    redirect_to clients_path, notice: 'Client was deleted successfully.'
   end
 
   private
