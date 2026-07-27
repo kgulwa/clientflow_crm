@@ -1,5 +1,12 @@
+# frozen_string_literal: true
+
 class Client < ApplicationRecord
   belongs_to :user
+
+  has_many :client_notes,
+           class_name: 'Note',
+           inverse_of: :client,
+           dependent: :destroy
 
   enum status: {
     lead: 0,

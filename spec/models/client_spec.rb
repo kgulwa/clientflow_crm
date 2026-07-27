@@ -1,8 +1,27 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Client, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:user) }
+
+    it do
+      expect(described_class.reflect_on_association(:client_notes))
+        .to have_attributes(
+          class_name: 'Note',
+          macro: :has_many
+        )
+    end
+
+    it 'destroys associated client notes' do
+      client = create(:client)
+      note = create(:note, client: client)
+
+      client.destroy
+
+      expect(Note.exists?(note.id)).to be(false)
+    end
   end
 
   describe 'validations' do

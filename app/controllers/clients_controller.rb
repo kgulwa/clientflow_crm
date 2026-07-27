@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ClientsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_client, only: %i[show edit update destroy]
@@ -6,7 +8,10 @@ class ClientsController < ApplicationController
     @clients = current_user.clients.order(created_at: :desc)
   end
 
-  def show; end
+  def show
+    @note = @client.client_notes.new
+    @client_notes = @client.client_notes.order(created_at: :desc)
+  end
 
   def new
     @client = current_user.clients.new
