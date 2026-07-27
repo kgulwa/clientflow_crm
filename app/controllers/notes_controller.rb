@@ -11,7 +11,7 @@ class NotesController < ApplicationController
     if @note.save
       redirect_to @client, notice: 'Note was added successfully.'
     else
-      @client_notes = @client.client_notes.order(created_at: :desc)
+      prepare_client_page
 
       render 'clients/show', status: :unprocessable_entity
     end
@@ -31,6 +31,19 @@ class NotesController < ApplicationController
 
   def set_note
     @note = @client.client_notes.find(params[:id])
+  end
+
+  def prepare_client_page
+    @client_notes = @client.client_notes.order(created_at: :desc)
+
+    @task = @client.tasks.new
+    @tasks = @client.tasks.order(
+      Arel.sql(
+        "CASE WHEN status = #{Task.statuses[:completed]} THEN 1 ELSE 0 END"
+      ),
+      due_date: :asc,
+      created_at: :desc
+    )
   end
 
   def note_params

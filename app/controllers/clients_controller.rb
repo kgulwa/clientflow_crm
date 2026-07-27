@@ -9,8 +9,7 @@ class ClientsController < ApplicationController
   end
 
   def show
-    @note = @client.client_notes.new
-    @client_notes = @client.client_notes.order(created_at: :desc)
+    prepare_client_page
   end
 
   def new
@@ -47,6 +46,20 @@ class ClientsController < ApplicationController
 
   def set_client
     @client = current_user.clients.find(params[:id])
+  end
+
+  def prepare_client_page
+    @note = @client.client_notes.new
+    @client_notes = @client.client_notes.order(created_at: :desc)
+
+    @task = @client.tasks.new
+    @tasks = @client.tasks.order(
+      Arel.sql(
+        "CASE WHEN status = #{Task.statuses[:completed]} THEN 1 ELSE 0 END"
+      ),
+      due_date: :asc,
+      created_at: :desc
+    )
   end
 
   def client_params

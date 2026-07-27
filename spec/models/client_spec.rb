@@ -14,6 +14,8 @@ RSpec.describe Client, type: :model do
         )
     end
 
+    it { is_expected.to have_many(:tasks).dependent(:destroy) }
+
     it 'destroys associated client notes' do
       client = create(:client)
       note = create(:note, client: client)
@@ -21,6 +23,15 @@ RSpec.describe Client, type: :model do
       client.destroy
 
       expect(Note.exists?(note.id)).to be(false)
+    end
+
+    it 'destroys associated tasks' do
+      client = create(:client)
+      task = create(:task, client: client)
+
+      client.destroy
+
+      expect(Task.exists?(task.id)).to be(false)
     end
   end
 

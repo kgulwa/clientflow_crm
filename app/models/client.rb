@@ -8,6 +8,10 @@ class Client < ApplicationRecord
            inverse_of: :client,
            dependent: :destroy
 
+  has_many :tasks,
+           inverse_of: :client,
+           dependent: :destroy
+
   enum status: {
     lead: 0,
     active: 1,

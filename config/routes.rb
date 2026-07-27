@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   resources :clients do
     resources :notes, only: %i[create destroy]
+    resources :tasks, only: %i[create update destroy]
   end
 
   root 'home#index'
