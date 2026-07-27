@@ -1,9 +1,34 @@
 # frozen_string_literal: true
 
 class TasksController < ApplicationController
+  FILTERS = %w[
+    all
+    pending
+    in_progress
+    completed
+    overdue
+    due_today
+  ].freeze
+
   before_action :authenticate_user!
-  before_action :set_client
+  before_action :set_client, only: %i[create update destroy]
   before_action :set_task, only: %i[update destroy]
+
+  def index
+    @filter = selected_filter
+    @tasks = filtered_tasks
+             .includes(:client)
+             .order(task_order)
+
+    @task_counts = {
+      all: user_tasks.count,
+      pending: user_tasks.pending.count,
+      in_progress: user_tasks.in_progress.count,
+      completed: user_tasks.completed.count,
+      overdue: user_tasks.overdue.count,
+      due_today: user_tasks.due_today.count
+    }
+  end
 
   def create
     @task = @client.tasks.new(task_params)
@@ -32,6 +57,44 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def user_tasks
+    @user_tasks ||= Task.for_user(current_user)
+  end
+
+  def selected_filter
+    FILTERS.include?(params[:filter]) ? params[:filter] : 'all'
+  end
+
+  def filtered_tasks
+    case @filter
+    when 'pending'
+      user_tasks.pending
+    when 'in_progress'
+      user_tasks.in_progress
+    when 'completed'
+      user_tasks.completed
+    when 'overdue'
+      user_tasks.overdue
+    when 'due_today'
+      user_tasks.due_today
+    else
+      user_tasks
+    end
+  end
+
+  def task_order
+    Arel.sql(
+      <<~SQL.squish
+        CASE
+          WHEN tasks.status = #{Task.statuses[:completed]} THEN 1
+          ELSE 0
+        END,
+        tasks.due_date ASC,
+        tasks.created_at DESC
+      SQL
+    )
+  end
 
   def set_client
     @client = current_user.clients.find(params[:client_id])

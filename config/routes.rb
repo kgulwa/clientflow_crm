@@ -8,5 +8,7 @@ Rails.application.routes.draw do
     resources :tasks, only: %i[create update destroy]
   end
 
+  resources :tasks, only: :index
+
   root 'home#index'
 end

@@ -15,6 +15,22 @@ class Task < ApplicationRecord
     high: 2
   }
 
+  scope :for_user, lambda { |user|
+    joins(:client).where(clients: { user_id: user.id })
+  }
+
+  scope :outstanding, lambda {
+    where.not(status: statuses[:completed])
+  }
+
+  scope :overdue, lambda {
+    outstanding.where(due_date: ...Date.current)
+  }
+
+  scope :due_today, lambda {
+    where(due_date: Date.current)
+  }
+
   validates :title, presence: true
   validates :due_date, presence: true
   validates :status, presence: true

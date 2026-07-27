@@ -26,6 +26,125 @@ RSpec.describe 'Tasks', type: :request do
       sign_in user
     end
 
+    describe 'GET /tasks' do
+      let!(:pending_task) do
+        create(
+          :task,
+          client: client,
+          title: 'Pending task',
+          status: :pending,
+          due_date: 2.days.from_now.to_date
+        )
+      end
+
+      let!(:in_progress_task) do
+        create(
+          :task,
+          :in_progress,
+          client: client,
+          title: 'In progress task',
+          due_date: 3.days.from_now.to_date
+        )
+      end
+
+      let!(:completed_task) do
+        create(
+          :task,
+          :completed,
+          client: client,
+          title: 'Completed task'
+        )
+      end
+
+      let!(:overdue_task) do
+        create(
+          :task,
+          :overdue,
+          client: client,
+          title: 'Overdue task'
+        )
+      end
+
+      let!(:today_task) do
+        create(
+          :task,
+          client: client,
+          title: 'Today task',
+          due_date: Date.current
+        )
+      end
+
+      before do
+        other_client = create(:client)
+
+        create(
+          :task,
+          client: other_client,
+          title: 'Hidden task'
+        )
+      end
+
+      it 'returns a successful response' do
+        get tasks_path
+
+        expect(response).to have_http_status(:success)
+      end
+
+      it "shows only the signed-in user's tasks" do
+        get tasks_path
+
+        expect(response.body).to include('Pending task')
+        expect(response.body).to include('In progress task')
+        expect(response.body).to include('Completed task')
+        expect(response.body).to include('Overdue task')
+        expect(response.body).to include('Today task')
+        expect(response.body).not_to include('Hidden task')
+      end
+
+      it 'filters pending tasks' do
+        get tasks_path(filter: :pending)
+
+        expect(response.body).to include('Pending task')
+        expect(response.body).not_to include('Completed task')
+      end
+
+      it 'filters in progress tasks' do
+        get tasks_path(filter: :in_progress)
+
+        expect(response.body).to include('In progress task')
+        expect(response.body).not_to include('Pending task')
+      end
+
+      it 'filters completed tasks' do
+        get tasks_path(filter: :completed)
+
+        expect(response.body).to include('Completed task')
+        expect(response.body).not_to include('Pending task')
+      end
+
+      it 'filters overdue tasks' do
+        get tasks_path(filter: :overdue)
+
+        expect(response.body).to include('Overdue task')
+        expect(response.body).not_to include('Today task')
+      end
+
+      it 'filters tasks due today' do
+        get tasks_path(filter: :due_today)
+
+        expect(response.body).to include('Today task')
+        expect(response.body).not_to include('Overdue task')
+      end
+
+      it 'falls back to all tasks for an invalid filter' do
+        get tasks_path(filter: :invalid)
+
+        expect(response.body).to include('Pending task')
+        expect(response.body).to include('Completed task')
+        expect(response.body).to include('Today task')
+      end
+    end
+
     describe 'POST /clients/:client_id/tasks' do
       let(:valid_attributes) do
         {

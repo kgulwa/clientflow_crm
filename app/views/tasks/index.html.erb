@@ -1,0 +1,158 @@
+<div class="space-y-8">
+  <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+        Tasks
+      </p>
+
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+        Client tasks
+      </h1>
+
+      <p class="mt-2 text-gray-600">
+        Track follow-ups, deadlines, and work across all your clients.
+      </p>
+    </div>
+
+    <%= link_to "Choose a client",
+                clients_path,
+                class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+  </section>
+
+  <section class="flex flex-wrap gap-3">
+    <% filters = [
+      ["All", "all", @task_counts[:all]],
+      ["Pending", "pending", @task_counts[:pending]],
+      ["In progress", "in_progress", @task_counts[:in_progress]],
+      ["Completed", "completed", @task_counts[:completed]],
+      ["Overdue", "overdue", @task_counts[:overdue]],
+      ["Due today", "due_today", @task_counts[:due_today]]
+    ] %>
+
+    <% filters.each do |label, filter, count| %>
+      <%= link_to tasks_path(filter: filter),
+                  class: "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition #{@filter == filter ? "border-indigo-600 bg-indigo-600 text-white" : "border-gray-300 bg-white text-gray-700 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"}" do %>
+        <span><%= label %></span>
+
+        <span class="rounded-full px-2 py-0.5 text-xs <%= @filter == filter ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600" %>">
+          <%= count %>
+        </span>
+      <% end %>
+    <% end %>
+  </section>
+
+  <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div class="flex flex-col justify-between gap-3 border-b border-gray-200 px-6 py-5 sm:flex-row sm:items-center">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">
+          <%= @filter.humanize %> tasks
+        </h2>
+
+        <p class="mt-1 text-sm text-gray-500">
+          <%= pluralize(@tasks.size, "task") %> found.
+        </p>
+      </div>
+    </div>
+
+    <% if @tasks.any? %>
+      <div class="divide-y divide-gray-200">
+        <% @tasks.each do |task| %>
+          <% overdue = !task.completed? && task.due_date < Date.current %>
+          <% due_today = !task.completed? && task.due_date == Date.current %>
+
+          <article class="px-6 py-5">
+            <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="font-semibold text-gray-900">
+                    <%= task.title %>
+                  </h3>
+
+                  <% status_classes = case task.status
+                                     when "completed"
+                                       "bg-green-50 text-green-700"
+                                     when "in_progress"
+                                       "bg-blue-50 text-blue-700"
+                                     else
+                                       "bg-amber-50 text-amber-700"
+                                     end %>
+
+                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= status_classes %>">
+                    <%= task.status.humanize %>
+                  </span>
+
+                  <% priority_classes = case task.priority
+                                       when "high"
+                                         "bg-red-50 text-red-700"
+                                       when "low"
+                                         "bg-gray-100 text-gray-700"
+                                       else
+                                         "bg-purple-50 text-purple-700"
+                                       end %>
+
+                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= priority_classes %>">
+                    <%= task.priority.humanize %> priority
+                  </span>
+
+                  <% if overdue %>
+                    <span class="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">
+                      Overdue
+                    </span>
+                  <% elsif due_today %>
+                    <span class="inline-flex rounded-full bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700">
+                      Due today
+                    </span>
+                  <% end %>
+                </div>
+
+                <p class="mt-2 text-sm font-medium text-gray-700">
+                  <%= task.client.full_name %>
+                </p>
+
+                <% if task.client.company_name.present? %>
+                  <p class="mt-1 text-sm text-gray-500">
+                    <%= task.client.company_name %>
+                  </p>
+                <% end %>
+
+                <% if task.description.present? %>
+                  <p class="mt-3 text-sm leading-6 text-gray-600">
+                    <%= task.description %>
+                  </p>
+                <% end %>
+
+                <p class="mt-3 text-sm text-gray-500">
+                  Due <%= task.due_date.strftime("%B %-d, %Y") %>
+                </p>
+              </div>
+
+              <div class="flex shrink-0 items-center gap-3">
+                <%= link_to "View client",
+                            client_path(task.client),
+                            class: "rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-xl font-semibold text-gray-500">
+          ✓
+        </div>
+
+        <h3 class="mt-4 font-semibold text-gray-900">
+          No <%= @filter.humanize.downcase %> tasks
+        </h3>
+
+        <p class="mt-2 max-w-sm text-sm text-gray-500">
+          Tasks created from your client pages will appear here.
+        </p>
+
+        <%= link_to "View clients",
+                    clients_path,
+                    class: "mt-5 text-sm font-semibold text-indigo-600 hover:text-indigo-800" %>
+      </div>
+    <% end %>
+  </section>
+</div>
