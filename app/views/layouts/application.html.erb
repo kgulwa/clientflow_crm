@@ -13,26 +13,111 @@
   </head>
 
   <body class="min-h-screen bg-gray-50 text-gray-900">
-    <% if notice.present? %>
-      <div
-        class="mx-auto mt-4 max-w-5xl rounded-md border border-green-200 bg-green-50 px-4 py-3 text-green-800"
-        role="alert"
-      >
-        <%= notice %>
-      </div>
-    <% end %>
+    <% if user_signed_in? %>
+      <div class="min-h-screen lg:flex">
+        <aside class="border-b border-gray-200 bg-slate-900 text-white lg:min-h-screen lg:w-64 lg:border-b-0">
+          <div class="flex items-center justify-between px-6 py-5">
+            <%= link_to root_path, class: "text-xl font-bold tracking-tight" do %>
+              ClientFlow
+            <% end %>
 
-    <% if alert.present? %>
-      <div
-        class="mx-auto mt-4 max-w-5xl rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-800"
-        role="alert"
-      >
-        <%= alert %>
-      </div>
-    <% end %>
+            <span class="rounded-full bg-indigo-500 px-2 py-1 text-xs font-semibold">
+              CRM
+            </span>
+          </div>
 
-    <main class="container mx-auto px-5 py-10">
-      <%= yield %>
-    </main>
+          <nav class="flex gap-2 overflow-x-auto px-4 pb-4 lg:block lg:space-y-2">
+            <%= link_to root_path,
+                        class: "block whitespace-nowrap rounded-lg bg-slate-800 px-4 py-3 text-sm font-medium text-white" do %>
+              Dashboard
+            <% end %>
+
+            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+              Clients
+            </span>
+
+            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+              Leads
+            </span>
+
+            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+              Deals
+            </span>
+
+            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+              Tasks
+            </span>
+          </nav>
+        </aside>
+
+        <div class="flex min-h-screen flex-1 flex-col">
+          <header class="border-b border-gray-200 bg-white">
+            <div class="flex items-center justify-between gap-4 px-6 py-4 lg:px-8">
+              <div>
+                <p class="text-sm text-gray-500">ClientFlow CRM</p>
+                <p class="font-semibold text-gray-900">
+                  <%= current_user.full_name %>
+                </p>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <span class="hidden rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 sm:inline">
+                  <%= current_user.role.titleize %>
+                </span>
+
+                <%= link_to "Sign out",
+                            destroy_user_session_path,
+                            data: { turbo_method: :delete },
+                            class: "rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+              </div>
+            </div>
+          </header>
+
+          <% if notice.present? %>
+            <div
+              class="mx-6 mt-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800 lg:mx-8"
+              role="alert"
+            >
+              <%= notice %>
+            </div>
+          <% end %>
+
+          <% if alert.present? %>
+            <div
+              class="mx-6 mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800 lg:mx-8"
+              role="alert"
+            >
+              <%= alert %>
+            </div>
+          <% end %>
+
+          <main class="flex-1 px-6 py-8 lg:px-8">
+            <%= yield %>
+          </main>
+        </div>
+      </div>
+    <% else %>
+      <% if notice.present? %>
+        <div
+          class="mx-auto mt-4 max-w-5xl rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+          role="alert"
+        >
+          <%= notice %>
+        </div>
+      <% end %>
+
+      <% if alert.present? %>
+        <div
+          class="mx-auto mt-4 max-w-5xl rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800"
+          role="alert"
+        >
+          <%= alert %>
+        </div>
+      <% end %>
+
+      <main class="container mx-auto px-5 py-10">
+        <%= yield %>
+      </main>
+    <% end %>
   </body>
 </html>
