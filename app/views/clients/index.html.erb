@@ -1,0 +1,105 @@
+<div class="space-y-6">
+  <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+        Client management
+      </p>
+
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+        Clients
+      </h1>
+
+      <p class="mt-2 text-gray-600">
+        View and manage the people and companies in your CRM.
+      </p>
+    </div>
+
+    <%= link_to "Add client",
+                new_client_path,
+                class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+  </section>
+
+  <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <% if @clients.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Client
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Company
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Contact
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Status
+              </th>
+              <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Actions
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <% @clients.each do |client| %>
+              <tr class="hover:bg-gray-50">
+                <td class="whitespace-nowrap px-6 py-4">
+                  <%= link_to client.full_name,
+                              client_path(client),
+                              class: "font-semibold text-gray-900 hover:text-indigo-600" %>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  <%= client.company_name.presence || "—" %>
+                </td>
+
+                <td class="px-6 py-4 text-sm text-gray-600">
+                  <p><%= client.email %></p>
+                  <p class="text-gray-400"><%= client.phone.presence || "No phone" %></p>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4">
+                  <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                    <%= client.status.titleize %>
+                  </span>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
+                  <%= link_to "View",
+                              client_path(client),
+                              class: "font-semibold text-indigo-600 hover:text-indigo-800" %>
+
+                  <%= link_to "Edit",
+                              edit_client_path(client),
+                              class: "ml-4 font-semibold text-gray-600 hover:text-gray-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-xl font-bold text-indigo-600">
+          C
+        </div>
+
+        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+          No clients yet
+        </h2>
+
+        <p class="mt-2 max-w-md text-sm text-gray-500">
+          Add your first client to begin tracking relationships, contact
+          details, and statuses.
+        </p>
+
+        <%= link_to "Add your first client",
+                    new_client_path,
+                    class: "mt-6 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+      </div>
+    <% end %>
+  </section>
+</div>

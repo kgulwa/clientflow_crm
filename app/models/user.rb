@@ -10,6 +10,8 @@ class User < ApplicationRecord
     admin: 1
   }
 
+  has_many :clients, dependent: :destroy
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :role, presence: true

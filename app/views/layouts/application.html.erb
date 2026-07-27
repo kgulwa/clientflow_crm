@@ -28,23 +28,24 @@
 
           <nav class="flex gap-2 overflow-x-auto px-4 pb-4 lg:block lg:space-y-2">
             <%= link_to root_path,
-                        class: "block whitespace-nowrap rounded-lg bg-slate-800 px-4 py-3 text-sm font-medium text-white" do %>
+                        class: "block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium transition #{current_page?(root_path) ? "bg-slate-800 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}" do %>
               Dashboard
             <% end %>
 
-            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+            <%= link_to clients_path,
+                        class: "block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium transition #{request.path.start_with?("/clients") ? "bg-slate-800 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}" do %>
               Clients
-            </span>
+            <% end %>
 
-            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-500">
               Leads
             </span>
 
-            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-500">
               Deals
             </span>
 
-            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-400">
+            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-500">
               Tasks
             </span>
           </nav>
