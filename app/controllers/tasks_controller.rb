@@ -44,16 +44,25 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to @client, notice: 'Task was updated successfully.'
+      redirect_back(
+        fallback_location: client_path(@client),
+        notice: 'Task was updated successfully.'
+      )
     else
-      redirect_to @client, alert: @task.errors.full_messages.to_sentence
+      redirect_back(
+        fallback_location: client_path(@client),
+        alert: @task.errors.full_messages.to_sentence
+      )
     end
   end
 
   def destroy
     @task.destroy
 
-    redirect_to @client, notice: 'Task was deleted successfully.'
+    redirect_back(
+      fallback_location: client_path(@client),
+      notice: 'Task was deleted successfully.'
+    )
   end
 
   private

@@ -7,7 +7,13 @@ RSpec.describe 'Tasks', type: :request do
   let(:client) { create(:client, user: user) }
 
   describe 'authentication' do
-    it 'redirects unauthenticated users to the sign-in page' do
+    it 'redirects unauthenticated users from the tasks index' do
+      get tasks_path
+
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it 'redirects unauthenticated users when creating a task' do
       post client_tasks_path(client), params: {
         task: {
           title: 'Follow up',
@@ -99,6 +105,15 @@ RSpec.describe 'Tasks', type: :request do
         expect(response.body).to include('Overdue task')
         expect(response.body).to include('Today task')
         expect(response.body).not_to include('Hidden task')
+      end
+
+      it 'shows task management actions' do
+        get tasks_path
+
+        expect(response.body).to include('Start')
+        expect(response.body).to include('Complete')
+        expect(response.body).to include('Reopen')
+        expect(response.body).to include('Delete')
       end
 
       it 'filters pending tasks' do
@@ -230,6 +245,57 @@ RSpec.describe 'Tasks', type: :request do
         expect(task.reload).to be_completed
       end
 
+      it 'returns to the tasks index after starting a task there' do
+        task = create(:task, client: client, status: :pending)
+
+        patch client_task_path(client, task),
+              params: {
+                task: {
+                  status: 'in_progress'
+                }
+              },
+              headers: {
+                'HTTP_REFERER' => tasks_url(filter: 'pending')
+              }
+
+        expect(task.reload).to be_in_progress
+        expect(response).to redirect_to(tasks_url(filter: 'pending'))
+      end
+
+      it 'returns to the tasks index after completing a task there' do
+        task = create(:task, client: client, status: :in_progress)
+
+        patch client_task_path(client, task),
+              params: {
+                task: {
+                  status: 'completed'
+                }
+              },
+              headers: {
+                'HTTP_REFERER' => tasks_url(filter: 'in_progress')
+              }
+
+        expect(task.reload).to be_completed
+        expect(response).to redirect_to(tasks_url(filter: 'in_progress'))
+      end
+
+      it 'reopens a completed task from the tasks index' do
+        task = create(:task, client: client, status: :completed)
+
+        patch client_task_path(client, task),
+              params: {
+                task: {
+                  status: 'pending'
+                }
+              },
+              headers: {
+                'HTTP_REFERER' => tasks_url(filter: 'completed')
+              }
+
+        expect(task.reload).to be_pending
+        expect(response).to redirect_to(tasks_url(filter: 'completed'))
+      end
+
       it "does not allow updates to another user's task" do
         other_task = create(:task)
 
@@ -252,6 +318,19 @@ RSpec.describe 'Tasks', type: :request do
         end.to change(client.tasks, :count).by(-1)
 
         expect(response).to redirect_to(client_path(client))
+      end
+
+      it 'returns to the tasks index after deleting a task there' do
+        task = create(:task, client: client)
+
+        expect do
+          delete client_task_path(client, task),
+                 headers: {
+                   'HTTP_REFERER' => tasks_url(filter: 'pending')
+                 }
+        end.to change(client.tasks, :count).by(-1)
+
+        expect(response).to redirect_to(tasks_url(filter: 'pending'))
       end
 
       it "does not allow deletion of another user's task" do
