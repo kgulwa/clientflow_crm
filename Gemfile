@@ -50,6 +50,8 @@ gem "bootsnap", require: false
 
 # Use Active Storage variants
 # gem "image_processing", "~> 1.2"
+# Authentication
+gem "devise"
 
 group :development, :test do
   # Debugging

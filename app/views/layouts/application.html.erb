@@ -1,18 +1,37 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ClientflowCrm</title>
+    <title>ClientFlow CRM</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
 
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <% if notice.present? %>
+      <div
+        class="mx-auto mt-4 max-w-5xl rounded-md border border-green-200 bg-green-50 px-4 py-3 text-green-800"
+        role="alert"
+      >
+        <%= notice %>
+      </div>
+    <% end %>
+
+    <% if alert.present? %>
+      <div
+        class="mx-auto mt-4 max-w-5xl rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-800"
+        role="alert"
+      >
+        <%= alert %>
+      </div>
+    <% end %>
+
+    <main class="container mx-auto px-5 py-10">
       <%= yield %>
     </main>
   </body>
