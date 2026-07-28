@@ -374,6 +374,73 @@ RSpec.describe 'Clients', type: :request do
           get client_path(other_client)
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
+
+      it 'shows the client activity statistics' do
+        client = create(
+          :client,
+          user: user,
+          created_at: Time.zone.local(2026, 7, 1)
+        )
+        create(
+          :task,
+          client: client,
+          status: :pending,
+          due_date: 2.days.from_now.to_date
+        )
+        create(
+          :task,
+          client: client,
+          status: :in_progress,
+          due_date: 3.days.from_now.to_date
+        )
+        create(
+          :task,
+          client: client,
+          status: :completed
+        )
+        create(
+          :task,
+          client: client,
+          status: :pending,
+          due_date: 2.days.ago.to_date
+        )
+        create_list(:note, 2, client: client)
+
+        get client_path(client)
+
+        expect(response.body).to include('Client summary')
+        expect(response.body).to include('Open tasks')
+        expect(response.body).to include('Completed tasks')
+        expect(response.body).to include('Overdue tasks')
+        expect(response.body).to include('Total notes')
+        expect(response.body).to include('July 2026')
+      end
+
+      it 'does not include completed tasks in the open task count' do
+        client = create(:client, user: user)
+        create(:task, client: client, status: :pending)
+        create(:task, client: client, status: :in_progress)
+        create(:task, client: client, status: :completed)
+
+        get client_path(client)
+
+        expect(response.body).to include('Open tasks')
+        expect(response.body).to include('2')
+      end
+
+      it 'shows zero statistics when the client has no tasks or notes' do
+        client = create(:client, user: user)
+
+        get client_path(client)
+
+        expect(response.body).to include('Client summary')
+        expect(response.body).to include('Open tasks')
+        expect(response.body).to include('Completed tasks')
+        expect(response.body).to include('Overdue tasks')
+        expect(response.body).to include('Total notes')
+       
+        expect(response.body.scan(/>\s*0\s*</).length).to be >= 4
+      end
     end
 
     describe 'POST /clients' do

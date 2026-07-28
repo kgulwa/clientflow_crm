@@ -78,6 +78,53 @@
   </section>
 
   <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div>
+      <h2 class="text-lg font-semibold text-gray-900">Client summary</h2>
+
+      <p class="mt-1 text-sm text-gray-500">
+        A quick overview of this client's activity.
+      </p>
+    </div>
+
+    <dl class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm font-medium text-gray-500">Open tasks</dt>
+        <dd class="mt-2 text-2xl font-bold text-gray-900">
+          <%= @client_statistics[:open_tasks] %>
+        </dd>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm font-medium text-gray-500">Completed tasks</dt>
+        <dd class="mt-2 text-2xl font-bold text-gray-900">
+          <%= @client_statistics[:completed_tasks] %>
+        </dd>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm font-medium text-gray-500">Overdue tasks</dt>
+        <dd class="mt-2 text-2xl font-bold text-gray-900">
+          <%= @client_statistics[:overdue_tasks] %>
+        </dd>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm font-medium text-gray-500">Total notes</dt>
+        <dd class="mt-2 text-2xl font-bold text-gray-900">
+          <%= @client_statistics[:total_notes] %>
+        </dd>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm font-medium text-gray-500">Client since</dt>
+        <dd class="mt-2 text-lg font-bold text-gray-900">
+          <%= @client.created_at.strftime("%B %Y") %>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
     <h2 class="text-lg font-semibold text-gray-900">General notes</h2>
 
     <div class="mt-4 whitespace-pre-wrap text-gray-700">

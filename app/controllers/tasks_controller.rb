@@ -124,6 +124,19 @@ class TasksController < ApplicationController
       due_date: :asc,
       created_at: :desc
     )
+
+    prepare_client_statistics
+  end
+
+  def prepare_client_statistics
+    client_tasks = @client.tasks
+
+    @client_statistics = {
+      open_tasks: client_tasks.outstanding.count,
+      completed_tasks: client_tasks.completed.count,
+      overdue_tasks: client_tasks.overdue.count,
+      total_notes: @client.client_notes.count
+    }
   end
 
   def task_params
