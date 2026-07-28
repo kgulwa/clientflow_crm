@@ -5,7 +5,15 @@ class ClientsController < ApplicationController
   before_action :set_client, only: %i[show edit update destroy]
 
   def index
-    @clients = current_user.clients.order(created_at: :desc)
+    @query = params[:query].to_s.strip
+    @status = selected_status
+
+    @clients = current_user.clients
+                           .search(@query)
+                           .with_status(@status)
+                           .order(created_at: :desc)
+
+    @filters_applied = @query.present? || @status.present?
   end
 
   def show
@@ -43,6 +51,12 @@ class ClientsController < ApplicationController
   end
 
   private
+
+  def selected_status
+    status = params[:status].to_s
+
+    status if Client.statuses.key?(status)
+  end
 
   def set_client
     @client = current_user.clients.find(params[:id])

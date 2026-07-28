@@ -19,8 +19,68 @@
                 class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
   </section>
 
+  <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <%= form_with url: clients_path,
+                  method: :get,
+                  local: true,
+                  class: "flex flex-col gap-4 lg:flex-row lg:items-end" do |form| %>
+      <div class="flex-1">
+        <%= form.label :query,
+                       "Search clients",
+                       class: "block text-sm font-semibold text-gray-700" %>
+
+        <%= form.search_field :query,
+                              value: @query,
+                              placeholder: "Search by name, company, or email",
+                              class: "mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+      </div>
+
+      <div class="w-full lg:w-56">
+        <%= form.label :status,
+                       "Status",
+                       class: "block text-sm font-semibold text-gray-700" %>
+
+        <%= form.select :status,
+                        options_for_select(
+                          [
+                            ["All statuses", ""],
+                            ["Lead", "lead"],
+                            ["Active", "active"],
+                            ["Inactive", "inactive"]
+                          ],
+                          @status
+                        ),
+                        {},
+                        class: "mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+      </div>
+
+      <div class="flex flex-col gap-2 sm:flex-row">
+        <%= form.submit "Search",
+                        class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+
+        <% if @filters_applied %>
+          <%= link_to "Clear filters",
+                      clients_path,
+                      class: "rounded-lg border border-gray-300 px-5 py-3 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
   <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
     <% if @clients.any? %>
+      <div class="flex flex-col justify-between gap-2 border-b border-gray-200 px-6 py-4 sm:flex-row sm:items-center">
+        <p class="text-sm font-medium text-gray-700">
+          <%= pluralize(@clients.size, "client") %> found
+        </p>
+
+        <% if @filters_applied %>
+          <p class="text-sm text-gray-500">
+            Showing filtered results
+          </p>
+        <% end %>
+      </div>
+
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
@@ -28,15 +88,19 @@
               <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Client
               </th>
+
               <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Company
               </th>
+
               <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Contact
               </th>
+
               <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Status
               </th>
+
               <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Actions
               </th>
@@ -58,11 +122,23 @@
 
                 <td class="px-6 py-4 text-sm text-gray-600">
                   <p><%= client.email %></p>
-                  <p class="text-gray-400"><%= client.phone.presence || "No phone" %></p>
+
+                  <p class="text-gray-400">
+                    <%= client.phone.presence || "No phone" %>
+                  </p>
                 </td>
 
                 <td class="whitespace-nowrap px-6 py-4">
-                  <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                  <% status_classes = case client.status
+                                      when "active"
+                                        "bg-green-50 text-green-700"
+                                      when "inactive"
+                                        "bg-gray-100 text-gray-700"
+                                      else
+                                        "bg-amber-50 text-amber-700"
+                                      end %>
+
+                  <span class="rounded-full px-3 py-1 text-xs font-semibold <%= status_classes %>">
                     <%= client.status.titleize %>
                   </span>
                 </td>
@@ -80,6 +156,25 @@
             <% end %>
           </tbody>
         </table>
+      </div>
+    <% elsif @filters_applied %>
+      <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl font-bold text-gray-600">
+          ?
+        </div>
+
+        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+          No matching clients
+        </h2>
+
+        <p class="mt-2 max-w-md text-sm text-gray-500">
+          We could not find any clients matching your current search and
+          status filters.
+        </p>
+
+        <%= link_to "Clear filters",
+                    clients_path,
+                    class: "mt-6 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
       </div>
     <% else %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">

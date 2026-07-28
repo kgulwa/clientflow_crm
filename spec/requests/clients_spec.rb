@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'Clients', type: :request do
@@ -41,6 +43,317 @@ RSpec.describe 'Clients', type: :request do
 
         expect(response.body).to include(client.full_name)
         expect(response.body).not_to include(other_client.full_name)
+      end
+
+      it 'orders clients from newest to oldest' do
+        older_client = create(
+          :client,
+          user: user,
+          first_name: 'Older',
+          last_name: 'Client',
+          created_at: 2.days.ago
+        )
+
+        newer_client = create(
+          :client,
+          user: user,
+          first_name: 'Newer',
+          last_name: 'Client',
+          created_at: 1.day.ago
+        )
+
+        get clients_path
+
+        expect(response.body.index(newer_client.full_name))
+          .to be < response.body.index(older_client.full_name)
+      end
+
+      it 'searches clients by first name' do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Smith'
+        )
+
+        non_matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Taylor',
+          last_name: 'Brown'
+        )
+
+        get clients_path(query: 'Jordan')
+
+        expect(response.body).to include(matching_client.full_name)
+        expect(response.body).not_to include(non_matching_client.full_name)
+      end
+
+      it 'searches clients by last name' do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Mokoena'
+        )
+
+        non_matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Taylor',
+          last_name: 'Brown'
+        )
+
+        get clients_path(query: 'Mokoena')
+
+        expect(response.body).to include(matching_client.full_name)
+        expect(response.body).not_to include(non_matching_client.full_name)
+      end
+
+      it 'searches clients by company name' do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Smith',
+          company_name: 'Acme Consulting'
+        )
+
+        non_matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Taylor',
+          last_name: 'Brown',
+          company_name: 'Bright Holdings'
+        )
+
+        get clients_path(query: 'Acme')
+
+        expect(response.body).to include(matching_client.full_name)
+        expect(response.body).not_to include(non_matching_client.full_name)
+      end
+
+      it 'searches clients by email address' do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Smith',
+          email: 'jordan.search@example.com'
+        )
+
+        non_matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Taylor',
+          last_name: 'Brown',
+          email: 'taylor.other@example.com'
+        )
+
+        get clients_path(query: 'jordan.search')
+
+        expect(response.body).to include(matching_client.full_name)
+        expect(response.body).not_to include(non_matching_client.full_name)
+      end
+
+      it 'searches without matching letter case' do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Smith'
+        )
+
+        get clients_path(query: 'jOrDaN')
+
+        expect(response.body).to include(matching_client.full_name)
+      end
+
+      it 'ignores whitespace around the search query' do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Smith'
+        )
+
+        get clients_path(query: '  Jordan  ')
+
+        expect(response.body).to include(matching_client.full_name)
+      end
+
+      it 'filters clients by lead status' do
+        lead_client = create(
+          :client,
+          user: user,
+          first_name: 'Lead',
+          last_name: 'Client',
+          status: :lead
+        )
+
+        active_client = create(
+          :client,
+          user: user,
+          first_name: 'Active',
+          last_name: 'Client',
+          status: :active
+        )
+
+        get clients_path(status: 'lead')
+
+        expect(response.body).to include(lead_client.full_name)
+        expect(response.body).not_to include(active_client.full_name)
+      end
+
+      it 'filters clients by active status' do
+        active_client = create(
+          :client,
+          user: user,
+          first_name: 'Active',
+          last_name: 'Client',
+          status: :active
+        )
+
+        inactive_client = create(
+          :client,
+          user: user,
+          first_name: 'Inactive',
+          last_name: 'Client',
+          status: :inactive
+        )
+
+        get clients_path(status: 'active')
+
+        expect(response.body).to include(active_client.full_name)
+        expect(response.body).not_to include(inactive_client.full_name)
+      end
+
+      it 'filters clients by inactive status' do
+        inactive_client = create(
+          :client,
+          user: user,
+          first_name: 'Inactive',
+          last_name: 'Client',
+          status: :inactive
+        )
+
+        lead_client = create(
+          :client,
+          user: user,
+          first_name: 'Lead',
+          last_name: 'Client',
+          status: :lead
+        )
+
+        get clients_path(status: 'inactive')
+
+        expect(response.body).to include(inactive_client.full_name)
+        expect(response.body).not_to include(lead_client.full_name)
+      end
+
+      it 'combines search and status filters' do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Smith',
+          company_name: 'Acme Consulting',
+          status: :active
+        )
+
+        wrong_status_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Brown',
+          company_name: 'Acme Logistics',
+          status: :inactive
+        )
+
+        wrong_search_client = create(
+          :client,
+          user: user,
+          first_name: 'Taylor',
+          last_name: 'Mokoena',
+          company_name: 'Bright Holdings',
+          status: :active
+        )
+
+        get clients_path(query: 'Acme', status: 'active')
+
+        expect(response.body).to include(matching_client.full_name)
+        expect(response.body).not_to include(wrong_status_client.full_name)
+        expect(response.body).not_to include(wrong_search_client.full_name)
+      end
+
+      it 'does not expose another user’s matching clients in search results' do
+        owned_client = create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Owned'
+        )
+
+        other_client = create(
+          :client,
+          first_name: 'Jordan',
+          last_name: 'Hidden'
+        )
+
+        get clients_path(query: 'Jordan')
+
+        expect(response.body).to include(owned_client.full_name)
+        expect(response.body).not_to include(other_client.full_name)
+      end
+
+      it 'ignores an invalid status filter' do
+        client = create(
+          :client,
+          user: user,
+          first_name: 'Visible',
+          last_name: 'Client'
+        )
+
+        get clients_path(status: 'unknown')
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(client.full_name)
+      end
+
+      it 'shows a filtered empty state when no clients match' do
+        create(
+          :client,
+          user: user,
+          first_name: 'Jordan',
+          last_name: 'Smith'
+        )
+
+        get clients_path(query: 'NoSuchClient')
+
+        expect(response.body).to include('No matching clients')
+        expect(response.body).to include('Clear filters')
+        expect(response.body).not_to include('No clients yet')
+      end
+
+      it 'shows the new-client empty state when the user has no clients' do
+        get clients_path
+
+        expect(response.body).to include('No clients yet')
+        expect(response.body).to include('Add your first client')
+      end
+
+      it 'preserves the search query in the form' do
+        get clients_path(query: 'Jordan')
+
+        expect(response.body).to include('value="Jordan"')
+      end
+
+      it 'preserves the selected status in the form' do
+        get clients_path(status: 'active')
+
+        expect(response.body).to include(
+          '<option selected="selected" value="active">Active</option>'
+        )
       end
     end
 

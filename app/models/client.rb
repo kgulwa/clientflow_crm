@@ -23,6 +23,32 @@ class Client < ApplicationRecord
   validates :email, presence: true
   validates :status, presence: true
 
+  scope :search, lambda { |query|
+    if query.blank?
+      all
+    else
+      search_term = "%#{sanitize_sql_like(query.to_s.strip)}%"
+
+      where(
+        <<~SQL.squish,
+          clients.first_name ILIKE :search_term
+          OR clients.last_name ILIKE :search_term
+          OR clients.company_name ILIKE :search_term
+          OR clients.email ILIKE :search_term
+        SQL
+        search_term: search_term
+      )
+    end
+  }
+
+  scope :with_status, lambda { |status|
+    if status.present? && statuses.key?(status.to_s)
+      where(status: statuses.fetch(status.to_s))
+    else
+      all
+    end
+  }
+
   def full_name
     "#{first_name} #{last_name}".strip
   end
