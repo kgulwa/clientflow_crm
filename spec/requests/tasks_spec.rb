@@ -233,6 +233,25 @@ RSpec.describe 'Tasks', type: :request do
         expect(response).to redirect_to(client_path(client))
       end
 
+      it 'records when a task is started' do
+        task = create(:task, client: client, status: :pending)
+        started_time = Time.zone.local(2026, 7, 28, 9, 30)
+
+        travel_to(started_time) do
+          patch client_task_path(client, task), params: {
+            task: {
+              status: 'in_progress'
+            }
+          }
+        end
+
+        task.reload
+
+        expect(task).to be_in_progress
+        expect(task.started_at).to eq(started_time)
+        expect(task.completed_at).to be_nil
+      end
+
       it 'marks a task as completed' do
         task = create(:task, client: client, status: :in_progress)
 
@@ -243,6 +262,75 @@ RSpec.describe 'Tasks', type: :request do
         }
 
         expect(task.reload).to be_completed
+      end
+
+      it 'records when an in-progress task is completed' do
+        started_time = Time.zone.local(2026, 7, 28, 8, 15)
+        completed_time = Time.zone.local(2026, 7, 28, 11, 45)
+        task = create(:task, client: client, status: :pending)
+
+        travel_to(started_time) do
+          task.update!(status: :in_progress)
+        end
+
+        travel_to(completed_time) do
+          patch client_task_path(client, task), params: {
+            task: {
+              status: 'completed'
+            }
+          }
+        end
+
+        task.reload
+
+        expect(task).to be_completed
+        expect(task.started_at).to eq(started_time)
+        expect(task.completed_at).to eq(completed_time)
+      end
+
+      it 'records both timestamps when completing a pending task' do
+        task = create(:task, client: client, status: :pending)
+        completed_time = Time.zone.local(2026, 7, 28, 12, 30)
+
+        travel_to(completed_time) do
+          patch client_task_path(client, task), params: {
+            task: {
+              status: 'completed'
+            }
+          }
+        end
+
+        task.reload
+
+        expect(task).to be_completed
+        expect(task.started_at).to eq(completed_time)
+        expect(task.completed_at).to eq(completed_time)
+      end
+
+      it 'clears completed_at when a task is reopened' do
+        started_time = Time.zone.local(2026, 7, 28, 8, 15)
+        completed_time = Time.zone.local(2026, 7, 28, 10, 30)
+        task = create(:task, client: client, status: :pending)
+
+        travel_to(started_time) do
+          task.update!(status: :in_progress)
+        end
+
+        travel_to(completed_time) do
+          task.update!(status: :completed)
+        end
+
+        patch client_task_path(client, task), params: {
+          task: {
+            status: 'pending'
+          }
+        }
+
+        task.reload
+
+        expect(task).to be_pending
+        expect(task.started_at).to eq(started_time)
+        expect(task.completed_at).to be_nil
       end
 
       it 'returns to the tasks index after starting a task there' do
@@ -292,7 +380,10 @@ RSpec.describe 'Tasks', type: :request do
                 'HTTP_REFERER' => tasks_url(filter: 'completed')
               }
 
-        expect(task.reload).to be_pending
+        task.reload
+
+        expect(task).to be_pending
+        expect(task.completed_at).to be_nil
         expect(response).to redirect_to(tasks_url(filter: 'completed'))
       end
 

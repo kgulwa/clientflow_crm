@@ -35,4 +35,22 @@ class Task < ApplicationRecord
   validates :due_date, presence: true
   validates :status, presence: true
   validates :priority, presence: true
+
+  before_validation :record_status_history,
+                    if: :will_save_change_to_status?
+
+  private
+
+  def record_status_history
+    case status
+    when 'pending'
+      self.completed_at = nil
+    when 'in_progress'
+      self.started_at ||= Time.current
+      self.completed_at = nil
+    when 'completed'
+      self.started_at ||= Time.current
+      self.completed_at ||= Time.current
+    end
+  end
 end
