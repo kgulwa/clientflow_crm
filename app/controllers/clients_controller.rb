@@ -75,6 +75,8 @@ class ClientsController < ApplicationController
       created_at: :desc
     )
 
+    @activities = ClientActivityTimeline.new(@client).call
+
     prepare_client_statistics
   end
 
