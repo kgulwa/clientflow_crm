@@ -115,6 +115,9 @@ class TasksController < ApplicationController
 
   def prepare_client_page
     @note = @client.client_notes.new
+
+    @task ||= @client.tasks.new
+
     @client_notes = @client.client_notes.order(created_at: :desc)
 
     @tasks = @client.tasks.order(
@@ -124,6 +127,10 @@ class TasksController < ApplicationController
       due_date: :asc,
       created_at: :desc
     )
+
+    @activities = ClientActivityTimeline.new(@client).call
+
+
 
     prepare_client_statistics
   end
