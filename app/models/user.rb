@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   devise :database_authenticatable,
          :registerable,
@@ -10,7 +12,11 @@ class User < ApplicationRecord
     admin: 1
   }
 
-  has_many :clients, dependent: :destroy
+  has_many :clients,
+           dependent: :destroy
+
+  has_many :tags,
+           dependent: :destroy
 
   validates :first_name, presence: true
   validates :last_name, presence: true

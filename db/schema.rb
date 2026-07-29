@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_28_105210) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_29_113157) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "client_tags", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id", "tag_id"], name: "index_client_tags_on_client_id_and_tag_id", unique: true
+    t.index ["client_id"], name: "index_client_tags_on_client_id"
+    t.index ["tag_id"], name: "index_client_tags_on_tag_id"
+  end
 
   create_table "clients", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -38,6 +48,16 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_28_105210) do
     t.datetime "updated_at", null: false
     t.index ["client_id", "created_at"], name: "index_notes_on_client_id_and_created_at"
     t.index ["client_id"], name: "index_notes_on_client_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.string "color", default: "indigo", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "user_id, lower((name)::text)", name: "index_tags_on_user_id_and_lower_name", unique: true
+    t.index ["user_id"], name: "index_tags_on_user_id"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -72,7 +92,10 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_28_105210) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  add_foreign_key "client_tags", "clients"
+  add_foreign_key "client_tags", "tags"
   add_foreign_key "clients", "users"
   add_foreign_key "notes", "clients"
+  add_foreign_key "tags", "users"
   add_foreign_key "tasks", "clients"
 end

@@ -4,13 +4,20 @@ class Client < ApplicationRecord
   belongs_to :user
 
   has_many :client_notes,
-           class_name: 'Note',
+           class_name: "Note",
            inverse_of: :client,
            dependent: :destroy
 
   has_many :tasks,
            inverse_of: :client,
            dependent: :destroy
+
+  has_many :client_tags,
+           inverse_of: :client,
+           dependent: :destroy
+
+  has_many :tags,
+           through: :client_tags
 
   enum status: {
     lead: 0,
