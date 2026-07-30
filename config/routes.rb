@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     resources :client_tags, only: %i[create destroy]
   end
 
+  resources :leads
+
   resources :tasks, only: :index
 
   root "home#index"

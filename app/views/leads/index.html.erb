@@ -1,0 +1,131 @@
+<div class="space-y-6">
+  <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+        Lead management
+      </p>
+
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+        Leads
+      </h1>
+
+      <p class="mt-2 text-gray-600">
+        Track potential customers before they become clients.
+      </p>
+    </div>
+
+    <%= link_to "Add lead",
+                new_lead_path,
+                class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+  </section>
+
+  <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <% if @leads.any? %>
+      <div class="border-b border-gray-200 px-6 py-4">
+        <p class="text-sm font-medium text-gray-700">
+          <%= pluralize(@leads.size, "lead") %>
+        </p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Lead
+              </th>
+
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Company
+              </th>
+
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Source
+              </th>
+
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Status
+              </th>
+
+              <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Actions
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <% @leads.each do |lead| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">
+                  <%= link_to lead.full_name,
+                              lead_path(lead),
+                              class: "font-semibold text-gray-900 hover:text-indigo-600" %>
+
+                  <p class="mt-1 text-sm text-gray-500">
+                    <%= lead.email %>
+                  </p>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  <%= lead.company_name.presence || "—" %>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  <%= lead.source == "linkedin" ? "LinkedIn" : lead.source.titleize %>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4">
+                  <% status_classes = case lead.status
+                                      when "qualified"
+                                        "bg-green-50 text-green-700"
+                                      when "contacted"
+                                        "bg-blue-50 text-blue-700"
+                                      when "lost"
+                                        "bg-red-50 text-red-700"
+                                      when "converted"
+                                        "bg-purple-50 text-purple-700"
+                                      else
+                                        "bg-amber-50 text-amber-700"
+                                      end %>
+
+                  <span class="rounded-full px-3 py-1 text-xs font-semibold <%= status_classes %>">
+                    <%= lead.display_status %>
+                  </span>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
+                  <%= link_to "View",
+                              lead_path(lead),
+                              class: "font-semibold text-indigo-600 hover:text-indigo-800" %>
+
+                  <%= link_to "Edit",
+                              edit_lead_path(lead),
+                              class: "ml-4 font-semibold text-gray-600 hover:text-gray-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-xl font-bold text-amber-700">
+          L
+        </div>
+
+        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+          No leads yet
+        </h2>
+
+        <p class="mt-2 max-w-md text-sm text-gray-500">
+          Add your first lead to begin tracking potential customers and
+          follow-up opportunities.
+        </p>
+
+        <%= link_to "Add your first lead",
+                    new_lead_path,
+                    class: "mt-6 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+      </div>
+    <% end %>
+  </section>
+</div>

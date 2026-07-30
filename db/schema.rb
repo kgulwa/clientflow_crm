@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_29_113157) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_30_095924) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -38,6 +38,24 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_29_113157) do
     t.index ["status"], name: "index_clients_on_status"
     t.index ["user_id", "email"], name: "index_clients_on_user_id_and_email", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
+  end
+
+  create_table "leads", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "company_name"
+    t.string "email", null: false
+    t.string "phone"
+    t.integer "source", default: 0, null: false
+    t.integer "status", default: 0, null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source"], name: "index_leads_on_source"
+    t.index ["status"], name: "index_leads_on_status"
+    t.index ["user_id", "status"], name: "index_leads_on_user_id_and_status"
+    t.index ["user_id"], name: "index_leads_on_user_id"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -95,6 +113,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_29_113157) do
   add_foreign_key "client_tags", "clients"
   add_foreign_key "client_tags", "tags"
   add_foreign_key "clients", "users"
+  add_foreign_key "leads", "users"
   add_foreign_key "notes", "clients"
   add_foreign_key "tags", "users"
   add_foreign_key "tasks", "clients"

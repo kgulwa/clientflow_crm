@@ -15,6 +15,9 @@ class User < ApplicationRecord
   has_many :clients,
            dependent: :destroy
 
+  has_many :leads,
+           dependent: :destroy
+
   has_many :tags,
            dependent: :destroy
 

@@ -37,9 +37,10 @@
               Clients
             <% end %>
 
-            <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-500">
+            <%= link_to leads_path,
+                        class: "block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium transition #{request.path.start_with?("/leads") ? "bg-slate-800 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}" do %>
               Leads
-            </span>
+            <% end %>
 
             <span class="block whitespace-nowrap rounded-lg px-4 py-3 text-sm font-medium text-slate-500">
               Deals
