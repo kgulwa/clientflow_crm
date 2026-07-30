@@ -84,6 +84,68 @@
   <%= render "clients/tags" %>
 
   <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Contacts</h2>
+
+        <p class="mt-1 text-sm text-gray-500">
+          People associated with this client.
+        </p>
+      </div>
+
+      <%= link_to "Add contact",
+                  new_client_contact_path(@client),
+                  class: "rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+    </div>
+
+    <% if @client.contacts.any? %>
+      <div class="mt-6 divide-y divide-gray-200">
+        <% @client.contacts.primary_first.each do |contact| %>
+          <div class="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <%= link_to contact.full_name,
+                            client_contact_path(@client, contact),
+                            class: "font-semibold text-indigo-600 hover:text-indigo-800" %>
+
+                <% if contact.primary_contact? %>
+                  <span class="inline-flex rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
+                    Primary
+                  </span>
+                <% end %>
+              </div>
+
+              <p class="mt-1 text-sm text-gray-600">
+                <%= contact.job_title.presence || "No job title" %>
+              </p>
+
+              <p class="mt-1 text-sm text-gray-500">
+                <%= contact.email %>
+              </p>
+            </div>
+
+            <div class="flex gap-2">
+              <%= link_to "View",
+                          client_contact_path(@client, contact),
+                          class: "rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100" %>
+
+              <%= link_to "Edit",
+                          edit_client_contact_path(@client, contact),
+                          class: "rounded-lg border border-indigo-300 px-3 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-50" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="mt-6 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+        <p class="text-gray-600">
+          No contacts have been added for this client yet.
+        </p>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
     <div>
       <h2 class="text-lg font-semibold text-gray-900">Client summary</h2>
 

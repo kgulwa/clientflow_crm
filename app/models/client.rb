@@ -16,6 +16,10 @@ class Client < ApplicationRecord
            inverse_of: :client,
            dependent: :destroy
 
+  has_many :contacts,
+           inverse_of: :client,
+           dependent: :destroy
+
   has_many :client_tags,
            inverse_of: :client,
            dependent: :destroy

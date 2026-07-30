@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :tasks, only: %i[create update destroy]
     resources :tags, only: :create
     resources :client_tags, only: %i[create destroy]
+    resources :contacts, except: :index
   end
 
   resources :leads
