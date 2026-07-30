@@ -68,6 +68,308 @@ RSpec.describe "Leads", type: :request do
           .to be < response.body.index(older_lead.full_name)
       end
 
+      it "searches leads by first name" do
+        matching_lead = create(
+          :lead,
+          user: user,
+          first_name: "Naledi",
+          last_name: "Mokoena"
+        )
+
+        other_lead = create(
+          :lead,
+          user: user,
+          first_name: "Sipho",
+          last_name: "Dlamini"
+        )
+
+        get leads_path, params: { search: "Naledi" }
+
+        expect(response.body).to include(matching_lead.full_name)
+        expect(response.body).not_to include(other_lead.full_name)
+      end
+
+      it "searches leads by last name" do
+        matching_lead = create(
+          :lead,
+          user: user,
+          first_name: "Ayanda",
+          last_name: "Khumalo"
+        )
+
+        other_lead = create(
+          :lead,
+          user: user,
+          first_name: "Lerato",
+          last_name: "Maseko"
+        )
+
+        get leads_path, params: { search: "Khumalo" }
+
+        expect(response.body).to include(matching_lead.full_name)
+        expect(response.body).not_to include(other_lead.full_name)
+      end
+
+      it "searches leads by company name" do
+        matching_lead = create(
+          :lead,
+          user: user,
+          first_name: "Zanele",
+          last_name: "Ndlovu",
+          company_name: "Ubuntu Digital"
+        )
+
+        other_lead = create(
+          :lead,
+          user: user,
+          first_name: "Thabo",
+          last_name: "Molefe",
+          company_name: "Molefe Logistics"
+        )
+
+        get leads_path, params: { search: "Ubuntu" }
+
+        expect(response.body).to include(matching_lead.full_name)
+        expect(response.body).not_to include(other_lead.full_name)
+      end
+
+      it "searches leads by email" do
+        matching_lead = create(
+          :lead,
+          user: user,
+          first_name: "Buhle",
+          last_name: "Nkosi",
+          email: "buhle.nkosi@example.com"
+        )
+
+        other_lead = create(
+          :lead,
+          user: user,
+          first_name: "Sizwe",
+          last_name: "Zulu",
+          email: "sizwe.zulu@example.com"
+        )
+
+        get leads_path, params: { search: "buhle.nkosi" }
+
+        expect(response.body).to include(matching_lead.full_name)
+        expect(response.body).not_to include(other_lead.full_name)
+      end
+
+      it "searches without matching letter case" do
+        lead = create(
+          :lead,
+          user: user,
+          first_name: "Nomvula",
+          last_name: "Dube"
+        )
+
+        get leads_path, params: { search: "nomvula" }
+
+        expect(response.body).to include(lead.full_name)
+      end
+
+      it "filters leads by status" do
+        qualified_lead = create(
+          :lead,
+          :qualified,
+          user: user,
+          first_name: "Qualified",
+          last_name: "Lead"
+        )
+
+        new_lead = create(
+          :lead,
+          user: user,
+          first_name: "New",
+          last_name: "Lead"
+        )
+
+        get leads_path, params: { status: "qualified" }
+
+        expect(response.body).to include(qualified_lead.full_name)
+        expect(response.body).not_to include(new_lead.full_name)
+      end
+
+      it "filters leads by source" do
+        linkedin_lead = create(
+          :lead,
+          :linkedin,
+          user: user,
+          first_name: "LinkedIn",
+          last_name: "Lead"
+        )
+
+        website_lead = create(
+          :lead,
+          user: user,
+          first_name: "Website",
+          last_name: "Lead"
+        )
+
+        get leads_path, params: { source: "linkedin" }
+
+        expect(response.body).to include(linkedin_lead.full_name)
+        expect(response.body).not_to include(website_lead.full_name)
+      end
+
+      it "combines search and status filters" do
+        matching_lead = create(
+          :lead,
+          :qualified,
+          user: user,
+          first_name: "Lindiwe",
+          last_name: "Mahlangu",
+          company_name: "Mahlangu Media"
+        )
+
+        wrong_status_lead = create(
+          :lead,
+          user: user,
+          first_name: "Lindiwe",
+          last_name: "Nene",
+          company_name: "Nene Consulting"
+        )
+
+        wrong_search_lead = create(
+          :lead,
+          :qualified,
+          user: user,
+          first_name: "Karabo",
+          last_name: "Mokoena",
+          company_name: "Mokoena Holdings"
+        )
+
+        get leads_path, params: {
+          search: "Lindiwe",
+          status: "qualified"
+        }
+
+        expect(response.body).to include(matching_lead.full_name)
+        expect(response.body).not_to include(wrong_status_lead.full_name)
+        expect(response.body).not_to include(wrong_search_lead.full_name)
+      end
+
+      it "combines search and source filters" do
+        matching_lead = create(
+          :lead,
+          :referral,
+          user: user,
+          first_name: "Refilwe",
+          last_name: "Mokoena",
+          company_name: "Refilwe Designs"
+        )
+
+        wrong_source_lead = create(
+          :lead,
+          user: user,
+          first_name: "Refilwe",
+          last_name: "Zulu",
+          company_name: "Zulu Designs"
+        )
+
+        wrong_search_lead = create(
+          :lead,
+          :referral,
+          user: user,
+          first_name: "Tshepo",
+          last_name: "Molefe",
+          company_name: "Molefe Designs"
+        )
+
+        get leads_path, params: {
+          search: "Refilwe",
+          source: "referral"
+        }
+
+        expect(response.body).to include(matching_lead.full_name)
+        expect(response.body).not_to include(wrong_source_lead.full_name)
+        expect(response.body).not_to include(wrong_search_lead.full_name)
+      end
+
+      it "combines search, status, and source filters" do
+        matching_lead = create(
+          :lead,
+          :qualified,
+          :linkedin,
+          user: user,
+          first_name: "Amanda",
+          last_name: "Dlamini",
+          company_name: "Dlamini Tech"
+        )
+
+        wrong_status_lead = create(
+          :lead,
+          :linkedin,
+          user: user,
+          first_name: "Amanda",
+          last_name: "Mokoena",
+          company_name: "Mokoena Tech"
+        )
+
+        wrong_source_lead = create(
+          :lead,
+          :qualified,
+          user: user,
+          first_name: "Amanda",
+          last_name: "Ndlovu",
+          company_name: "Ndlovu Tech"
+        )
+
+        get leads_path, params: {
+          search: "Amanda",
+          status: "qualified",
+          source: "linkedin"
+        }
+
+        expect(response.body).to include(matching_lead.full_name)
+        expect(response.body).not_to include(wrong_status_lead.full_name)
+        expect(response.body).not_to include(wrong_source_lead.full_name)
+      end
+
+      it "ignores an invalid status filter" do
+        lead = create(
+          :lead,
+          user: user,
+          first_name: "Visible",
+          last_name: "Lead"
+        )
+
+        get leads_path, params: { status: "invalid_status" }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(lead.full_name)
+      end
+
+      it "ignores an invalid source filter" do
+        lead = create(
+          :lead,
+          user: user,
+          first_name: "Visible",
+          last_name: "Source"
+        )
+
+        get leads_path, params: { source: "invalid_source" }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(lead.full_name)
+      end
+
+      it "shows a filtered empty state when no leads match" do
+        create(
+          :lead,
+          user: user,
+          first_name: "Existing",
+          last_name: "Lead"
+        )
+
+        get leads_path, params: { search: "Missing" }
+
+        expect(response.body).to include("No matching leads")
+        expect(response.body).to include("Clear filters")
+        expect(response.body).not_to include("No leads yet")
+      end
+
       it "shows the empty state when the user has no leads" do
         get leads_path
 

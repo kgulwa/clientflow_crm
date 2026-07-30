@@ -5,7 +5,11 @@ class LeadsController < ApplicationController
   before_action :set_lead, only: %i[show edit update destroy]
 
   def index
-    @leads = current_user.leads.order(created_at: :desc)
+    @leads = current_user.leads
+                         .search(params[:search])
+                         .with_status(params[:status])
+                         .with_source(params[:source])
+                         .order(created_at: :desc)
   end
 
   def show; end
