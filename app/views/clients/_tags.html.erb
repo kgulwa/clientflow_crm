@@ -51,7 +51,8 @@
       <% available_tags = @tags.reject { |tag| @client_tags.any? { |client_tag| client_tag.tag_id == tag.id } } %>
 
       <% if available_tags.any? %>
-        <%= form_with url: client_client_tags_path(@client),
+        <%= form_with scope: :client_tag,
+                      url: client_client_tags_path(@client),
                       method: :post,
                       class: "mt-4 space-y-4" do |form| %>
           <div>
