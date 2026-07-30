@@ -1,0 +1,19 @@
+<div class="mx-auto max-w-3xl space-y-6">
+  <section>
+    <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+      Deal management
+    </p>
+
+    <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+      Add a new deal
+    </h1>
+
+    <p class="mt-2 text-gray-600">
+      Create a new opportunity and connect it to one of your clients.
+    </p>
+  </section>
+
+  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+    <%= render "form", deal: @deal %>
+  </section>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_30_095924) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_30_105937) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -38,6 +38,20 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_30_095924) do
     t.index ["status"], name: "index_clients_on_status"
     t.index ["user_id", "email"], name: "index_clients_on_user_id_and_email", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
+  end
+
+  create_table "deals", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.string "title", null: false
+    t.integer "stage", default: 0, null: false
+    t.decimal "value", precision: 12, scale: 2, default: "0.0", null: false
+    t.date "expected_close_date"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_deals_on_client_id"
+    t.index ["expected_close_date"], name: "index_deals_on_expected_close_date"
+    t.index ["stage"], name: "index_deals_on_stage"
   end
 
   create_table "leads", force: :cascade do |t|
@@ -113,6 +127,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_30_095924) do
   add_foreign_key "client_tags", "clients"
   add_foreign_key "client_tags", "tags"
   add_foreign_key "clients", "users"
+  add_foreign_key "deals", "clients"
   add_foreign_key "leads", "users"
   add_foreign_key "notes", "clients"
   add_foreign_key "tags", "users"

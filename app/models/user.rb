@@ -15,6 +15,9 @@ class User < ApplicationRecord
   has_many :clients,
            dependent: :destroy
 
+  has_many :deals,
+            through: :clients
+
   has_many :leads,
            dependent: :destroy
 

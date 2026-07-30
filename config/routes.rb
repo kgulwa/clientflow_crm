@@ -12,6 +12,8 @@ Rails.application.routes.draw do
 
   resources :leads
 
+  resources :deals
+
   resources :tasks, only: :index
 
   root "home#index"

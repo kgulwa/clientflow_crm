@@ -1,0 +1,140 @@
+<div class="space-y-6">
+  <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+        Deal management
+      </p>
+
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+        Deals
+      </h1>
+
+      <p class="mt-2 text-gray-600">
+        Track opportunities from prospecting through to won or lost.
+      </p>
+    </div>
+
+    <%= link_to "Add deal",
+                new_deal_path,
+                class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+  </section>
+
+  <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <% if @deals.any? %>
+      <div class="border-b border-gray-200 px-6 py-4">
+        <p class="text-sm font-medium text-gray-700">
+          <%= pluralize(@deals.size, "deal") %>
+        </p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Deal
+              </th>
+
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Client
+              </th>
+
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Stage
+              </th>
+
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Value
+              </th>
+
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Expected close
+              </th>
+
+              <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Actions
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <% @deals.each do |deal| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">
+                  <%= link_to deal.title,
+                              deal_path(deal),
+                              class: "font-semibold text-gray-900 hover:text-indigo-600" %>
+
+                  <p class="mt-1 max-w-sm truncate text-sm text-gray-500">
+                    <%= deal.description.presence || "No description added" %>
+                  </p>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  <%= deal.client.full_name %>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4">
+                  <% stage_classes = case deal.stage
+                                     when "won"
+                                       "bg-green-50 text-green-700"
+                                     when "lost"
+                                       "bg-red-50 text-red-700"
+                                     when "negotiation"
+                                       "bg-purple-50 text-purple-700"
+                                     when "proposal_sent"
+                                       "bg-blue-50 text-blue-700"
+                                     when "qualified"
+                                       "bg-cyan-50 text-cyan-700"
+                                     else
+                                       "bg-amber-50 text-amber-700"
+                                     end %>
+
+                  <span class="rounded-full px-3 py-1 text-xs font-semibold <%= stage_classes %>">
+                    <%= deal.display_stage %>
+                  </span>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900">
+                  <%= number_to_currency(deal.value, unit: "R", separator: ".", delimiter: ",") %>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  <%= deal.expected_close_date&.strftime("%d %B %Y") || "—" %>
+                </td>
+
+                <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
+                  <%= link_to "View",
+                              deal_path(deal),
+                              class: "font-semibold text-indigo-600 hover:text-indigo-800" %>
+
+                  <%= link_to "Edit",
+                              edit_deal_path(deal),
+                              class: "ml-4 font-semibold text-gray-600 hover:text-gray-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-xl font-bold text-indigo-700">
+          D
+        </div>
+
+        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+          No deals yet
+        </h2>
+
+        <p class="mt-2 max-w-md text-sm text-gray-500">
+          Create your first deal to begin tracking opportunities through your sales pipeline.
+        </p>
+
+        <%= link_to "Add your first deal",
+                    new_deal_path,
+                    class: "mt-6 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+      </div>
+    <% end %>
+  </section>
+</div>
