@@ -28,7 +28,7 @@ class ClientsController < ApplicationController
     @client = current_user.clients.new(client_params)
 
     if @client.save
-      redirect_to @client, notice: 'Client was created successfully.'
+      redirect_to @client, notice: "Client was created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -38,7 +38,7 @@ class ClientsController < ApplicationController
 
   def update
     if @client.update(client_params)
-      redirect_to @client, notice: 'Client was updated successfully.'
+      redirect_to @client, notice: "Client was updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -47,7 +47,7 @@ class ClientsController < ApplicationController
   def destroy
     @client.destroy
 
-    redirect_to clients_path, notice: 'Client was deleted successfully.'
+    redirect_to clients_path, notice: "Client was deleted successfully."
   end
 
   private
@@ -74,6 +74,10 @@ class ClientsController < ApplicationController
       due_date: :asc,
       created_at: :desc
     )
+
+    @tag = current_user.tags.new
+    @tags = current_user.tags.order(:name)
+    @client_tags = @client.client_tags.includes(:tag)
 
     @activities = ClientActivityTimeline.new(@client).call
 

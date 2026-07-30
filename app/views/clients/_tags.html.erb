@@ -1,0 +1,141 @@
+<section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+  <div>
+    <h2 class="text-lg font-semibold text-gray-900">Tags</h2>
+
+    <p class="mt-1 text-sm text-gray-500">
+      Organize this client with reusable labels.
+    </p>
+  </div>
+
+  <div class="mt-6">
+    <% if @client_tags.any? %>
+      <div class="flex flex-wrap gap-2">
+        <% @client_tags.each do |client_tag| %>
+          <div class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1">
+            <span class="text-sm font-semibold text-gray-700">
+              <%= client_tag.tag.name %>
+            </span>
+
+            <%= button_to "×",
+                          client_client_tag_path(@client, client_tag),
+                          method: :delete,
+                          form: {
+                            data: {
+                              turbo_confirm: "Remove this tag from the client?"
+                            }
+                          },
+                          class: "border-0 bg-transparent p-0 text-sm font-bold text-red-600 hover:text-red-800",
+                          aria: {
+                            label: "Remove #{client_tag.tag.name} tag"
+                          } %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
+        <p class="text-sm text-gray-600">
+          No tags have been assigned to this client yet.
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-8 grid gap-6 lg:grid-cols-2">
+    <div class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <h3 class="font-semibold text-gray-900">Assign an existing tag</h3>
+
+      <p class="mt-1 text-sm text-gray-500">
+        Select one of your existing tags for this client.
+      </p>
+
+      <% available_tags = @tags.reject { |tag| @client_tags.any? { |client_tag| client_tag.tag_id == tag.id } } %>
+
+      <% if available_tags.any? %>
+        <%= form_with url: client_client_tags_path(@client),
+                      method: :post,
+                      class: "mt-4 space-y-4" do |form| %>
+          <div>
+            <%= form.label :tag_id,
+                           "Tag",
+                           class: "block text-sm font-medium text-gray-700" %>
+
+            <%= form.select :tag_id,
+                            available_tags.map { |tag| [tag.name, tag.id] },
+                            {
+                              prompt: "Choose a tag"
+                            },
+                            class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500",
+                            required: true %>
+          </div>
+
+          <%= form.submit "Assign tag",
+                          class: "w-full rounded-lg border border-indigo-300 px-4 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50" %>
+        <% end %>
+      <% else %>
+        <p class="mt-4 text-sm text-gray-600">
+          All existing tags have already been assigned to this client.
+        </p>
+      <% end %>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <h3 class="font-semibold text-gray-900">Create a new tag</h3>
+
+      <p class="mt-1 text-sm text-gray-500">
+        Create a reusable tag and assign it immediately.
+      </p>
+
+      <%= form_with model: [@client, @tag],
+                    class: "mt-4 space-y-4" do |form| %>
+        <% if @tag.errors.any? %>
+          <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+            <h4 class="text-sm font-semibold text-red-800">
+              Please fix the following:
+            </h4>
+
+            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-red-700">
+              <% @tag.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div>
+          <%= form.label :name,
+                         class: "block text-sm font-medium text-gray-700" %>
+
+          <%= form.text_field :name,
+                              class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500",
+                              placeholder: "VIP",
+                              required: true %>
+        </div>
+
+        <div>
+          <%= form.label :color,
+                         class: "block text-sm font-medium text-gray-700" %>
+
+          <%= form.select :color,
+                          [
+                            ["Indigo", "indigo"],
+                            ["Blue", "blue"],
+                            ["Green", "green"],
+                            ["Yellow", "yellow"],
+                            ["Orange", "orange"],
+                            ["Red", "red"],
+                            ["Pink", "pink"],
+                            ["Purple", "purple"],
+                            ["Gray", "gray"]
+                          ],
+                          {
+                            selected: @tag.color.presence || Tag::DEFAULT_COLOR
+                          },
+                          class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500" %>
+        </div>
+
+        <%= form.submit "Create and assign tag",
+                        class: "w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+      <% end %>
+    </div>
+  </div>
+</section>

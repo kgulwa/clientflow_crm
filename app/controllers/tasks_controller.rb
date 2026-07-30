@@ -34,11 +34,11 @@ class TasksController < ApplicationController
     @task = @client.tasks.new(task_params)
 
     if @task.save
-      redirect_to @client, notice: 'Task was created successfully.'
+      redirect_to @client, notice: "Task was created successfully."
     else
       prepare_client_page
 
-      render 'clients/show', status: :unprocessable_entity
+      render "clients/show", status: :unprocessable_entity
     end
   end
 
@@ -46,7 +46,7 @@ class TasksController < ApplicationController
     if @task.update(task_params)
       redirect_back(
         fallback_location: client_path(@client),
-        notice: 'Task was updated successfully.'
+        notice: "Task was updated successfully."
       )
     else
       redirect_back(
@@ -61,7 +61,7 @@ class TasksController < ApplicationController
 
     redirect_back(
       fallback_location: client_path(@client),
-      notice: 'Task was deleted successfully.'
+      notice: "Task was deleted successfully."
     )
   end
 
@@ -72,20 +72,20 @@ class TasksController < ApplicationController
   end
 
   def selected_filter
-    FILTERS.include?(params[:filter]) ? params[:filter] : 'all'
+    FILTERS.include?(params[:filter]) ? params[:filter] : "all"
   end
 
   def filtered_tasks
     case @filter
-    when 'pending'
+    when "pending"
       user_tasks.pending
-    when 'in_progress'
+    when "in_progress"
       user_tasks.in_progress
-    when 'completed'
+    when "completed"
       user_tasks.completed
-    when 'overdue'
+    when "overdue"
       user_tasks.overdue
-    when 'due_today'
+    when "due_today"
       user_tasks.due_today
     else
       user_tasks
@@ -115,7 +115,6 @@ class TasksController < ApplicationController
 
   def prepare_client_page
     @note = @client.client_notes.new
-
     @task ||= @client.tasks.new
 
     @client_notes = @client.client_notes.order(created_at: :desc)
@@ -128,9 +127,11 @@ class TasksController < ApplicationController
       created_at: :desc
     )
 
+    @tag = current_user.tags.new
+    @tags = current_user.tags.order(:name)
+    @client_tags = @client.client_tags.includes(:tag)
+
     @activities = ClientActivityTimeline.new(@client).call
-
-
 
     prepare_client_statistics
   end
