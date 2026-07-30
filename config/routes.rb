@@ -6,9 +6,11 @@ Rails.application.routes.draw do
   resources :clients do
     resources :notes, only: %i[create destroy]
     resources :tasks, only: %i[create update destroy]
+    resources :tags, only: :create
+    resources :client_tags, only: %i[create destroy]
   end
 
   resources :tasks, only: :index
 
-  root 'home#index'
+  root "home#index"
 end
