@@ -5,7 +5,10 @@ class DealsController < ApplicationController
   before_action :set_deal, only: %i[show edit update destroy]
 
   def index
-    @deals = current_user.deals.recent_first
+    @deals = current_user.deals
+                         .search(params[:search])
+                         .with_stage(params[:stage])
+                         .recent_first
   end
 
   def show; end

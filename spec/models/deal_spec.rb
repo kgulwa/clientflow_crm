@@ -92,6 +92,125 @@ RSpec.describe Deal, type: :model do
     end
   end
 
+  describe ".search" do
+    let(:user) { create(:user) }
+
+    let(:matching_client) do
+      create(
+        :client,
+        user: user,
+        first_name: "Thando",
+        last_name: "Mokoena"
+      )
+    end
+
+    let(:other_client) do
+      create(
+        :client,
+        user: user,
+        first_name: "Lerato",
+        last_name: "Dlamini"
+      )
+    end
+
+    let!(:title_match) do
+      create(
+        :deal,
+        client: other_client,
+        title: "Website redesign"
+      )
+    end
+
+    let!(:client_match) do
+      create(
+        :deal,
+        client: matching_client,
+        title: "Mobile application"
+      )
+    end
+
+    let!(:non_match) do
+      create(
+        :deal,
+        client: other_client,
+        title: "Accounting support"
+      )
+    end
+
+    it "returns all deals when the query is blank" do
+      expect(described_class.search("")).to contain_exactly(
+        title_match,
+        client_match,
+        non_match
+      )
+    end
+
+    it "searches by deal title" do
+      expect(described_class.search("website")).to contain_exactly(
+        title_match
+      )
+    end
+
+    it "searches by client first name" do
+      expect(described_class.search("Thando")).to contain_exactly(
+        client_match
+      )
+    end
+
+    it "searches by client last name" do
+      expect(described_class.search("Mokoena")).to contain_exactly(
+        client_match
+      )
+    end
+
+    it "searches by the client's full name" do
+      expect(
+        described_class.search("Thando Mokoena")
+      ).to contain_exactly(client_match)
+    end
+
+    it "is case-insensitive" do
+      expect(described_class.search("WEBSITE")).to contain_exactly(
+        title_match
+      )
+    end
+
+    it "escapes SQL wildcard characters" do
+      percentage_deal = create(
+        :deal,
+        client: matching_client,
+        title: "50% deposit"
+      )
+
+      expect(described_class.search("50%")).to contain_exactly(
+        percentage_deal
+      )
+    end
+  end
+
+  describe ".with_stage" do
+    let!(:prospecting_deal) do
+      create(:deal, stage: :prospecting)
+    end
+
+    let!(:won_deal) do
+      create(:deal, stage: :won)
+    end
+
+    it "returns all deals when the stage is blank" do
+      expect(described_class.with_stage("")).to contain_exactly(
+        prospecting_deal,
+        won_deal
+      )
+    end
+
+    it "returns deals matching the selected stage" do
+      expect(described_class.with_stage("won")).to contain_exactly(
+        won_deal
+      )
+    end
+  end
+
   describe "#display_stage" do
     it "titleizes a single-word stage" do
       deal = build(:deal, stage: :qualified)

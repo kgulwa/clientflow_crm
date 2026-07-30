@@ -19,6 +19,50 @@
                 class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
   </section>
 
+  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <%= form_with url: deals_path,
+                  method: :get,
+                  local: true,
+                  class: "grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px_auto]" do |form| %>
+      <div>
+        <%= form.label :search,
+                       "Search deals",
+                       class: "block text-sm font-medium text-gray-700" %>
+
+        <%= form.search_field :search,
+                              value: params[:search],
+                              placeholder: "Deal title or client name",
+                              class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= form.label :stage,
+                       class: "block text-sm font-medium text-gray-700" %>
+
+        <%= form.select(
+              :stage,
+              Deal.stages.keys.map { |stage| [stage.titleize, stage] },
+              {
+                include_blank: "All stages",
+                selected: params[:stage]
+              },
+              class: "mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            ) %>
+      </div>
+
+      <div class="flex items-end gap-3">
+        <%= form.submit "Apply filters",
+                        class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+
+        <% if params[:search].present? || params[:stage].present? %>
+          <%= link_to "Clear",
+                      deals_path,
+                      class: "rounded-lg border border-gray-300 px-5 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
   <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
     <% if @deals.any? %>
       <div class="border-b border-gray-200 px-6 py-4">
@@ -116,6 +160,24 @@
             <% end %>
           </tbody>
         </table>
+      </div>
+    <% elsif params[:search].present? || params[:stage].present? %>
+      <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl font-bold text-gray-700">
+          ?
+        </div>
+
+        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+          No matching deals
+        </h2>
+
+        <p class="mt-2 max-w-md text-sm text-gray-500">
+          Try changing your search or clearing the filters.
+        </p>
+
+        <%= link_to "Clear filters",
+                    deals_path,
+                    class: "mt-6 rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
       </div>
     <% else %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">

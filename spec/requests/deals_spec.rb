@@ -71,6 +71,154 @@ RSpec.describe "Deals", type: :request do
         expect(response.body).to include("No deals yet")
         expect(response.body).to include("Add your first deal")
       end
+
+      it "searches deals by title" do
+        matching_deal = create(
+          :deal,
+          client: client,
+          title: "Website redesign"
+        )
+
+        non_matching_deal = create(
+          :deal,
+          client: client,
+          title: "Mobile application"
+        )
+
+        get deals_path, params: {
+          search: "website"
+        }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(matching_deal.title)
+        expect(response.body).not_to include(non_matching_deal.title)
+      end
+
+      it "searches deals by client name" do
+        matching_client = create(
+          :client,
+          user: user,
+          first_name: "Thando",
+          last_name: "Mokoena"
+        )
+
+        other_client = create(
+          :client,
+          user: user,
+          first_name: "Lerato",
+          last_name: "Dlamini"
+        )
+
+        matching_deal = create(
+          :deal,
+          client: matching_client,
+          title: "Website opportunity"
+        )
+
+        non_matching_deal = create(
+          :deal,
+          client: other_client,
+          title: "Support opportunity"
+        )
+
+        get deals_path, params: {
+          search: "Thando Mokoena"
+        }
+
+        expect(response.body).to include(matching_deal.title)
+        expect(response.body).not_to include(non_matching_deal.title)
+      end
+
+      it "filters deals by stage" do
+        won_deal = create(
+          :deal,
+          client: client,
+          title: "Won opportunity",
+          stage: :won
+        )
+
+        prospecting_deal = create(
+          :deal,
+          client: client,
+          title: "Prospecting opportunity",
+          stage: :prospecting
+        )
+
+        get deals_path, params: {
+          stage: "won"
+        }
+
+        expect(response.body).to include(won_deal.title)
+        expect(response.body).not_to include(prospecting_deal.title)
+      end
+
+      it "combines search and stage filters" do
+        matching_deal = create(
+          :deal,
+          client: client,
+          title: "Website redesign",
+          stage: :won
+        )
+
+        wrong_stage = create(
+          :deal,
+          client: client,
+          title: "Website maintenance",
+          stage: :prospecting
+        )
+
+        wrong_search = create(
+          :deal,
+          client: client,
+          title: "Mobile application",
+          stage: :won
+        )
+
+        get deals_path, params: {
+          search: "website",
+          stage: "won"
+        }
+
+        expect(response.body).to include(matching_deal.title)
+        expect(response.body).not_to include(wrong_stage.title)
+        expect(response.body).not_to include(wrong_search.title)
+      end
+
+      it "shows the no matching deals state when filters return no results" do
+        create(
+          :deal,
+          client: client,
+          title: "Website redesign"
+        )
+
+        get deals_path, params: {
+          search: "Something impossible"
+        }
+
+        expect(response.body).to include("No matching deals")
+        expect(response.body).to include("Clear filters")
+        expect(response.body).not_to include("No deals yet")
+      end
+
+      it "preserves the selected filters in the form" do
+        get deals_path, params: {
+          search: "website",
+          stage: "negotiation"
+        }
+
+        expect(response.body).to include('value="website"')
+        expect(response.body).to include(
+          '<option selected="selected" value="negotiation">Negotiation</option>'
+        )
+      end
+
+      it "does not show the clear button when no filters are active" do
+        create(:deal, client: client)
+
+        get deals_path
+
+        expect(response.body).not_to include(">Clear<")
+      end
     end
 
     describe "GET /deals/:id" do
