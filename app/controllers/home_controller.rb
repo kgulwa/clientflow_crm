@@ -8,6 +8,15 @@ class HomeController < ApplicationController
     @lead_clients = current_user.clients.lead.count
     @active_clients = current_user.clients.active.count
 
+    @total_leads = current_user.leads.count
+    @new_leads = current_user.leads.new_lead.count
+    @qualified_leads = current_user.leads.qualified.count
+    @converted_leads = current_user.leads.converted.count
+
+    @recent_leads = current_user.leads
+                            .order(created_at: :desc)
+                            .limit(5)
+
     @pending_tasks_count = user_tasks.pending.count
     @overdue_tasks_count = user_tasks
                            .where.not(status: Task.statuses[:completed])
