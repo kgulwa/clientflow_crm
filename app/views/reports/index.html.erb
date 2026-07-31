@@ -53,12 +53,14 @@
                             class: "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" %>
       </div>
 
+      <%= form.hidden_field :year, value: @selected_year %>
+
       <div class="flex flex-col gap-2 sm:flex-row">
         <%= form.submit "Apply filter",
                         class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
 
         <%= link_to "This month",
-                    reports_path,
+                    reports_path(year: @selected_year),
                     class: "rounded-lg border border-gray-300 px-5 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
       </div>
     <% end %>
@@ -184,14 +186,180 @@
     </article>
   </section>
 
+  <section class="space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+          Revenue trends
+        </p>
+
+        <h2 class="mt-1 text-2xl font-bold tracking-tight text-gray-900">
+          Monthly revenue for <%= @selected_year %>
+        </h2>
+
+        <p class="mt-2 text-sm text-gray-600">
+          Revenue is based on deals marked as won during the selected year.
+        </p>
+      </div>
+
+      <%= form_with url: reports_path,
+                    method: :get,
+                    class: "flex items-end gap-3" do |form| %>
+        <%= form.hidden_field :start_date, value: @start_date %>
+        <%= form.hidden_field :end_date, value: @end_date %>
+
+        <div>
+          <%= form.label :year,
+                         "Report year",
+                         class: "mb-2 block text-sm font-semibold text-gray-700" %>
+
+          <%= form.select :year,
+                          options_for_select(@available_years, @selected_year),
+                          {},
+                          class: "rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" %>
+        </div>
+
+        <%= form.submit "View year",
+                        class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+      <% end %>
+    </div>
+
+    <div class="grid gap-5 md:grid-cols-3">
+      <article class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+        <p class="text-sm font-medium text-gray-500">
+          Yearly revenue
+        </p>
+
+        <p class="mt-3 text-2xl font-bold text-gray-900">
+          <%= number_to_currency(
+                @yearly_revenue,
+                unit: "R",
+                separator: ".",
+                delimiter: ","
+              ) %>
+        </p>
+
+        <p class="mt-2 text-xs text-gray-500">
+          Total won revenue for <%= @selected_year %>
+        </p>
+      </article>
+
+      <article class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+        <p class="text-sm font-medium text-gray-500">
+          Monthly average
+        </p>
+
+        <p class="mt-3 text-2xl font-bold text-gray-900">
+          <%= number_to_currency(
+                @average_monthly_revenue,
+                unit: "R",
+                separator: ".",
+                delimiter: ","
+              ) %>
+        </p>
+
+        <p class="mt-2 text-xs text-gray-500">
+          Average across all 12 months
+        </p>
+      </article>
+
+      <article class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+        <p class="text-sm font-medium text-gray-500">
+          Best revenue month
+        </p>
+
+        <% if @best_revenue_month.present? %>
+          <p class="mt-3 text-2xl font-bold text-gray-900">
+            <%= @best_revenue_month %>
+          </p>
+
+          <p class="mt-2 text-xs text-gray-500">
+            <%= number_to_currency(
+                  @best_month_revenue,
+                  unit: "R",
+                  separator: ".",
+                  delimiter: ","
+                ) %>
+          </p>
+        <% else %>
+          <p class="mt-3 text-2xl font-bold text-gray-900">
+            No revenue yet
+          </p>
+
+          <p class="mt-2 text-xs text-gray-500">
+            No won deals were recorded for this year
+          </p>
+        <% end %>
+      </article>
+    </div>
+
+    <div class="overflow-hidden rounded-xl border border-gray-200">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+            >
+              Month
+            </th>
+
+            <th
+              scope="col"
+              class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500"
+            >
+              Revenue
+            </th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-200 bg-white">
+          <% @monthly_revenue.each do |month_number, revenue| %>
+            <tr>
+              <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                <%= Date::MONTHNAMES[month_number] %>
+              </td>
+
+              <td class="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-700">
+                <%= number_to_currency(
+                      revenue,
+                      unit: "R",
+                      separator: ".",
+                      delimiter: ","
+                    ) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+
+        <tfoot class="bg-gray-50">
+          <tr>
+            <td class="px-6 py-4 text-sm font-bold text-gray-900">
+              Total
+            </td>
+
+            <td class="px-6 py-4 text-right text-sm font-bold text-gray-900">
+              <%= number_to_currency(
+                    @yearly_revenue,
+                    unit: "R",
+                    separator: ".",
+                    delimiter: ","
+                  ) %>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
   <section class="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
     <h2 class="text-lg font-semibold text-gray-900">
-      Detailed reports are coming next
+      More reports are coming next
     </h2>
 
     <p class="mx-auto mt-2 max-w-2xl text-sm text-gray-600">
-      Future reports will include revenue trends, deal-stage breakdowns,
-      conversion funnels, client growth, and task-performance charts.
+      Future reports will include deal-stage breakdowns, conversion funnels,
+      client growth, task-performance charts, and downloadable exports.
     </p>
   </section>
 </div>

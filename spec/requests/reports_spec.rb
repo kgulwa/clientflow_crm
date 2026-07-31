@@ -269,6 +269,158 @@ RSpec.describe "Reports", type: :request do
           later_date.strftime("%d %b %Y")
         )
       end
+
+      it "displays the revenue trends section" do
+        get reports_path
+
+        expect(response.body).to include("Revenue trends")
+        expect(response.body).to include(
+          "Monthly revenue for #{Date.current.year}"
+        )
+        expect(response.body).to include("Yearly revenue")
+        expect(response.body).to include("Monthly average")
+        expect(response.body).to include("Best revenue month")
+      end
+
+      it "groups won revenue by month for the selected year" do
+        january = Time.zone.local(Date.current.year, 1, 15, 12)
+        march = Time.zone.local(Date.current.year, 3, 15, 12)
+
+        create(
+          :deal,
+          :won,
+          client: client,
+          title: "January deal",
+          value: 12_000,
+          updated_at: january
+        )
+
+        create(
+          :deal,
+          :won,
+          client: client,
+          title: "March deal",
+          value: 18_000,
+          updated_at: march
+        )
+
+        get reports_path, params: { year: Date.current.year }
+
+        expect(response.body).to match(
+          /January.*?R12,000\.00/m
+        )
+
+        expect(response.body).to match(
+          /March.*?R18,000\.00/m
+        )
+
+        expect(response.body).to match(
+          /Yearly revenue.*?R30,000\.00/m
+        )
+      end
+
+      it "does not include lost deals in revenue trends" do
+        create(
+          :deal,
+          :lost,
+          client: client,
+          title: "Lost revenue",
+          value: 50_000,
+          updated_at: Date.current.noon
+        )
+
+        get reports_path, params: { year: Date.current.year }
+
+        expect(response.body).to match(
+          /Yearly revenue.*?R0\.00/m
+        )
+      end
+
+      it "does not include another user's revenue trends" do
+        other_client = create(:client)
+
+        create(
+          :deal,
+          :won,
+          client: other_client,
+          title: "Another user's deal",
+          value: 50_000,
+          updated_at: Date.current.noon
+        )
+
+        get reports_path, params: { year: Date.current.year }
+
+        expect(response.body).to match(
+          /Yearly revenue.*?R0\.00/m
+        )
+      end
+
+      it "supports selecting a previous revenue year" do
+        selected_year = Date.current.year - 1
+        previous_year_date = Time.zone.local(selected_year, 6, 15, 12)
+
+        create(
+          :deal,
+          :won,
+          client: client,
+          title: "Previous year deal",
+          value: 24_000,
+          updated_at: previous_year_date
+        )
+
+        get reports_path, params: { year: selected_year }
+
+        expect(response.body).to include(
+          "Monthly revenue for #{selected_year}"
+        )
+
+        expect(response.body).to match(
+          /June.*?R24,000\.00/m
+        )
+      end
+
+      it "calculates the monthly average and best revenue month" do
+        february = Time.zone.local(Date.current.year, 2, 15, 12)
+        april = Time.zone.local(Date.current.year, 4, 15, 12)
+
+        create(
+          :deal,
+          :won,
+          client: client,
+          title: "February deal",
+          value: 12_000,
+          updated_at: february
+        )
+
+        create(
+          :deal,
+          :won,
+          client: client,
+          title: "April deal",
+          value: 24_000,
+          updated_at: april
+        )
+
+        get reports_path, params: { year: Date.current.year }
+
+        expect(response.body).to match(
+          /Monthly average.*?R3,000\.00/m
+        )
+
+        expect(response.body).to match(
+          /Best revenue month.*?April.*?R24,000\.00/m
+        )
+      end
+
+      it "handles an invalid revenue year without crashing" do
+        get reports_path, params: { year: "invalid-year" }
+
+        expect(response).to have_http_status(:success)
+
+        expect(response.body).to include(
+          "Monthly revenue for #{Date.current.year}"
+        )
+      end
     end
   end
 end
