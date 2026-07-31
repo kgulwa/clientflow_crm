@@ -17,5 +17,7 @@ Rails.application.routes.draw do
 
   resources :tasks, only: :index
 
+  resources :reports, only: :index
+
   root "home#index"
 end
