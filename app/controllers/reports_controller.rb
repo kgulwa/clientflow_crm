@@ -6,7 +6,9 @@ class ReportsController < ApplicationController
 
   def index
     set_period_metrics
+    set_report_year
     set_revenue_trends
+    set_client_growth
   end
 
   private
@@ -23,9 +25,12 @@ class ReportsController < ApplicationController
     @tasks_completed = completed_tasks_in_period.count
   end
 
-  def set_revenue_trends
+  def set_report_year
     @selected_year = parsed_year(params[:year]) || Date.current.year
-    @available_years = available_revenue_years
+    @available_years = available_report_years
+  end
+
+  def set_revenue_trends
     @monthly_revenue = empty_monthly_revenue
 
     won_deals_for_selected_year.pluck(:updated_at, :value).each do |updated_at, value|
@@ -52,14 +57,47 @@ class ReportsController < ApplicationController
     end
   end
 
-  def available_revenue_years
-    deal_years = user_deals
-                 .won
-                 .where.not(updated_at: nil)
-                 .pluck(:updated_at)
-                 .map(&:year)
+  def set_client_growth
+    @monthly_client_growth = empty_monthly_client_growth
 
-    (deal_years + [Date.current.year, @selected_year])
+    clients_for_selected_year.pluck(:created_at).each do |created_at|
+      @monthly_client_growth[created_at.month] += 1
+    end
+
+    @yearly_client_growth = @monthly_client_growth.values.sum
+    @average_monthly_client_growth =
+      (@yearly_client_growth.to_f / 12).round(1)
+
+    set_best_growth_month
+  end
+
+  def set_best_growth_month
+    if @yearly_client_growth.positive?
+      month_number, client_count = @monthly_client_growth.max_by do |_month, count|
+        count
+      end
+
+      @best_growth_month = Date::MONTHNAMES[month_number]
+      @best_growth_count = client_count
+    else
+      @best_growth_month = nil
+      @best_growth_count = 0
+    end
+  end
+
+  def available_report_years
+    revenue_years = user_deals
+                    .won
+                    .where.not(updated_at: nil)
+                    .pluck(:updated_at)
+                    .map(&:year)
+
+    client_years = current_user.clients
+                               .where.not(created_at: nil)
+                               .pluck(:created_at)
+                               .map(&:year)
+
+    (revenue_years + client_years + [Date.current.year, @selected_year])
       .uniq
       .sort
       .reverse
@@ -67,6 +105,10 @@ class ReportsController < ApplicationController
 
   def empty_monthly_revenue
     (1..12).index_with { 0.to_d }
+  end
+
+  def empty_monthly_client_growth
+    (1..12).index_with { 0 }
   end
 
   def parsed_year(value)
@@ -80,16 +122,26 @@ class ReportsController < ApplicationController
   end
 
   def won_deals_for_selected_year
+    user_deals
+      .won
+      .where(updated_at: selected_year_datetime_range)
+  end
+
+  def clients_for_selected_year
+    current_user.clients.where(created_at: selected_year_datetime_range)
+  end
+
+  def selected_year_datetime_range
     start_date = Date.new(@selected_year, 1, 1)
     end_date = start_date.end_of_year
 
-    user_deals
-      .won
-      .where(updated_at: start_date.beginning_of_day..end_date.end_of_day)
+    start_date.beginning_of_day..end_date.end_of_day
   end
 
   def set_date_range
-    @start_date = parsed_date(params[:start_date]) || Date.current.beginning_of_month
+    @start_date =
+      parsed_date(params[:start_date]) || Date.current.beginning_of_month
+
     @end_date = parsed_date(params[:end_date]) || Date.current
 
     normalize_date_range
