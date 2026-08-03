@@ -53,6 +53,8 @@ gem 'bootsnap', require: false
 # Authentication
 gem 'devise'
 
+gem 'pagy'
+
 group :development, :test do
   # Debugging
   gem 'debug', platforms: %i[mri mingw x64_mingw]

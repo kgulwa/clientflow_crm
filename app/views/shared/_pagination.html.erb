@@ -1,0 +1,35 @@
+<% if pagy.pages > 1 %>
+  <div class="border-t border-gray-200 px-6 py-4">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm text-gray-500">
+        Showing page <%= pagy.page %> of <%= pagy.pages %>
+      </p>
+
+      <div class="flex items-center gap-3">
+        <% if pagy.previous %>
+          <%= link_to "Previous",
+                      url_for(request.query_parameters.merge(page: pagy.previous)),
+                      class: "rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+        <% else %>
+          <span class="cursor-not-allowed rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-300">
+            Previous
+          </span>
+        <% end %>
+
+        <span class="rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700">
+          <%= pagy.page %>/<%= pagy.pages %>
+        </span>
+
+        <% if pagy.next %>
+          <%= link_to "Next",
+                      url_for(request.query_parameters.merge(page: pagy.next)),
+                      class: "rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+        <% else %>
+          <span class="cursor-not-allowed rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-300">
+            Next
+          </span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

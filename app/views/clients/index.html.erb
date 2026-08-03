@@ -71,7 +71,7 @@
     <% if @clients.any? %>
       <div class="flex flex-col justify-between gap-2 border-b border-gray-200 px-6 py-4 sm:flex-row sm:items-center">
         <p class="text-sm font-medium text-gray-700">
-          <%= pluralize(@clients.size, "client") %> found
+          <%= pluralize(@clients.size, "client") %> on this page
         </p>
 
         <% if @filters_applied %>
@@ -157,6 +157,8 @@
           </tbody>
         </table>
       </div>
+
+      <%= render "shared/pagination", pagy: @pagy %>
     <% elsif @filters_applied %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
         <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl font-bold text-gray-600">

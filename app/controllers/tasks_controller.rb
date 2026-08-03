@@ -16,9 +16,12 @@ class TasksController < ApplicationController
 
   def index
     @filter = selected_filter
-    @tasks = filtered_tasks
-             .includes(:client)
-             .order(task_order)
+
+    tasks = filtered_tasks
+            .includes(:client)
+            .order(task_order)
+
+    @pagy, @tasks = pagy(:offset, tasks, limit: 10)
 
     @task_counts = {
       all: user_tasks.count,

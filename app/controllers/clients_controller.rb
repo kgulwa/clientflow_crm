@@ -8,10 +8,12 @@ class ClientsController < ApplicationController
     @query = params[:query].to_s.strip
     @status = selected_status
 
-    @clients = current_user.clients
-                           .search(@query)
-                           .with_status(@status)
-                           .order(created_at: :desc)
+    clients = current_user.clients
+                          .search(@query)
+                          .with_status(@status)
+                          .order(created_at: :desc)
+
+    @pagy, @clients = pagy(:offset, clients, limit: 10)
 
     @filters_applied = @query.present? || @status.present?
   end

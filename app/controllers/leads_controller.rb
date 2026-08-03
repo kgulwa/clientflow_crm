@@ -5,11 +5,13 @@ class LeadsController < ApplicationController
   before_action :set_lead, only: %i[show edit update destroy]
 
   def index
-    @leads = current_user.leads
+    leads = current_user.leads
                          .search(params[:search])
                          .with_status(params[:status])
                          .with_source(params[:source])
                          .order(created_at: :desc)
+
+    @pagy, @leads = pagy(:offset, leads, limit: 10)
   end
 
   def show; end
