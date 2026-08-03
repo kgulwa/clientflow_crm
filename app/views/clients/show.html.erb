@@ -31,11 +31,15 @@
 
   <section class="grid gap-6 lg:grid-cols-3">
     <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2">
-      <h2 class="text-lg font-semibold text-gray-900">Contact details</h2>
+      <h2 class="text-lg font-semibold text-gray-900">
+        Contact details
+      </h2>
 
       <dl class="mt-6 grid gap-6 sm:grid-cols-2">
         <div>
-          <dt class="text-sm font-medium text-gray-500">Email</dt>
+          <dt class="text-sm font-medium text-gray-500">
+            Email
+          </dt>
 
           <dd class="mt-1 text-gray-900">
             <%= mail_to @client.email, @client.email %>
@@ -43,7 +47,9 @@
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">Phone</dt>
+          <dt class="text-sm font-medium text-gray-500">
+            Phone
+          </dt>
 
           <dd class="mt-1 text-gray-900">
             <%= @client.phone.presence || "Not provided" %>
@@ -51,7 +57,9 @@
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">Company</dt>
+          <dt class="text-sm font-medium text-gray-500">
+            Company
+          </dt>
 
           <dd class="mt-1 text-gray-900">
             <%= @client.company_name.presence || "Not provided" %>
@@ -59,7 +67,9 @@
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">Added</dt>
+          <dt class="text-sm font-medium text-gray-500">
+            Added
+          </dt>
 
           <dd class="mt-1 text-gray-900">
             <%= @client.created_at.strftime("%B %-d, %Y") %>
@@ -69,10 +79,14 @@
     </div>
 
     <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-900">Relationship</h2>
+      <h2 class="text-lg font-semibold text-gray-900">
+        Relationship
+      </h2>
 
       <div class="mt-6">
-        <p class="text-sm font-medium text-gray-500">Current status</p>
+        <p class="text-sm font-medium text-gray-500">
+          Current status
+        </p>
 
         <span class="mt-2 inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
           <%= @client.status.titleize %>
@@ -81,12 +95,18 @@
     </div>
   </section>
 
-  <%= render "clients/tags" %>
+  <%= render "clients/tags_section",
+             client: @client,
+             tag: @tag,
+             tags: @tags,
+             client_tags: @client_tags %>
 
   <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-lg font-semibold text-gray-900">Contacts</h2>
+        <h2 class="text-lg font-semibold text-gray-900">
+          Contacts
+        </h2>
 
         <p class="mt-1 text-sm text-gray-500">
           People associated with this client.
@@ -147,7 +167,9 @@
 
   <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
     <div>
-      <h2 class="text-lg font-semibold text-gray-900">Client summary</h2>
+      <h2 class="text-lg font-semibold text-gray-900">
+        Client summary
+      </h2>
 
       <p class="mt-1 text-sm text-gray-500">
         A quick overview of this client's activity.
@@ -156,7 +178,9 @@
 
     <dl class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
       <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-        <dt class="text-sm font-medium text-gray-500">Open tasks</dt>
+        <dt class="text-sm font-medium text-gray-500">
+          Open tasks
+        </dt>
 
         <dd
           id="open_tasks_count"
@@ -167,7 +191,9 @@
       </div>
 
       <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-        <dt class="text-sm font-medium text-gray-500">Completed tasks</dt>
+        <dt class="text-sm font-medium text-gray-500">
+          Completed tasks
+        </dt>
 
         <dd
           id="completed_tasks_count"
@@ -178,7 +204,9 @@
       </div>
 
       <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-        <dt class="text-sm font-medium text-gray-500">Overdue tasks</dt>
+        <dt class="text-sm font-medium text-gray-500">
+          Overdue tasks
+        </dt>
 
         <dd
           id="overdue_tasks_count"
@@ -189,7 +217,9 @@
       </div>
 
       <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-        <dt class="text-sm font-medium text-gray-500">Total notes</dt>
+        <dt class="text-sm font-medium text-gray-500">
+          Total notes
+        </dt>
 
         <dd
           id="total_notes_count"
@@ -200,7 +230,9 @@
       </div>
 
       <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-        <dt class="text-sm font-medium text-gray-500">Client since</dt>
+        <dt class="text-sm font-medium text-gray-500">
+          Client since
+        </dt>
 
         <dd class="mt-2 text-lg font-bold text-gray-900">
           <%= @client.created_at.strftime("%B %Y") %>
@@ -211,7 +243,9 @@
 
   <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
     <div>
-      <h2 class="text-lg font-semibold text-gray-900">Activity timeline</h2>
+      <h2 class="text-lg font-semibold text-gray-900">
+        Activity timeline
+      </h2>
 
       <p class="mt-1 text-sm text-gray-500">
         Notes and task activity for this client, ordered from newest to oldest.
@@ -246,7 +280,9 @@
 
                 <% if activity[:occurred_at].present? %>
                   <time class="shrink-0 text-sm text-gray-500">
-                    <%= activity[:occurred_at].strftime("%B %-d, %Y at %-I:%M %p") %>
+                    <%= activity[:occurred_at].strftime(
+                          "%B %-d, %Y at %-I:%M %p"
+                        ) %>
                   </time>
                 <% end %>
               </div>
@@ -264,10 +300,13 @@
   </section>
 
   <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-gray-900">General notes</h2>
+    <h2 class="text-lg font-semibold text-gray-900">
+      General notes
+    </h2>
 
     <div class="mt-4 whitespace-pre-wrap text-gray-700">
-      <%= @client.notes.presence || "No general notes have been added for this client." %>
+      <%= @client.notes.presence ||
+          "No general notes have been added for this client." %>
     </div>
   </section>
 

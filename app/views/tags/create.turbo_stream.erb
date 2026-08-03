@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "tags_section" do %>
+  <%= render "clients/tags_section",
+             client: @client,
+             tag: @tag.persisted? ? current_user.tags.new : @tag,
+             tags: @tags,
+             client_tags: @client_tags %>
+<% end %>

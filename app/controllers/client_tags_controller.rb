@@ -7,14 +7,23 @@ class ClientTagsController < ApplicationController
 
   def create
     tag = current_user.tags.find(client_tag_params[:tag_id])
-    client_tag = @client.client_tags.new(tag: tag)
+    @client_tag = @client.client_tags.new(tag: tag)
 
-    if client_tag.save
-      redirect_to @client, notice: "Tag was assigned successfully."
+    if @client_tag.save
+      prepare_tags
+
+      respond_to do |format|
+        format.html do
+          redirect_to @client,
+                      notice: "Tag was assigned successfully."
+        end
+
+        format.turbo_stream
+      end
     else
       redirect_to(
         @client,
-        alert: client_tag.errors.full_messages.to_sentence
+        alert: @client_tag.errors.full_messages.to_sentence
       )
     end
   end
@@ -22,7 +31,16 @@ class ClientTagsController < ApplicationController
   def destroy
     @client_tag.destroy
 
-    redirect_to @client, notice: "Tag was removed successfully."
+    prepare_tags
+
+    respond_to do |format|
+      format.html do
+        redirect_to @client,
+                    notice: "Tag was removed successfully."
+      end
+
+      format.turbo_stream
+    end
   end
 
   private
@@ -33,6 +51,12 @@ class ClientTagsController < ApplicationController
 
   def set_client_tag
     @client_tag = @client.client_tags.find(params[:id])
+  end
+
+  def prepare_tags
+    @tag = current_user.tags.new
+    @tags = current_user.tags.order(:name)
+    @client_tags = @client.client_tags.includes(:tag)
   end
 
   def client_tag_params

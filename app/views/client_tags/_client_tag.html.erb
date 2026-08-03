@@ -1,0 +1,21 @@
+<div
+  id="<%= dom_id(client_tag) %>"
+  class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1"
+>
+  <span class="text-sm font-semibold text-gray-700">
+    <%= client_tag.tag.name %>
+  </span>
+
+  <%= button_to "×",
+                client_client_tag_path(client, client_tag),
+                method: :delete,
+                form: {
+                  data: {
+                    turbo_confirm: "Remove this tag from the client?"
+                  }
+                },
+                class: "border-0 bg-transparent p-0 text-sm font-bold text-red-600 hover:text-red-800",
+                aria: {
+                  label: "Remove #{client_tag.tag.name} tag"
+                } %>
+</div>

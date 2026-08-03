@@ -1,0 +1,10 @@
+<%= turbo_stream.replace(
+      "tags_section",
+      partial: "clients/tags_section",
+      locals: {
+        client: @client,
+        tag: @tag,
+        tags: @tags,
+        client_tags: @client_tags
+      }
+    ) %>

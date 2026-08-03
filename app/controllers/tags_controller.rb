@@ -8,12 +8,31 @@ class TagsController < ApplicationController
     @tag = current_user.tags.new(tag_params)
 
     if create_and_assign_tag
-      redirect_to @client, notice: "Tag was created and assigned successfully."
+      prepare_tags
+
+      respond_to do |format|
+        format.html do
+          redirect_to @client,
+                      notice: "Tag was created and assigned successfully."
+        end
+
+        format.turbo_stream
+      end
     else
-      redirect_to(
-        @client,
-        alert: @tag.errors.full_messages.to_sentence
-      )
+      respond_to do |format|
+        format.html do
+          redirect_to(
+            @client,
+            alert: @tag.errors.full_messages.to_sentence
+          )
+        end
+
+        format.turbo_stream do
+          prepare_tags
+
+          render :create, status: :unprocessable_entity
+        end
+      end
     end
   end
 
@@ -30,8 +49,23 @@ class TagsController < ApplicationController
     end
 
     true
-  rescue ActiveRecord::RecordInvalid
+  rescue ActiveRecord::RecordInvalid => error
+    copy_assignment_errors(error.record)
+
     false
+  end
+
+  def copy_assignment_errors(record)
+    return if record == @tag
+
+    record.errors.full_messages.each do |message|
+      @tag.errors.add(:base, message)
+    end
+  end
+
+  def prepare_tags
+    @tags = current_user.tags.order(:name)
+    @client_tags = @client.client_tags.includes(:tag)
   end
 
   def tag_params
