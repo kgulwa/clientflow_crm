@@ -1,0 +1,24 @@
+<%= turbo_stream.replace "tasks_section" do %>
+  <%= render "clients/tasks_section",
+             client: @client,
+             task: @task.persisted? ? @client.tasks.new : @task,
+             tasks: @tasks %>
+<% end %>
+
+<%= turbo_stream.replace "open_tasks_count" do %>
+  <dd id="open_tasks_count" class="mt-2 text-2xl font-bold text-gray-900">
+    <%= @client_statistics[:open_tasks] %>
+  </dd>
+<% end %>
+
+<%= turbo_stream.replace "completed_tasks_count" do %>
+  <dd id="completed_tasks_count" class="mt-2 text-2xl font-bold text-gray-900">
+    <%= @client_statistics[:completed_tasks] %>
+  </dd>
+<% end %>
+
+<%= turbo_stream.replace "overdue_tasks_count" do %>
+  <dd id="overdue_tasks_count" class="mt-2 text-2xl font-bold text-gray-900">
+    <%= @client_statistics[:overdue_tasks] %>
+  </dd>
+<% end %>

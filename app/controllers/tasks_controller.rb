@@ -37,35 +37,78 @@ class TasksController < ApplicationController
     @task = @client.tasks.new(task_params)
 
     if @task.save
-      redirect_to @client, notice: "Task was created successfully."
-    else
-      prepare_client_page
+      prepare_tasks
 
-      render "clients/show", status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          redirect_to @client, notice: "Task was created successfully."
+        end
+
+        format.turbo_stream
+      end
+    else
+      respond_to do |format|
+        format.html do
+          prepare_client_page
+
+          render "clients/show", status: :unprocessable_entity
+        end
+
+        format.turbo_stream do
+          prepare_tasks
+
+          render :create, status: :unprocessable_entity
+        end
+      end
     end
   end
 
   def update
     if @task.update(task_params)
-      redirect_back(
-        fallback_location: client_path(@client),
-        notice: "Task was updated successfully."
-      )
+      prepare_tasks
+
+      respond_to do |format|
+        format.html do
+          redirect_back(
+            fallback_location: client_path(@client),
+            notice: "Task was updated successfully."
+          )
+        end
+
+        format.turbo_stream
+      end
     else
-      redirect_back(
-        fallback_location: client_path(@client),
-        alert: @task.errors.full_messages.to_sentence
-      )
+      respond_to do |format|
+        format.html do
+          redirect_back(
+            fallback_location: client_path(@client),
+            alert: @task.errors.full_messages.to_sentence
+          )
+        end
+
+        format.turbo_stream do
+          prepare_tasks
+
+          render :update, status: :unprocessable_entity
+        end
+      end
     end
   end
 
   def destroy
     @task.destroy
+    prepare_tasks
 
-    redirect_back(
-      fallback_location: client_path(@client),
-      notice: "Task was deleted successfully."
-    )
+    respond_to do |format|
+      format.html do
+        redirect_back(
+          fallback_location: client_path(@client),
+          notice: "Task was deleted successfully."
+        )
+      end
+
+      format.turbo_stream
+    end
   end
 
   private
@@ -116,12 +159,7 @@ class TasksController < ApplicationController
     @task = @client.tasks.find(params[:id])
   end
 
-  def prepare_client_page
-    @note = @client.client_notes.new
-    @task ||= @client.tasks.new
-
-    @client_notes = @client.client_notes.order(created_at: :desc)
-
+  def prepare_tasks
     @tasks = @client.tasks.order(
       Arel.sql(
         "CASE WHEN status = #{Task.statuses[:completed]} THEN 1 ELSE 0 END"
@@ -130,13 +168,22 @@ class TasksController < ApplicationController
       created_at: :desc
     )
 
+    prepare_client_statistics
+  end
+
+  def prepare_client_page
+    @contacts = @client.contacts.primary_first
+    @note = @client.client_notes.new
+    @client_notes = @client.client_notes.order(created_at: :desc)
+
+    @task ||= @client.tasks.new
+    prepare_tasks
+
     @tag = current_user.tags.new
     @tags = current_user.tags.order(:name)
     @client_tags = @client.client_tags.includes(:tag)
 
     @activities = ClientActivityTimeline.new(@client).call
-
-    prepare_client_statistics
   end
 
   def prepare_client_statistics
