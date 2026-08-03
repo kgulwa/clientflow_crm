@@ -1,0 +1,75 @@
+<section
+  id="notes_section"
+  class="grid gap-6 lg:grid-cols-3"
+>
+  <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-900">
+      Add client note
+    </h2>
+
+    <%= form_with model: [client, note],
+                  class: "mt-6 space-y-4" do |form| %>
+      <% if note.errors.any? %>
+        <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+          <h3 class="text-sm font-semibold text-red-800">
+            Please fix the following:
+          </h3>
+
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-red-700">
+            <% note.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :title,
+                       class: "block text-sm font-medium text-gray-700" %>
+
+        <%= form.text_field :title,
+                            class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500",
+                            placeholder: "Follow-up call" %>
+      </div>
+
+      <div>
+        <%= form.label :content,
+                       class: "block text-sm font-medium text-gray-700" %>
+
+        <%= form.text_area :content,
+                           rows: 5,
+                           class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500",
+                           placeholder: "Add details about the interaction..." %>
+      </div>
+
+      <%= form.submit "Add note",
+                      class: "w-full cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+    <% end %>
+  </div>
+
+  <div class="space-y-4 lg:col-span-2">
+    <div>
+      <h2 class="text-lg font-semibold text-gray-900">
+        Client note history
+      </h2>
+
+      <p class="mt-1 text-sm text-gray-500">
+        Calls, meetings, emails, and follow-up details.
+      </p>
+    </div>
+
+    <% if client_notes.any? %>
+      <div class="space-y-4">
+        <%= render partial: "notes/note",
+                   collection: client_notes,
+                   locals: { client: client } %>
+      </div>
+    <% else %>
+      <div class="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
+        <p class="text-gray-600">
+          No client note history has been added yet.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</section>

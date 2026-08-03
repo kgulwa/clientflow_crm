@@ -1,0 +1,15 @@
+<%= turbo_stream.replace "notes_section" do %>
+  <%= render "clients/notes_section",
+             client: @client,
+             note: @client.client_notes.new,
+             client_notes: @client_notes %>
+<% end %>
+
+<%= turbo_stream.replace "total_notes_count" do %>
+  <dd
+    id="total_notes_count"
+    class="mt-2 text-2xl font-bold text-gray-900"
+  >
+    <%= @client.client_notes.count %>
+  </dd>
+<% end %>

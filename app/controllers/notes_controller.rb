@@ -9,18 +9,43 @@ class NotesController < ApplicationController
     @note = @client.client_notes.new(note_params)
 
     if @note.save
-      redirect_to @client, notice: 'Note was added successfully.'
-    else
-      prepare_client_page
+      prepare_notes
 
-      render 'clients/show', status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          redirect_to @client, notice: "Note was added successfully."
+        end
+
+        format.turbo_stream
+      end
+    else
+      respond_to do |format|
+        format.html do
+          prepare_client_page
+
+          render "clients/show", status: :unprocessable_entity
+        end
+
+        format.turbo_stream do
+          prepare_notes
+
+          render :create, status: :unprocessable_entity
+        end
+      end
     end
   end
 
   def destroy
     @note.destroy
+    prepare_notes
 
-    redirect_to @client, notice: 'Note was deleted successfully.'
+    respond_to do |format|
+      format.html do
+        redirect_to @client, notice: "Note was deleted successfully."
+      end
+
+      format.turbo_stream
+    end
   end
 
   private
@@ -33,7 +58,13 @@ class NotesController < ApplicationController
     @note = @client.client_notes.find(params[:id])
   end
 
+  def prepare_notes
+    @client_notes = @client.client_notes.order(created_at: :desc)
+  end
+
   def prepare_client_page
+    @contacts = @client.contacts.primary_first
+
     @client_notes = @client.client_notes.order(created_at: :desc)
 
     @task = @client.tasks.new
@@ -44,6 +75,12 @@ class NotesController < ApplicationController
       due_date: :asc,
       created_at: :desc
     )
+
+    @tag = current_user.tags.new
+    @tags = current_user.tags.order(:name)
+    @client_tags = @client.client_tags.includes(:tag)
+
+    @activities = ClientActivityTimeline.new(@client).call
 
     prepare_client_statistics
   end
