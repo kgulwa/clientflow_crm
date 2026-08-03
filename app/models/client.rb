@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "csv"
+
 class Client < ApplicationRecord
   belongs_to :user
 
@@ -63,6 +65,34 @@ class Client < ApplicationRecord
       all
     end
   }
+
+  def self.to_csv(records = all)
+    CSV.generate(headers: true) do |csv|
+      csv << [
+        "First Name",
+        "Last Name",
+        "Company",
+        "Email",
+        "Phone",
+        "Status",
+        "Notes",
+        "Created At"
+      ]
+
+      records.each do |client|
+        csv << [
+          client.first_name,
+          client.last_name,
+          client.company_name,
+          client.email,
+          client.phone,
+          client.status.titleize,
+          client.notes,
+          client.created_at.iso8601
+        ]
+      end
+    end
+  end
 
   def full_name
     "#{first_name} #{last_name}".strip

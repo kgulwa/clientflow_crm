@@ -14,9 +14,19 @@
       </p>
     </div>
 
-    <%= link_to "Add client",
-                new_client_path,
-                class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <%= link_to "Export CSV",
+                  clients_path(
+                    format: :csv,
+                    query: @query,
+                    status: @status
+                  ),
+                  class: "rounded-lg border border-gray-300 bg-white px-5 py-3 text-center text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50" %>
+
+      <%= link_to "Add client",
+                  new_client_path,
+                  class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+    </div>
   </section>
 
   <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -132,12 +142,8 @@
                   <%= client.company_name.presence || "—" %>
                 </td>
 
-                <td class="px-6 py-4 text-sm text-gray-600">
-                  <p><%= client.email %></p>
-
-                  <p class="text-gray-400">
-                    <%= client.phone.presence || "No phone" %>
-                  </p>
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  <%= client.phone.presence || "No phone" %>
                 </td>
 
                 <td class="whitespace-nowrap px-6 py-4">
@@ -188,7 +194,7 @@
 
         <%= link_to "Clear filters",
                     clients_path,
-                    class: "mt-6 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-100" %>
+                    class: "mt-6 rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
       </div>
     <% else %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">

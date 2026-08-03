@@ -13,9 +13,21 @@ class ClientsController < ApplicationController
                           .with_status(@status)
                           .order(created_at: :desc)
 
-    @pagy, @clients = pagy(:offset, clients, limit: 10)
+    respond_to do |format|
+      format.html do
+        @pagy, @clients = pagy(:offset, clients, limit: 10)
+        @filters_applied = @query.present? || @status.present?
+      end
 
-    @filters_applied = @query.present? || @status.present?
+      format.csv do
+        send_data(
+          Client.to_csv(clients),
+          filename: clients_export_filename,
+          type: "text/csv; charset=utf-8",
+          disposition: "attachment"
+        )
+      end
+    end
   end
 
   def show
@@ -58,6 +70,14 @@ class ClientsController < ApplicationController
     status = params[:status].to_s
 
     status if Client.statuses.key?(status)
+  end
+
+  def clients_export_filename
+    parts = ["clients"]
+    parts << @status if @status.present?
+    parts << Date.current.iso8601
+
+    "#{parts.join("-")}.csv"
   end
 
   def set_client

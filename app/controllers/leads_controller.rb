@@ -6,12 +6,25 @@ class LeadsController < ApplicationController
 
   def index
     leads = current_user.leads
-                         .search(params[:search])
-                         .with_status(params[:status])
-                         .with_source(params[:source])
-                         .order(created_at: :desc)
+                        .search(params[:search])
+                        .with_status(params[:status])
+                        .with_source(params[:source])
+                        .order(created_at: :desc)
 
-    @pagy, @leads = pagy(:offset, leads, limit: 10)
+    respond_to do |format|
+      format.html do
+        @pagy, @leads = pagy(:offset, leads, limit: 10)
+      end
+
+      format.csv do
+        send_data(
+          Lead.to_csv(leads),
+          filename: leads_export_filename,
+          type: "text/csv; charset=utf-8",
+          disposition: "attachment"
+        )
+      end
+    end
   end
 
   def show; end
@@ -47,6 +60,22 @@ class LeadsController < ApplicationController
   end
 
   private
+
+  def leads_export_filename
+    parts = ["leads"]
+
+    if Lead.statuses.key?(params[:status].to_s)
+      parts << params[:status]
+    end
+
+    if Lead.sources.key?(params[:source].to_s)
+      parts << params[:source]
+    end
+
+    parts << Date.current.iso8601
+
+    "#{parts.join("-")}.csv"
+  end
 
   def set_lead
     @lead = current_user.leads.find(params[:id])

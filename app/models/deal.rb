@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "csv"
+
 class Deal < ApplicationRecord
   belongs_to :client
 
@@ -51,6 +53,34 @@ class Deal < ApplicationRecord
   scope :recent_first, lambda {
     order(created_at: :desc)
   }
+
+  def self.to_csv(records = all)
+    CSV.generate(headers: true) do |csv|
+      csv << [
+        "Title",
+        "Client",
+        "Company",
+        "Stage",
+        "Value",
+        "Expected Close Date",
+        "Description",
+        "Created At"
+      ]
+
+      records.each do |deal|
+        csv << [
+          deal.title,
+          deal.client.full_name,
+          deal.client.company_name,
+          deal.display_stage,
+          deal.value.to_s,
+          deal.expected_close_date&.iso8601,
+          deal.description,
+          deal.created_at.iso8601
+        ]
+      end
+    end
+  end
 
   def display_stage
     stage.titleize

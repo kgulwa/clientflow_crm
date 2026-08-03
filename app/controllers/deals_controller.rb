@@ -10,7 +10,20 @@ class DealsController < ApplicationController
                         .with_stage(params[:stage])
                         .recent_first
 
-    @pagy, @deals = pagy(:offset, deals, limit: 10)
+    respond_to do |format|
+      format.html do
+        @pagy, @deals = pagy(:offset, deals, limit: 10)
+      end
+
+      format.csv do
+        send_data(
+          Deal.to_csv(deals),
+          filename: deals_export_filename,
+          type: "text/csv; charset=utf-8",
+          disposition: "attachment"
+        )
+      end
+    end
   end
 
   def show; end
@@ -50,6 +63,18 @@ class DealsController < ApplicationController
   end
 
   private
+
+  def deals_export_filename
+    parts = ["deals"]
+
+    if Deal.stages.key?(params[:stage].to_s)
+      parts << params[:stage]
+    end
+
+    parts << Date.current.iso8601
+
+    "#{parts.join("-")}.csv"
+  end
 
   def set_deal
     @deal = current_user.deals.find(params[:id])
