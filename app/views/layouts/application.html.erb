@@ -62,12 +62,20 @@
         <div class="flex min-h-screen flex-1 flex-col">
           <header class="border-b border-gray-200 bg-white">
             <div class="flex items-center justify-between gap-4 px-6 py-4 lg:px-8">
-              <div>
-                <p class="text-sm text-gray-500">ClientFlow CRM</p>
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
+                  <%= avatar_initials(current_user.full_name) %>
+                </div>
 
-                <p class="font-semibold text-gray-900">
-                  <%= current_user.full_name %>
-                </p>
+                <div>
+                  <p class="font-semibold text-gray-900">
+                    <%= current_user.full_name %>
+                  </p>
+
+                  <p class="text-sm text-gray-500">
+                    ClientFlow CRM
+                  </p>
+                </div>
               </div>
 
               <div class="flex items-center gap-4">
