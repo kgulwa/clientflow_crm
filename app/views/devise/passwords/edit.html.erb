@@ -58,12 +58,37 @@
         <% end %>
       </div>
 
-      <%= form.password_field :password,
-                              autofocus: true,
-                              autocomplete: "new-password",
-                              placeholder: "Enter your new password",
-                              required: true,
-                              class: "mt-2 block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+      <div
+        class="relative mt-2"
+        data-controller="password-visibility"
+      >
+        <%= form.password_field :password,
+                                autofocus: true,
+                                autocomplete: "new-password",
+                                placeholder: "Enter your new password",
+                                required: true,
+                                data: {
+                                  password_visibility_target: "input"
+                                },
+                                class: "block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-12 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+        <button
+          type="button"
+          aria-label="Show password"
+          aria-pressed="false"
+          data-action="password-visibility#toggle"
+          data-password-visibility-target="button"
+          class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 transition hover:text-indigo-600 focus:outline-none focus:text-indigo-600"
+        >
+          <span data-password-visibility-target="showIcon">👁</span>
+          <span
+            data-password-visibility-target="hideIcon"
+            class="hidden"
+          >
+            🙈
+          </span>
+        </button>
+      </div>
     </div>
 
     <div>
@@ -71,11 +96,36 @@
                      "Confirm new password",
                      class: "block text-sm font-semibold text-gray-700" %>
 
-      <%= form.password_field :password_confirmation,
-                              autocomplete: "new-password",
-                              placeholder: "Enter the password again",
-                              required: true,
-                              class: "mt-2 block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+      <div
+        class="relative mt-2"
+        data-controller="password-visibility"
+      >
+        <%= form.password_field :password_confirmation,
+                                autocomplete: "new-password",
+                                placeholder: "Enter the password again",
+                                required: true,
+                                data: {
+                                  password_visibility_target: "input"
+                                },
+                                class: "block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-12 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+        <button
+          type="button"
+          aria-label="Show password"
+          aria-pressed="false"
+          data-action="password-visibility#toggle"
+          data-password-visibility-target="button"
+          class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 transition hover:text-indigo-600 focus:outline-none focus:text-indigo-600"
+        >
+          <span data-password-visibility-target="showIcon">👁</span>
+          <span
+            data-password-visibility-target="hideIcon"
+            class="hidden"
+          >
+            🙈
+          </span>
+        </button>
+      </div>
     </div>
 
     <%= form.submit "Update password",
