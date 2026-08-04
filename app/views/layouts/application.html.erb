@@ -104,19 +104,39 @@
 
           <% if notice.present? %>
             <div
-              class="mx-6 mt-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800 lg:mx-8"
+              data-turbo-temporary
+              class="mx-6 mt-6 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm lg:mx-8"
               role="alert"
             >
-              <%= notice %>
+              <span
+                aria-hidden="true"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700"
+              >
+                ✓
+              </span>
+
+              <p class="pt-0.5">
+                <%= notice %>
+              </p>
             </div>
           <% end %>
 
           <% if alert.present? %>
             <div
-              class="mx-6 mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800 lg:mx-8"
+              data-turbo-temporary
+              class="mx-6 mt-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm lg:mx-8"
               role="alert"
             >
-              <%= alert %>
+              <span
+                aria-hidden="true"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700"
+              >
+                !
+              </span>
+
+              <p class="pt-0.5">
+                <%= alert %>
+              </p>
             </div>
           <% end %>
 
@@ -127,7 +147,7 @@
       </div>
     <% else %>
       <div class="min-h-screen lg:grid lg:grid-cols-2">
-        <section class="relative hidden overflow-hidden bg-slate-950 px-12 py-12 text-white lg:flex lg:flex-col lg:justify-between">
+        <section class="relative hidden overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-12 py-12 text-white lg:flex lg:flex-col lg:justify-between">
           <div
             aria-hidden="true"
             class="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
@@ -135,12 +155,12 @@
 
           <div
             aria-hidden="true"
-            class="absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-purple-500/10 blur-3xl"
+            class="absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl"
           ></div>
 
           <div class="relative z-10">
-            <div class="flex items-center gap-3">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500 text-sm font-bold shadow-lg shadow-indigo-950/30">
+            <div class="flex items-center gap-4">
+              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-base font-bold text-white shadow-xl shadow-indigo-950/40">
                 CF
               </div>
 
@@ -162,7 +182,7 @@
             </p>
 
             <h2 class="mt-5 text-4xl font-bold leading-tight tracking-tight">
-              Keep every client relationship moving forward.
+              Build stronger client relationships.
             </h2>
 
             <p class="mt-5 max-w-lg text-base leading-7 text-slate-300">
@@ -171,7 +191,7 @@
             </p>
 
             <div class="mt-10 grid gap-4 sm:grid-cols-2">
-              <div class="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
                 <p class="font-semibold text-white">
                   Centralized records
                 </p>
@@ -181,7 +201,7 @@
                 </p>
               </div>
 
-              <div class="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
                 <p class="font-semibold text-white">
                   Clear follow-ups
                 </p>
@@ -190,31 +210,67 @@
                   Track tasks, deadlines, priorities, and progress with ease.
                 </p>
               </div>
+
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur sm:col-span-2">
+                <p class="font-semibold text-white">
+                  Built for productivity
+                </p>
+
+                <p class="mt-2 text-sm leading-6 text-slate-400">
+                  Spend less time managing scattered information and more time
+                  building valuable customer relationships.
+                </p>
+              </div>
             </div>
+
+            <p class="mt-8 text-sm text-slate-400">
+              A focused workspace for consultants, agencies, and growing teams.
+            </p>
           </div>
 
           <p class="relative z-10 text-sm text-slate-500">
-            ClientFlow CRM
+            Built with Ruby on Rails · Turbo · Tailwind CSS
           </p>
         </section>
 
         <section class="flex min-h-screen items-center justify-center bg-gray-50 px-6 py-10 sm:px-10">
-          <div class="w-full max-w-md">
+          <div class="w-full max-w-lg">
             <% if notice.present? %>
               <div
-                class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+                data-turbo-temporary
+                class="mb-6 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm"
                 role="alert"
               >
-                <%= notice %>
+                <span
+                  aria-hidden="true"
+                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700"
+                >
+                  ✓
+                </span>
+
+                <p class="pt-0.5">
+                  <%= notice %>
+                </p>
               </div>
             <% end %>
 
-            <% if alert.present? %>
+            <% if alert.present? &&
+                  alert != "You need to sign in or sign up before continuing." %>
               <div
-                class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                data-turbo-temporary
+                class="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm"
                 role="alert"
               >
-                <%= alert %>
+                <span
+                  aria-hidden="true"
+                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700"
+                >
+                  !
+                </span>
+
+                <p class="pt-0.5">
+                  <%= alert %>
+                </p>
               </div>
             <% end %>
 

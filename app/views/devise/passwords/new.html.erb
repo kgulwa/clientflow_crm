@@ -1,16 +1,82 @@
-<h2>Forgot your password?</h2>
+<div class="w-full">
+  <div class="mb-8 lg:hidden">
+    <div class="flex items-center gap-3">
+      <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-lg shadow-indigo-100">
+        CF
+      </div>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+      <div>
+        <p class="text-lg font-bold tracking-tight text-gray-900">
+          ClientFlow
+        </p>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+        <p class="text-sm text-gray-500">
+          Customer relationship management
+        </p>
+      </div>
+    </div>
   </div>
 
-  <div class="actions">
-    <%= f.submit "Send me password reset instructions" %>
-  </div>
-<% end %>
+  <div>
+    <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+      Account recovery
+    </p>
 
-<%= render "devise/shared/links" %>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900">
+      Reset your password
+    </h1>
+
+    <p class="mt-3 text-sm leading-6 text-gray-600">
+      Enter the email address associated with your account. We’ll send you a
+      secure link to choose a new password.
+    </p>
+  </div>
+
+  <%= form_for(
+        resource,
+        as: resource_name,
+        url: password_path(resource_name),
+        html: {
+          method: :post,
+          class: "mt-8 space-y-5"
+        }
+      ) do |form| %>
+    <%= render "devise/shared/error_messages",
+               resource: resource %>
+
+    <div>
+      <%= form.label :email,
+                     class: "block text-sm font-semibold text-gray-700" %>
+
+      <%= form.email_field :email,
+                           autofocus: true,
+                           autocomplete: "email",
+                           placeholder: "you@example.com",
+                           required: true,
+                           class: "mt-2 block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+    </div>
+
+    <%= form.submit "Send reset link",
+                    class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition duration-200 hover:scale-[1.01] hover:from-indigo-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+  <% end %>
+
+  <p class="mt-5 text-center text-xs leading-5 text-gray-500">
+    For your security, password-reset links expire after six hours.
+  </p>
+
+  <div class="mt-8 border-t border-gray-200 pt-6 text-center">
+    <%= link_to "← Back to sign in",
+                new_session_path(resource_name),
+                class: "text-sm font-semibold text-indigo-600 transition hover:text-indigo-800" %>
+
+    <% if devise_mapping.registerable? %>
+      <p class="mt-4 text-sm text-gray-600">
+        Don’t have an account?
+
+        <%= link_to "Create one",
+                    new_registration_path(resource_name),
+                    class: "font-semibold text-indigo-600 transition hover:text-indigo-800" %>
+      </p>
+    <% end %>
+  </div>
+</div>
