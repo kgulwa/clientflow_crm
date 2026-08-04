@@ -86,6 +86,11 @@ class ClientsController < ApplicationController
 
   def prepare_client_page
     @contacts = @client.contacts.primary_first
+
+    @editing_contact = @contacts.find do |contact|
+      contact.id == params[:edit_contact].to_i
+    end
+
     @note = @client.client_notes.new
     @client_notes = @client.client_notes.order(created_at: :desc)
 

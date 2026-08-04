@@ -2,13 +2,21 @@
 <html>
   <head>
     <title>ClientFlow CRM</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1"
+    >
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind",
+                            "data-turbo-track": "reload" %>
+
+    <%= stylesheet_link_tag "application",
+                            "data-turbo-track": "reload" %>
+
     <%= javascript_importmap_tags %>
   </head>
 
@@ -17,7 +25,8 @@
       <div class="min-h-screen lg:flex">
         <aside class="border-b border-gray-200 bg-slate-900 text-white lg:min-h-screen lg:w-64 lg:border-b-0">
           <div class="flex items-center justify-between px-6 py-5">
-            <%= link_to root_path, class: "text-xl font-bold tracking-tight" do %>
+            <%= link_to root_path,
+                        class: "text-xl font-bold tracking-tight" do %>
               ClientFlow
             <% end %>
 
@@ -85,7 +94,9 @@
 
                 <%= link_to "Sign out",
                             destroy_user_session_path,
-                            data: { turbo_method: :delete },
+                            data: {
+                              turbo_method: :delete
+                            },
                             class: "rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
               </div>
             </div>
@@ -115,27 +126,104 @@
         </div>
       </div>
     <% else %>
-      <% if notice.present? %>
-        <div
-          class="mx-auto mt-4 max-w-5xl rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800"
-          role="alert"
-        >
-          <%= notice %>
-        </div>
-      <% end %>
+      <div class="min-h-screen lg:grid lg:grid-cols-2">
+        <section class="relative hidden overflow-hidden bg-slate-950 px-12 py-12 text-white lg:flex lg:flex-col lg:justify-between">
+          <div
+            aria-hidden="true"
+            class="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
+          ></div>
 
-      <% if alert.present? %>
-        <div
-          class="mx-auto mt-4 max-w-5xl rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800"
-          role="alert"
-        >
-          <%= alert %>
-        </div>
-      <% end %>
+          <div
+            aria-hidden="true"
+            class="absolute -bottom-24 -right-20 h-96 w-96 rounded-full bg-purple-500/10 blur-3xl"
+          ></div>
 
-      <main class="container mx-auto px-5 py-10">
-        <%= yield %>
-      </main>
+          <div class="relative z-10">
+            <div class="flex items-center gap-3">
+              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500 text-sm font-bold shadow-lg shadow-indigo-950/30">
+                CF
+              </div>
+
+              <div>
+                <p class="text-xl font-bold tracking-tight">
+                  ClientFlow
+                </p>
+
+                <p class="text-sm text-slate-400">
+                  CRM
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative z-10 max-w-xl">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-300">
+              Work smarter
+            </p>
+
+            <h2 class="mt-5 text-4xl font-bold leading-tight tracking-tight">
+              Keep every client relationship moving forward.
+            </h2>
+
+            <p class="mt-5 max-w-lg text-base leading-7 text-slate-300">
+              Manage contacts, opportunities, follow-ups, tasks, and client
+              activity from one focused workspace.
+            </p>
+
+            <div class="mt-10 grid gap-4 sm:grid-cols-2">
+              <div class="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <p class="font-semibold text-white">
+                  Centralized records
+                </p>
+
+                <p class="mt-2 text-sm leading-6 text-slate-400">
+                  Keep clients, leads, deals, contacts, and notes together.
+                </p>
+              </div>
+
+              <div class="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <p class="font-semibold text-white">
+                  Clear follow-ups
+                </p>
+
+                <p class="mt-2 text-sm leading-6 text-slate-400">
+                  Track tasks, deadlines, priorities, and progress with ease.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p class="relative z-10 text-sm text-slate-500">
+            ClientFlow CRM
+          </p>
+        </section>
+
+        <section class="flex min-h-screen items-center justify-center bg-gray-50 px-6 py-10 sm:px-10">
+          <div class="w-full max-w-md">
+            <% if notice.present? %>
+              <div
+                class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+                role="alert"
+              >
+                <%= notice %>
+              </div>
+            <% end %>
+
+            <% if alert.present? %>
+              <div
+                class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                role="alert"
+              >
+                <%= alert %>
+              </div>
+            <% end %>
+
+            <main>
+              <%= yield %>
+            </main>
+          </div>
+        </section>
+      </div>
     <% end %>
   </body>
 </html>

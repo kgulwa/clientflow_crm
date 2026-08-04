@@ -1,0 +1,76 @@
+<section
+  id="contacts_section"
+  class="grid gap-6 lg:grid-cols-3"
+>
+  <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div>
+      <h2 class="text-lg font-semibold text-gray-900">
+        Add contact
+      </h2>
+
+      <p class="mt-1 text-sm leading-6 text-gray-500">
+        Add another person associated with this client.
+      </p>
+    </div>
+
+    <div class="mt-6">
+      <%= render "contacts/inline_form",
+                 client: client,
+                 contact: contact %>
+    </div>
+  </div>
+
+  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:col-span-2">
+    <div class="border-b border-gray-200 px-6 py-5">
+      <div class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">
+            Contacts
+          </h2>
+
+          <p class="mt-1 text-sm text-gray-500">
+            People associated with this client.
+          </p>
+        </div>
+
+        <% if contacts.any? %>
+          <p class="text-sm font-medium text-gray-500">
+            <%= pluralize(contacts.size, "contact") %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <% if contacts.any? %>
+      <div class="divide-y divide-gray-200 px-6">
+        <% contacts.each do |listed_contact| %>
+          <% if editing_contact == listed_contact %>
+            <%= turbo_frame_tag listed_contact do %>
+              <%= render "contacts/inline_edit_form",
+                         client: client,
+                         contact: listed_contact %>
+            <% end %>
+          <% else %>
+            <%= render "contacts/contact",
+                       client: client,
+                       contact: listed_contact %>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-600">
+          CT
+        </div>
+
+        <h3 class="mt-4 font-semibold text-gray-900">
+          No contacts yet
+        </h3>
+
+        <p class="mt-2 max-w-sm text-sm leading-6 text-gray-500">
+          Add the first person associated with this client using the form.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</section>

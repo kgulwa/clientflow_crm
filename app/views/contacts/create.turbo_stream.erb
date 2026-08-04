@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "contacts_section" do %>
+  <%= render "clients/contacts_section",
+             client: @client,
+             contact: @contact.persisted? ? @client.contacts.new : @contact,
+             contacts: @contacts,
+             editing_contact: nil %>
+<% end %>

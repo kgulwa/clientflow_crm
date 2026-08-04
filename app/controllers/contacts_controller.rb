@@ -15,9 +15,28 @@ class ContactsController < ApplicationController
     @contact = @client.contacts.new(contact_params)
 
     if @contact.save
-      redirect_to @client, notice: "Contact was created successfully."
+      prepare_contacts
+
+      respond_to do |format|
+        format.html do
+          redirect_to @client,
+                      notice: "Contact was created successfully."
+        end
+
+        format.turbo_stream
+      end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          render :new, status: :unprocessable_entity
+        end
+
+        format.turbo_stream do
+          prepare_contacts
+
+          render :create, status: :unprocessable_entity
+        end
+      end
     end
   end
 
@@ -25,16 +44,56 @@ class ContactsController < ApplicationController
 
   def update
     if @contact.update(contact_params)
-      redirect_to @client, notice: "Contact was updated successfully."
+      prepare_contacts
+
+      respond_to do |format|
+        format.html do
+          redirect_to @client,
+                      notice: "Contact was updated successfully."
+        end
+
+        format.turbo_stream
+      end
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          render :edit, status: :unprocessable_entity
+        end
+
+        format.turbo_stream do
+          prepare_contacts
+
+          render :update, status: :unprocessable_entity
+        end
+      end
     end
   end
 
   def destroy
     @contact.destroy
+    prepare_contacts
 
-    redirect_to @client, notice: "Contact was deleted successfully."
+    if params[:return_to_client].present?
+      redirect_to(
+        client_path(@client, anchor: "contacts_section"),
+        notice: "Contact was deleted successfully.",
+        status: :see_other
+      )
+
+      return
+    end
+
+    respond_to do |format|
+      format.html do
+        redirect_to(
+          client_path(@client, anchor: "contacts_section"),
+          notice: "Contact was deleted successfully.",
+          status: :see_other
+        )
+      end
+
+      format.turbo_stream
+    end
   end
 
   private
@@ -45,6 +104,10 @@ class ContactsController < ApplicationController
 
   def set_contact
     @contact = @client.contacts.find(params[:id])
+  end
+
+  def prepare_contacts
+    @contacts = @client.contacts.primary_first
   end
 
   def contact_params

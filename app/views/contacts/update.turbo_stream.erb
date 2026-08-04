@@ -1,0 +1,17 @@
+<% if @contact.errors.any? %>
+  <%= turbo_stream.replace dom_id(@contact) do %>
+    <%= turbo_frame_tag @contact do %>
+      <%= render "contacts/inline_edit_form",
+                 client: @client,
+                 contact: @contact %>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace "contacts_section" do %>
+    <%= render "clients/contacts_section",
+               client: @client,
+               contact: @client.contacts.new,
+               contacts: @contacts,
+               editing_contact: nil %>
+  <% end %>
+<% end %>
