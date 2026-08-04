@@ -135,7 +135,7 @@ Business overview dashboard including:
 ## Running Locally
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/clientflow_crm.git
+git clone https://github.com/kgulwa/clientflow_crm.git
 
 cd clientflow_crm
 
