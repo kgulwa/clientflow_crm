@@ -4,6 +4,7 @@ require "csv"
 
 class Client < ApplicationRecord
   belongs_to :user
+  belongs_to :workspace
 
   has_many :client_notes,
            class_name: "Note",

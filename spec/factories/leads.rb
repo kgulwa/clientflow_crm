@@ -4,6 +4,8 @@ FactoryBot.define do
   factory :lead do
     association :user
 
+    workspace { user.workspace }
+
     first_name { "Thando" }
     last_name { "Mokoena" }
     company_name { "Mokoena Consulting" }

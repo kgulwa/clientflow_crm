@@ -4,6 +4,7 @@ class Tag < ApplicationRecord
   DEFAULT_COLOR = "indigo"
 
   belongs_to :user
+  belongs_to :workspace
 
   has_many :client_tags,
            inverse_of: :tag,

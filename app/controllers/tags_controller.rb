@@ -5,7 +5,11 @@ class TagsController < ApplicationController
   before_action :set_client
 
   def create
-    @tag = current_user.tags.new(tag_params)
+    @tag = current_user.tags.new(
+      tag_params.merge(
+        workspace: current_user.workspace
+      )
+    )
 
     if create_and_assign_tag
       prepare_tags

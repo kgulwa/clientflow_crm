@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_30_134025) do
+ActiveRecord::Schema[7.0].define(version: 2026_08_09_133410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,9 +35,11 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_30_134025) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "workspace_id", null: false
     t.index ["status"], name: "index_clients_on_status"
     t.index ["user_id", "email"], name: "index_clients_on_user_id_and_email", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
+    t.index ["workspace_id"], name: "index_clients_on_workspace_id"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -81,10 +83,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_30_134025) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "workspace_id", null: false
     t.index ["source"], name: "index_leads_on_source"
     t.index ["status"], name: "index_leads_on_status"
     t.index ["user_id", "status"], name: "index_leads_on_user_id_and_status"
     t.index ["user_id"], name: "index_leads_on_user_id"
+    t.index ["workspace_id"], name: "index_leads_on_workspace_id"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -103,8 +107,10 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_30_134025) do
     t.string "color", default: "indigo", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "workspace_id", null: false
     t.index "user_id, lower((name)::text)", name: "index_tags_on_user_id_and_lower_name", unique: true
     t.index ["user_id"], name: "index_tags_on_user_id"
+    t.index ["workspace_id"], name: "index_tags_on_workspace_id"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -134,18 +140,30 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_30_134025) do
     t.string "first_name", null: false
     t.string "last_name", null: false
     t.integer "role", default: 0, null: false
+    t.bigint "workspace_id", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
+    t.index ["workspace_id"], name: "index_users_on_workspace_id"
+  end
+
+  create_table "workspaces", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "client_tags", "clients"
   add_foreign_key "client_tags", "tags"
   add_foreign_key "clients", "users"
+  add_foreign_key "clients", "workspaces"
   add_foreign_key "contacts", "clients"
   add_foreign_key "deals", "clients"
   add_foreign_key "leads", "users"
+  add_foreign_key "leads", "workspaces"
   add_foreign_key "notes", "clients"
   add_foreign_key "tags", "users"
+  add_foreign_key "tags", "workspaces"
   add_foreign_key "tasks", "clients"
+  add_foreign_key "users", "workspaces"
 end

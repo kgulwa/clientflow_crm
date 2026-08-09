@@ -4,6 +4,8 @@ FactoryBot.define do
   factory :tag do
     association :user
 
+    workspace { user.workspace }
+
     sequence(:name) { |number| "Tag #{number}" }
     color { "indigo" }
 

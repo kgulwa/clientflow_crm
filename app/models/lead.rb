@@ -4,6 +4,7 @@ require "csv"
 
 class Lead < ApplicationRecord
   belongs_to :user
+  belongs_to :workspace
 
   enum source: {
     website: 0,

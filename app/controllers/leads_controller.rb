@@ -30,11 +30,17 @@ class LeadsController < ApplicationController
   def show; end
 
   def new
-    @lead = current_user.leads.new
+    @lead = current_user.leads.new(
+      workspace: current_user.workspace
+    )
   end
 
   def create
-    @lead = current_user.leads.new(lead_params)
+    @lead = current_user.leads.new(
+      lead_params.merge(
+        workspace: current_user.workspace
+      )
+    )
 
     if @lead.save
       redirect_to @lead, notice: "Lead was created successfully."

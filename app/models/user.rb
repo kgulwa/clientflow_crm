@@ -12,11 +12,13 @@ class User < ApplicationRecord
     admin: 1
   }
 
+  belongs_to :workspace
+
   has_many :clients,
            dependent: :destroy
 
   has_many :deals,
-            through: :clients
+           through: :clients
 
   has_many :leads,
            dependent: :destroy

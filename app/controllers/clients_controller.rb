@@ -35,11 +35,17 @@ class ClientsController < ApplicationController
   end
 
   def new
-    @client = current_user.clients.new
+    @client = current_user.clients.new(
+      workspace: current_user.workspace
+    )
   end
 
   def create
-    @client = current_user.clients.new(client_params)
+    @client = current_user.clients.new(
+      client_params.merge(
+        workspace: current_user.workspace
+      )
+    )
 
     if @client.save
       redirect_to @client, notice: "Client was created successfully."
