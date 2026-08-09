@@ -24,12 +24,12 @@ class TasksController < ApplicationController
     @pagy, @tasks = pagy(:offset, tasks, limit: 10)
 
     @task_counts = {
-      all: user_tasks.count,
-      pending: user_tasks.pending.count,
-      in_progress: user_tasks.in_progress.count,
-      completed: user_tasks.completed.count,
-      overdue: user_tasks.overdue.count,
-      due_today: user_tasks.due_today.count
+      all: workspace_tasks.count,
+      pending: workspace_tasks.pending.count,
+      in_progress: workspace_tasks.in_progress.count,
+      completed: workspace_tasks.completed.count,
+      overdue: workspace_tasks.overdue.count,
+      due_today: workspace_tasks.due_today.count
     }
   end
 
@@ -113,8 +113,12 @@ class TasksController < ApplicationController
 
   private
 
-  def user_tasks
-    @user_tasks ||= Task.for_user(current_user)
+  def workspace_tasks
+    @workspace_tasks ||= Task.joins(:client).where(
+      clients: {
+        workspace_id: current_user.workspace_id
+      }
+    )
   end
 
   def selected_filter
@@ -124,17 +128,17 @@ class TasksController < ApplicationController
   def filtered_tasks
     case @filter
     when "pending"
-      user_tasks.pending
+      workspace_tasks.pending
     when "in_progress"
-      user_tasks.in_progress
+      workspace_tasks.in_progress
     when "completed"
-      user_tasks.completed
+      workspace_tasks.completed
     when "overdue"
-      user_tasks.overdue
+      workspace_tasks.overdue
     when "due_today"
-      user_tasks.due_today
+      workspace_tasks.due_today
     else
-      user_tasks
+      workspace_tasks
     end
   end
 
@@ -152,7 +156,7 @@ class TasksController < ApplicationController
   end
 
   def set_client
-    @client = current_user.clients.find(params[:client_id])
+    @client = current_user.workspace.clients.find(params[:client_id])
   end
 
   def set_task
@@ -179,8 +183,10 @@ class TasksController < ApplicationController
     @task ||= @client.tasks.new
     prepare_tasks
 
-    @tag = current_user.tags.new
-    @tags = current_user.tags.order(:name)
+    @tag = current_user.workspace.tags.new(
+      user: current_user
+    )
+    @tags = current_user.workspace.tags.order(:name)
     @client_tags = @client.client_tags.includes(:tag)
 
     @activities = ClientActivityTimeline.new(@client).call

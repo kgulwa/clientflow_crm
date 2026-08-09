@@ -44,6 +44,25 @@ RSpec.describe "Deals", type: :request do
         expect(response.body).not_to include(other_deal.title)
       end
 
+      it "shows deals belonging to another user in the same workspace" do
+        teammate = create(:user, workspace: user.workspace)
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+
+        teammate_deal = create(
+          :deal,
+          client: teammate_client,
+          title: "Shared workspace opportunity"
+        )
+
+        get deals_path
+
+        expect(response.body).to include(teammate_deal.title)
+      end
+
       it "orders deals from newest to oldest" do
         older_deal = create(
           :deal,
@@ -243,6 +262,20 @@ RSpec.describe "Deals", type: :request do
           get deal_path(other_deal)
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
+
+      it "allows access to another user's deal in the same workspace" do
+        teammate = create(:user, workspace: user.workspace)
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+        deal = create(:deal, client: teammate_client)
+
+        get deal_path(deal)
+
+        expect(response).to have_http_status(:success)
+      end
     end
 
     describe "GET /deals/new" do
@@ -350,8 +383,27 @@ RSpec.describe "Deals", type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include(
-          "Client must belong to your account"
+          "Client must belong to your workspace"
         )
+      end
+
+      it "creates a deal for another user's client in the same workspace" do
+        teammate = create(:user, workspace: user.workspace)
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+
+        expect do
+          post deals_path, params: {
+            deal: valid_attributes.merge(
+              client_id: teammate_client.id
+            )
+          }
+        end.to change(Deal, :count).by(1)
+
+        expect(Deal.last.client).to eq(teammate_client)
       end
     end
 
@@ -401,7 +453,7 @@ RSpec.describe "Deals", type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include(
-          "Client must belong to your account"
+          "Client must belong to your workspace"
         )
         expect(deal.reload.client).to eq(client)
       end
@@ -421,6 +473,24 @@ RSpec.describe "Deals", type: :request do
         end.to raise_error(ActiveRecord::RecordNotFound)
 
         expect(other_deal.reload.title).to eq("Original opportunity")
+      end
+
+      it "allows updating another user's deal in the same workspace" do
+        teammate = create(:user, workspace: user.workspace)
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+        deal = create(:deal, client: teammate_client)
+
+        patch deal_path(deal), params: {
+          deal: {
+            title: "Updated shared opportunity"
+          }
+        }
+
+        expect(deal.reload.title).to eq("Updated shared opportunity")
       end
 
       it "renders the edit page when the update is invalid" do
@@ -458,6 +528,20 @@ RSpec.describe "Deals", type: :request do
             delete deal_path(other_deal)
           end.to raise_error(ActiveRecord::RecordNotFound)
         end.not_to change(Deal, :count)
+      end
+
+      it "allows deleting another user's deal in the same workspace" do
+        teammate = create(:user, workspace: user.workspace)
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+        deal = create(:deal, client: teammate_client)
+
+        expect do
+          delete deal_path(deal)
+        end.to change(Deal, :count).by(-1)
       end
     end
   end

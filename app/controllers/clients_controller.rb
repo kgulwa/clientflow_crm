@@ -8,7 +8,7 @@ class ClientsController < ApplicationController
     @query = params[:query].to_s.strip
     @status = selected_status
 
-    clients = current_user.clients
+    clients = current_user.workspace.clients
                           .search(@query)
                           .with_status(@status)
                           .order(created_at: :desc)
@@ -35,15 +35,15 @@ class ClientsController < ApplicationController
   end
 
   def new
-    @client = current_user.clients.new(
-      workspace: current_user.workspace
+    @client = current_user.workspace.clients.new(
+      user: current_user
     )
   end
 
   def create
-    @client = current_user.clients.new(
+    @client = current_user.workspace.clients.new(
       client_params.merge(
-        workspace: current_user.workspace
+        user: current_user
       )
     )
 
@@ -87,7 +87,7 @@ class ClientsController < ApplicationController
   end
 
   def set_client
-    @client = current_user.clients.find(params[:id])
+    @client = current_user.workspace.clients.find(params[:id])
   end
 
   def prepare_client_page
@@ -109,8 +109,11 @@ class ClientsController < ApplicationController
       created_at: :desc
     )
 
-    @tag = current_user.tags.new
-    @tags = current_user.tags.order(:name)
+    @tag = current_user.workspace.tags.new(
+      user: current_user
+    )
+
+    @tags = current_user.workspace.tags.order(:name)
     @client_tags = @client.client_tags.includes(:tag)
 
     @activities = ClientActivityTimeline.new(@client).call

@@ -53,7 +53,7 @@ class ReportsController < ApplicationController
   end
 
   def available_revenue_years
-    deal_years = user_deals
+    deal_years = workspace_deals
                  .won
                  .where.not(updated_at: nil)
                  .pluck(:updated_at)
@@ -83,7 +83,7 @@ class ReportsController < ApplicationController
     start_date = Date.new(@selected_year, 1, 1)
     end_date = start_date.end_of_year
 
-    user_deals
+    workspace_deals
       .won
       .where(updated_at: start_date.beginning_of_day..end_date.end_of_day)
   end
@@ -114,26 +114,39 @@ class ReportsController < ApplicationController
   end
 
   def clients_in_period
-    current_user.clients.where(created_at: datetime_range)
+    current_user.workspace.clients.where(
+      created_at: datetime_range
+    )
   end
 
-  def user_deals
-    Deal.joins(:client)
-        .where(clients: { user_id: current_user.id })
+  def workspace_deals
+    Deal.joins(:client).where(
+      clients: {
+        workspace_id: current_user.workspace_id
+      }
+    )
   end
 
   def deals_in_period
-    user_deals.where(created_at: datetime_range)
+    workspace_deals.where(created_at: datetime_range)
   end
 
   def won_deals_in_period
-    user_deals.won.where(updated_at: datetime_range)
+    workspace_deals.won.where(updated_at: datetime_range)
   end
 
   def completed_tasks_in_period
-    Task.for_user(current_user)
-        .completed
-        .where(completed_at: datetime_range)
+    workspace_tasks
+      .completed
+      .where(completed_at: datetime_range)
+  end
+
+  def workspace_tasks
+    Task.joins(:client).where(
+      clients: {
+        workspace_id: current_user.workspace_id
+      }
+    )
   end
 
   def calculate_conversion_rate

@@ -5,9 +5,9 @@ class TagsController < ApplicationController
   before_action :set_client
 
   def create
-    @tag = current_user.tags.new(
+    @tag = current_user.workspace.tags.new(
       tag_params.merge(
-        workspace: current_user.workspace
+        user: current_user
       )
     )
 
@@ -43,7 +43,7 @@ class TagsController < ApplicationController
   private
 
   def set_client
-    @client = current_user.clients.find(params[:client_id])
+    @client = current_user.workspace.clients.find(params[:client_id])
   end
 
   def create_and_assign_tag
@@ -68,7 +68,7 @@ class TagsController < ApplicationController
   end
 
   def prepare_tags
-    @tags = current_user.tags.order(:name)
+    @tags = current_user.workspace.tags.order(:name)
     @client_tags = @client.client_tags.includes(:tag)
   end
 

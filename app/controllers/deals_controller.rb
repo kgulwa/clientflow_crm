@@ -5,10 +5,10 @@ class DealsController < ApplicationController
   before_action :set_deal, only: %i[show edit update destroy]
 
   def index
-    deals = current_user.deals
-                        .search(params[:search])
-                        .with_stage(params[:stage])
-                        .recent_first
+    deals = workspace_deals
+            .search(params[:search])
+            .with_stage(params[:stage])
+            .recent_first
 
     respond_to do |format|
       format.html do
@@ -35,10 +35,10 @@ class DealsController < ApplicationController
   def create
     @deal = Deal.new(deal_params)
 
-    if client_belongs_to_current_user? && @deal.save
+    if client_belongs_to_current_workspace? && @deal.save
       redirect_to @deal, notice: "Deal was created successfully."
     else
-      add_client_error unless client_belongs_to_current_user?
+      add_client_error unless client_belongs_to_current_workspace?
       render :new, status: :unprocessable_entity
     end
   end
@@ -48,10 +48,10 @@ class DealsController < ApplicationController
   def update
     @deal.assign_attributes(deal_params)
 
-    if client_belongs_to_current_user? && @deal.save
+    if client_belongs_to_current_workspace? && @deal.save
       redirect_to @deal, notice: "Deal was updated successfully."
     else
-      add_client_error unless client_belongs_to_current_user?
+      add_client_error unless client_belongs_to_current_workspace?
       render :edit, status: :unprocessable_entity
     end
   end
@@ -63,6 +63,14 @@ class DealsController < ApplicationController
   end
 
   private
+
+  def workspace_deals
+    Deal.joins(:client).where(
+      clients: {
+        workspace_id: current_user.workspace_id
+      }
+    )
+  end
 
   def deals_export_filename
     parts = ["deals"]
@@ -77,7 +85,7 @@ class DealsController < ApplicationController
   end
 
   def set_deal
-    @deal = current_user.deals.find(params[:id])
+    @deal = workspace_deals.find(params[:id])
   end
 
   def deal_params
@@ -91,11 +99,11 @@ class DealsController < ApplicationController
     )
   end
 
-  def client_belongs_to_current_user?
-    current_user.clients.exists?(id: @deal.client_id)
+  def client_belongs_to_current_workspace?
+    current_user.workspace.clients.exists?(id: @deal.client_id)
   end
 
   def add_client_error
-    @deal.errors.add(:client, "must belong to your account")
+    @deal.errors.add(:client, "must belong to your workspace")
   end
 end

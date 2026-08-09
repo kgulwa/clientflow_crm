@@ -99,7 +99,7 @@ class ContactsController < ApplicationController
   private
 
   def set_client
-    @client = current_user.clients.find(params[:client_id])
+    @client = current_user.workspace.clients.find(params[:client_id])
   end
 
   def set_contact

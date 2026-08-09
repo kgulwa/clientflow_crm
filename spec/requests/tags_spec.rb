@@ -32,15 +32,17 @@ RSpec.describe "Tags", type: :request do
         }
       end
 
-      it "creates a tag belonging to the signed-in user" do
+      it "creates a tag belonging to the signed-in user and workspace" do
         expect do
           post client_tags_path(client), params: {
             tag: valid_attributes
           }
-        end.to change(user.tags, :count).by(1)
+        end.to change(user.workspace.tags, :count).by(1)
 
-        tag = user.tags.last
+        tag = user.workspace.tags.last
 
+        expect(tag.user).to eq(user)
+        expect(tag.workspace).to eq(user.workspace)
         expect(tag.name).to eq("VIP")
         expect(tag.color).to eq("purple")
       end
@@ -83,7 +85,7 @@ RSpec.describe "Tags", type: :request do
           }
         }
 
-        expect(user.tags.last.color).to eq(Tag::DEFAULT_COLOR)
+        expect(user.workspace.tags.last.color).to eq(Tag::DEFAULT_COLOR)
       end
 
       it "normalizes whitespace around the tag name" do
@@ -94,7 +96,7 @@ RSpec.describe "Tags", type: :request do
           }
         }
 
-        expect(user.tags.last.name).to eq("Important Client")
+        expect(user.workspace.tags.last.name).to eq("Important Client")
       end
 
       it "does not create a tag with a blank name" do
@@ -116,10 +118,11 @@ RSpec.describe "Tags", type: :request do
         end.not_to change(ClientTag, :count)
       end
 
-      it "does not create a duplicate tag name for the same user" do
+      it "does not create a duplicate tag name in the same workspace" do
         create(
           :tag,
           user: user,
+          workspace: user.workspace,
           name: "VIP"
         )
 
@@ -136,12 +139,38 @@ RSpec.describe "Tags", type: :request do
         expect(flash[:alert]).to include("Name has already been taken")
       end
 
-      it "does not allow tag creation for another user's client" do
-        other_client = create(:client)
+      it "allows another user in the same workspace to create a tag for the client" do
+        teammate = create(:user, workspace: user.workspace)
+
+        sign_in teammate
+
+        post client_tags_path(client), params: {
+          tag: {
+            name: "Shared Workspace Tag",
+            color: "indigo"
+          }
+        }
+
+        expect(user.workspace.tags.count).to eq(1)
+
+        tag = user.workspace.tags.last
+
+        expect(tag.user).to eq(teammate)
+        expect(tag.workspace).to eq(user.workspace)
+        expect(client.reload.tags).to include(tag)
+      end
+
+      it "prevents a user from another workspace from creating a tag for the client" do
+        other_user = create(:user)
+
+        sign_in other_user
 
         expect do
-          post client_tags_path(other_client), params: {
-            tag: valid_attributes
+          post client_tags_path(client), params: {
+            tag: {
+              name: "Forbidden Tag",
+              color: "red"
+            }
           }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end

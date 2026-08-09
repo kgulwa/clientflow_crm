@@ -19,7 +19,7 @@ class Tag < ApplicationRecord
   validates :name,
             presence: true,
             uniqueness: {
-              scope: :user_id,
+              scope: :workspace_id,
               case_sensitive: false
             }
 

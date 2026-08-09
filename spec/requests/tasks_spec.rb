@@ -96,7 +96,7 @@ RSpec.describe 'Tasks', type: :request do
         expect(response).to have_http_status(:success)
       end
 
-      it "shows only the signed-in user's tasks" do
+      it "shows only tasks belonging to the signed-in user's workspace" do
         get tasks_path
 
         expect(response.body).to include('Pending task')
@@ -105,6 +105,29 @@ RSpec.describe 'Tasks', type: :request do
         expect(response.body).to include('Overdue task')
         expect(response.body).to include('Today task')
         expect(response.body).not_to include('Hidden task')
+      end
+
+      it 'shows tasks belonging to another user in the same workspace' do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+
+        create(
+          :task,
+          client: teammate_client,
+          title: 'Shared workspace task'
+        )
+
+        get tasks_path
+
+        expect(response.body).to include('Shared workspace task')
       end
 
       it 'shows task management actions' do
@@ -208,7 +231,7 @@ RSpec.describe 'Tasks', type: :request do
         expect(response.body).to include("Due date can&#39;t be blank")
       end
 
-      it "does not allow task creation for another user's client" do
+      it 'does not allow task creation for a client in another workspace' do
         other_client = create(:client)
 
         expect do
@@ -216,6 +239,25 @@ RSpec.describe 'Tasks', type: :request do
             task: valid_attributes
           }
         end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "allows task creation for another user's client in the same workspace" do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+
+        expect do
+          post client_tasks_path(teammate_client), params: {
+            task: valid_attributes
+          }
+        end.to change(teammate_client.tasks, :count).by(1)
       end
     end
 
@@ -387,7 +429,7 @@ RSpec.describe 'Tasks', type: :request do
         expect(response).to redirect_to(tasks_url(filter: 'completed'))
       end
 
-      it "does not allow updates to another user's task" do
+      it 'does not allow updates to a task in another workspace' do
         other_task = create(:task)
 
         expect do
@@ -397,6 +439,33 @@ RSpec.describe 'Tasks', type: :request do
             }
           }
         end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "allows updating another user's task in the same workspace" do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+
+        task = create(
+          :task,
+          client: teammate_client,
+          status: :pending
+        )
+
+        patch client_task_path(teammate_client, task), params: {
+          task: {
+            status: 'completed'
+          }
+        }
+
+        expect(task.reload).to be_completed
       end
     end
 
@@ -424,12 +493,34 @@ RSpec.describe 'Tasks', type: :request do
         expect(response).to redirect_to(tasks_url(filter: 'pending'))
       end
 
-      it "does not allow deletion of another user's task" do
+      it 'does not allow deletion of a task in another workspace' do
         other_task = create(:task)
 
         expect do
           delete client_task_path(other_task.client, other_task)
         end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "allows deleting another user's task in the same workspace" do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        teammate_client = create(
+          :client,
+          user: teammate,
+          workspace: user.workspace
+        )
+
+        task = create(
+          :task,
+          client: teammate_client
+        )
+
+        expect do
+          delete client_task_path(teammate_client, task)
+        end.to change(Task, :count).by(-1)
       end
     end
   end

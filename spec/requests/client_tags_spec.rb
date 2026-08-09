@@ -76,10 +76,28 @@ RSpec.describe "Client tags", type: :request do
         end.not_to change(ClientTag, :count)
 
         expect(response).to redirect_to(client_path(client))
-        expect(flash[:alert]).to include("Tag has already been assigned to this client")
+        expect(flash[:alert]).to include(
+          "Tag has already been assigned to this client"
+        )
       end
 
-      it "does not allow assignment of another user's tag" do
+      it "allows another user in the same workspace to assign an existing tag" do
+        teammate = create(:user, workspace: user.workspace)
+
+        sign_in teammate
+
+        expect do
+          post client_client_tags_path(client), params: {
+            client_tag: {
+              tag_id: tag.id
+            }
+          }
+        end.to change(client.client_tags, :count).by(1)
+
+        expect(client.reload.tags).to include(tag)
+      end
+
+      it "does not allow assignment of a tag from another workspace" do
         other_tag = create(:tag)
 
         expect do
@@ -91,11 +109,25 @@ RSpec.describe "Client tags", type: :request do
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
 
-      it "does not allow tag assignment to another user's client" do
+      it "does not allow tag assignment to a client from another workspace" do
         other_client = create(:client)
 
         expect do
           post client_client_tags_path(other_client), params: {
+            client_tag: {
+              tag_id: tag.id
+            }
+          }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "prevents a user from another workspace from assigning the tag" do
+        other_user = create(:user)
+
+        sign_in other_user
+
+        expect do
+          post client_client_tags_path(client), params: {
             client_tag: {
               tag_id: tag.id
             }
@@ -146,6 +178,23 @@ RSpec.describe "Client tags", type: :request do
         expect(flash[:notice]).to eq("Tag was removed successfully.")
       end
 
+      it "allows another user in the same workspace to remove a tag" do
+        teammate = create(:user, workspace: user.workspace)
+        client_tag = create(
+          :client_tag,
+          client: client,
+          tag: tag
+        )
+
+        sign_in teammate
+
+        expect do
+          delete client_client_tag_path(client, client_tag)
+        end.to change(client.client_tags, :count).by(-1)
+
+        expect(client.reload.tags).not_to include(tag)
+      end
+
       it "does not remove a client tag belonging to another client" do
         other_client = create(:client, user: user)
         other_client_tag = create(
@@ -161,7 +210,7 @@ RSpec.describe "Client tags", type: :request do
         expect(ClientTag.exists?(other_client_tag.id)).to be(true)
       end
 
-      it "does not allow removal from another user's client" do
+      it "does not allow removal from a client in another workspace" do
         other_client_tag = create(:client_tag)
 
         expect do
@@ -172,6 +221,23 @@ RSpec.describe "Client tags", type: :request do
         end.to raise_error(ActiveRecord::RecordNotFound)
 
         expect(ClientTag.exists?(other_client_tag.id)).to be(true)
+      end
+
+      it "prevents a user from another workspace from removing the tag" do
+        client_tag = create(
+          :client_tag,
+          client: client,
+          tag: tag
+        )
+        other_user = create(:user)
+
+        sign_in other_user
+
+        expect do
+          delete client_client_tag_path(client, client_tag)
+        end.to raise_error(ActiveRecord::RecordNotFound)
+
+        expect(ClientTag.exists?(client_tag.id)).to be(true)
       end
     end
   end

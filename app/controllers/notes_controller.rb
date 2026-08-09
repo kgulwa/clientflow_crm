@@ -51,7 +51,7 @@ class NotesController < ApplicationController
   private
 
   def set_client
-    @client = current_user.clients.find(params[:client_id])
+    @client = current_user.workspace.clients.find(params[:client_id])
   end
 
   def set_note
@@ -76,8 +76,10 @@ class NotesController < ApplicationController
       created_at: :desc
     )
 
-    @tag = current_user.tags.new
-    @tags = current_user.tags.order(:name)
+    @tag = current_user.workspace.tags.new(
+      user: current_user
+    )
+    @tags = current_user.workspace.tags.order(:name)
     @client_tags = @client.client_tags.includes(:tag)
 
     @activities = ClientActivityTimeline.new(@client).call

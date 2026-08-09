@@ -13,14 +13,14 @@ class ClientTag < ApplicationRecord
               message: "has already been assigned to this client"
             }
 
-  validate :client_and_tag_belong_to_same_user
+  validate :client_and_tag_belong_to_same_workspace
 
   private
 
-  def client_and_tag_belong_to_same_user
+  def client_and_tag_belong_to_same_workspace
     return if client.blank? || tag.blank?
-    return if client.user_id == tag.user_id
+    return if client.workspace_id == tag.workspace_id
 
-    errors.add(:tag, "must belong to the same user as the client")
+    errors.add(:tag, "must belong to the same workspace as the client")
   end
 end

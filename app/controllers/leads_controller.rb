@@ -5,7 +5,7 @@ class LeadsController < ApplicationController
   before_action :set_lead, only: %i[show edit update destroy]
 
   def index
-    leads = current_user.leads
+    leads = current_user.workspace.leads
                         .search(params[:search])
                         .with_status(params[:status])
                         .with_source(params[:source])
@@ -30,15 +30,15 @@ class LeadsController < ApplicationController
   def show; end
 
   def new
-    @lead = current_user.leads.new(
-      workspace: current_user.workspace
+    @lead = current_user.workspace.leads.new(
+      user: current_user
     )
   end
 
   def create
-    @lead = current_user.leads.new(
+    @lead = current_user.workspace.leads.new(
       lead_params.merge(
-        workspace: current_user.workspace
+        user: current_user
       )
     )
 
@@ -84,7 +84,7 @@ class LeadsController < ApplicationController
   end
 
   def set_lead
-    @lead = current_user.leads.find(params[:id])
+    @lead = current_user.workspace.leads.find(params[:id])
   end
 
   def lead_params
