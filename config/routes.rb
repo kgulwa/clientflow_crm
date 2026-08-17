@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   resources :reports, only: :index
 
   resources :workspace_invitations, only: %i[index create destroy]
+  resources :workspace_members, only: %i[update destroy]
 
   get "workspace_invitations/:token/accept",
       to: "workspace_invitations#accept",

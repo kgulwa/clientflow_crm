@@ -41,26 +41,82 @@
 
       <div class="divide-y divide-gray-100">
         <% @workspace_users.each do |user| %>
-          <div class="flex items-center justify-between gap-4 px-6 py-5">
-            <div class="flex min-w-0 items-center gap-4">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
-                <%= avatar_initials(user.full_name) %>
+          <div class="px-6 py-5">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div class="flex min-w-0 items-center gap-4">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
+                  <%= avatar_initials(user.full_name) %>
+                </div>
+
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <p class="truncate font-semibold text-gray-900">
+                      <%= user.full_name %>
+                    </p>
+
+                    <% if user == current_user %>
+                      <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+                        You
+                      </span>
+                    <% end %>
+                  </div>
+
+                  <p class="truncate text-sm text-gray-500">
+                    <%= user.email %>
+                  </p>
+                </div>
               </div>
 
-              <div class="min-w-0">
-                <p class="truncate font-semibold text-gray-900">
-                  <%= user.full_name %>
-                </p>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+                  <%= user.role.titleize %>
+                </span>
 
-                <p class="truncate text-sm text-gray-500">
-                  <%= user.email %>
-                </p>
+                <% unless user == current_user %>
+                  <% if user.member? %>
+                    <%= button_to "Promote to Admin",
+                                  workspace_member_path(user),
+                                  method: :patch,
+                                  params: {
+                                    user: {
+                                      role: "admin"
+                                    }
+                                  },
+                                  form: {
+                                    data: {
+                                      turbo_confirm: "Promote #{user.full_name} to Admin?"
+                                    }
+                                  },
+                                  class: "rounded-lg border border-indigo-200 px-3 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50" %>
+                  <% else %>
+                    <%= button_to "Demote to Member",
+                                  workspace_member_path(user),
+                                  method: :patch,
+                                  params: {
+                                    user: {
+                                      role: "member"
+                                    }
+                                  },
+                                  form: {
+                                    data: {
+                                      turbo_confirm: "Demote #{user.full_name} to Member?"
+                                    }
+                                  },
+                                  class: "rounded-lg border border-amber-200 px-3 py-2 text-xs font-semibold text-amber-700 transition hover:bg-amber-50" %>
+                  <% end %>
+
+                  <%= button_to "Remove",
+                                workspace_member_path(user),
+                                method: :delete,
+                                form: {
+                                  data: {
+                                    turbo_confirm: "Remove #{user.full_name} from this workspace?"
+                                  }
+                                },
+                                class: "rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50" %>
+                <% end %>
               </div>
             </div>
-
-            <span class="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-              <%= user.role.titleize %>
-            </span>
           </div>
         <% end %>
       </div>

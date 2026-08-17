@@ -53,6 +53,21 @@ RSpec.describe "Workspace invitations", type: :request do
         expect(response.body).to include(member.full_name)
         expect(response.body).not_to include(other_workspace_user.full_name)
       end
+
+      it "does not show inactive workspace members" do
+        inactive_member = create(
+          :user,
+          workspace: workspace,
+          first_name: "Removed",
+          last_name: "Member",
+          active: false,
+          deactivated_at: Time.current
+        )
+
+        get workspace_invitations_path
+
+        expect(response.body).not_to include(inactive_member.full_name)
+      end
     end
 
     describe "POST /workspace_invitations" do

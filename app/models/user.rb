@@ -30,7 +30,31 @@ class User < ApplicationRecord
   validates :last_name, presence: true
   validates :role, presence: true
 
+  scope :active, -> { where(active: true) }
+
   def full_name
     "#{first_name} #{last_name}".strip
+  end
+
+  def active_for_authentication?
+    super && active?
+  end
+
+  def inactive_message
+    active? ? super : :deactivated
+  end
+
+  def deactivate!
+    update!(
+      active: false,
+      deactivated_at: Time.current
+    )
+  end
+
+  def activate!
+    update!(
+      active: true,
+      deactivated_at: nil
+    )
   end
 end

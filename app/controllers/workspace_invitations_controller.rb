@@ -8,7 +8,7 @@ class WorkspaceInvitationsController < ApplicationController
   def index
     @workspace = current_user.workspace
 
-    @workspace_users = @workspace.users.order(
+    @workspace_users = @workspace.users.active.order(
       :first_name,
       :last_name,
       :email
@@ -90,7 +90,7 @@ class WorkspaceInvitationsController < ApplicationController
   def prepare_index
     @workspace = current_user.workspace
 
-    @workspace_users = @workspace.users.order(
+    @workspace_users = @workspace.users.active.order(
       :first_name,
       :last_name,
       :email
