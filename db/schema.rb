@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_08_09_140937) do
+ActiveRecord::Schema[7.0].define(version: 2026_08_09_164405) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -147,6 +147,21 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_09_140937) do
     t.index ["workspace_id"], name: "index_users_on_workspace_id"
   end
 
+  create_table "workspace_invitations", force: :cascade do |t|
+    t.bigint "workspace_id", null: false
+    t.bigint "invited_by_id", null: false
+    t.string "email", null: false
+    t.string "token", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invited_by_id"], name: "index_workspace_invitations_on_invited_by_id"
+    t.index ["token"], name: "index_workspace_invitations_on_token", unique: true
+    t.index ["workspace_id", "email"], name: "index_pending_workspace_invitations_on_workspace_and_email", unique: true, where: "(status = 0)"
+    t.index ["workspace_id"], name: "index_workspace_invitations_on_workspace_id"
+  end
+
   create_table "workspaces", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -166,4 +181,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_09_140937) do
   add_foreign_key "tags", "workspaces"
   add_foreign_key "tasks", "clients"
   add_foreign_key "users", "workspaces"
+  add_foreign_key "workspace_invitations", "users", column: "invited_by_id"
+  add_foreign_key "workspace_invitations", "workspaces"
 end

@@ -26,7 +26,7 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.delivery_method = :letter_opener_web
 
   config.action_mailer.default_url_options = {
     host: ENV.fetch("APP_HOST", "localhost"),
@@ -42,8 +42,8 @@ Rails.application.configure do
     password: ENV.fetch("SMTP_PASSWORD"),
     authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain"),
     enable_starttls_auto: true,
-    open_timeout: 5,
-    read_timeout: 5
+    open_timeout: 15,
+    read_timeout: 30
   }
 
   config.active_support.deprecation = :log

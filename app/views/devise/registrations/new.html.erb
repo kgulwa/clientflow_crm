@@ -46,6 +46,11 @@
         }
       ) do |form| %>
 
+    <% if @workspace_invitation.present? %>
+      <%= hidden_field_tag :invitation_token,
+                           @workspace_invitation.token %>
+    <% end %>
+
     <%= render "devise/shared/error_messages",
                resource: resource %>
 

@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  devise_for :users
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  devise_for :users,
+              controllers: {
+                registrations: "users/registrations" }
 
   resources :clients do
     resources :notes, only: %i[create destroy]
@@ -18,6 +21,12 @@ Rails.application.routes.draw do
   resources :tasks, only: :index
 
   resources :reports, only: :index
+
+  resources :workspace_invitations, only: %i[index create destroy]
+
+  get "workspace_invitations/:token/accept",
+      to: "workspace_invitations#accept",
+      as: :accept_workspace_invitation
 
   root "home#index"
 end
