@@ -1,16 +1,16 @@
 <div class="w-full">
   <div class="mb-8 lg:hidden">
     <div class="flex items-center gap-3">
-      <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-lg shadow-indigo-100">
+      <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-stone-300 bg-stone-100 text-sm font-bold text-slate-800 shadow-sm">
         CF
       </div>
 
       <div>
-        <p class="text-lg font-bold tracking-tight text-gray-900">
+        <p class="text-lg font-bold tracking-tight text-slate-900">
           ClientFlow
         </p>
 
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-slate-500">
           Customer relationship management
         </p>
       </div>
@@ -18,15 +18,15 @@
   </div>
 
   <div>
-    <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+    <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">
       Get started
     </p>
 
-    <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900">
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
       Create your account
     </h1>
 
-    <p class="mt-3 text-sm leading-6 text-gray-600">
+    <p class="mt-3 text-sm leading-6 text-slate-600">
       Start managing clients, leads, deals, tasks, and follow-ups from one
       focused workspace.
     </p>
@@ -57,46 +57,46 @@
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
         <%= form.label :first_name,
-                       class: "block text-sm font-semibold text-gray-700" %>
+                       class: "block text-sm font-semibold text-slate-700" %>
 
         <%= form.text_field :first_name,
                             autofocus: true,
                             autocomplete: "given-name",
                             placeholder: "First name",
                             required: true,
-                            class: "mt-2 block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                            class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
       </div>
 
       <div>
         <%= form.label :last_name,
-                       class: "block text-sm font-semibold text-gray-700" %>
+                       class: "block text-sm font-semibold text-slate-700" %>
 
         <%= form.text_field :last_name,
                             autocomplete: "family-name",
                             placeholder: "Last name",
                             required: true,
-                            class: "mt-2 block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                            class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
       </div>
     </div>
 
     <div>
       <%= form.label :email,
-                     class: "block text-sm font-semibold text-gray-700" %>
+                     class: "block text-sm font-semibold text-slate-700" %>
 
       <%= form.email_field :email,
                            autocomplete: "email",
                            placeholder: "you@example.com",
                            required: true,
-                           class: "mt-2 block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                           class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
     </div>
 
     <div>
       <div class="flex items-center justify-between gap-4">
         <%= form.label :password,
-                       class: "block text-sm font-semibold text-gray-700" %>
+                       class: "block text-sm font-semibold text-slate-700" %>
 
         <% if @minimum_password_length %>
-          <span class="text-xs text-gray-500">
+          <span class="text-xs text-slate-500">
             <%= @minimum_password_length %> characters minimum
           </span>
         <% end %>
@@ -113,7 +113,7 @@
                                 data: {
                                   password_visibility_target: "input"
                                 },
-                                class: "block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-12 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                                class: "block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 pr-12 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
 
         <button
           type="button"
@@ -121,7 +121,7 @@
           aria-pressed="false"
           data-action="password-visibility#toggle"
           data-password-visibility-target="button"
-          class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 transition hover:text-indigo-600 focus:outline-none focus:text-indigo-600"
+          class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-400 transition hover:text-slate-700 focus:outline-none focus:text-slate-700"
         >
           <svg
             data-password-visibility-target="showIcon"
@@ -138,11 +138,7 @@
               d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z"
             />
 
-            <circle
-              cx="12"
-              cy="12"
-              r="3"
-            />
+            <circle cx="12" cy="12" r="3" />
           </svg>
 
           <svg
@@ -185,7 +181,7 @@
     <div>
       <%= form.label :password_confirmation,
                      "Confirm password",
-                     class: "block text-sm font-semibold text-gray-700" %>
+                     class: "block text-sm font-semibold text-slate-700" %>
 
       <div
         class="relative mt-2"
@@ -198,7 +194,7 @@
                                 data: {
                                   password_visibility_target: "input"
                                 },
-                                class: "block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-12 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                                class: "block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 pr-12 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
 
         <button
           type="button"
@@ -206,7 +202,7 @@
           aria-pressed="false"
           data-action="password-visibility#toggle"
           data-password-visibility-target="button"
-          class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 transition hover:text-indigo-600 focus:outline-none focus:text-indigo-600"
+          class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-400 transition hover:text-slate-700 focus:outline-none focus:text-slate-700"
         >
           <svg
             data-password-visibility-target="showIcon"
@@ -223,11 +219,7 @@
               d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z"
             />
 
-            <circle
-              cx="12"
-              cy="12"
-              r="3"
-            />
+            <circle cx="12" cy="12" r="3" />
           </svg>
 
           <svg
@@ -271,21 +263,20 @@
                     data: {
                       submit_button_target: "button"
                     },
-                    class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition duration-200 hover:scale-[1.01] hover:from-indigo-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:hover:scale-100" %>
-
+                    class: "w-full cursor-pointer rounded-xl bg-slate-800 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-300/40 transition duration-200 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70" %>
   <% end %>
 
-  <p class="mt-5 text-center text-xs leading-5 text-gray-500">
+  <p class="mt-5 text-center text-xs leading-5 text-slate-500">
     By creating an account, you agree to keep your login details secure.
   </p>
 
-  <div class="mt-8 border-t border-gray-200 pt-6 text-center">
-    <p class="text-sm text-gray-600">
+  <div class="mt-8 border-t border-stone-200 pt-6 text-center">
+    <p class="text-sm text-slate-600">
       Already have an account?
 
       <%= link_to "Sign in",
                   new_session_path(resource_name),
-                  class: "font-semibold text-indigo-600 transition hover:text-indigo-800" %>
+                  class: "font-semibold text-slate-800 transition hover:text-slate-950" %>
     </p>
   </div>
 </div>

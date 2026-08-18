@@ -2,20 +2,30 @@
   id="tasks_section"
   class="grid gap-6 lg:grid-cols-3"
 >
-  <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-gray-900">
-      Add task
-    </h2>
+  <div class="rounded-2xl border border-white/70 bg-white/65 p-6 shadow-sm backdrop-blur">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-[0.14em] text-stone-500">
+        New task
+      </p>
+
+      <h2 class="mt-1 text-lg font-semibold text-slate-900">
+        Add task
+      </h2>
+
+      <p class="mt-1 text-sm leading-6 text-slate-500">
+        Create a follow-up, reminder, or deadline for this client.
+      </p>
+    </div>
 
     <%= form_with model: [client, task],
                   class: "mt-6 space-y-4" do |form| %>
       <% if task.errors.any? %>
-        <div class="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h3 class="text-sm font-semibold text-red-800">
+        <div class="rounded-xl border border-[#e5c8c3] bg-[#f7ecea] p-4">
+          <h3 class="text-sm font-semibold text-[#8b3f39]">
             Please fix the following:
           </h3>
 
-          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-red-700">
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-[#9a4d46]">
             <% task.errors.full_messages.each do |message| %>
               <li><%= message %></li>
             <% end %>
@@ -25,57 +35,86 @@
 
       <div>
         <%= form.label :title,
-                       class: "block text-sm font-medium text-gray-700" %>
+                       class: "block text-sm font-medium text-slate-700" %>
 
         <%= form.text_field :title,
-                            class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500",
+                            class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200",
                             placeholder: "Send proposal" %>
       </div>
 
       <div>
         <%= form.label :description,
-                       class: "block text-sm font-medium text-gray-700" %>
+                       class: "block text-sm font-medium text-slate-700" %>
 
         <%= form.text_area :description,
                            rows: 4,
-                           class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500",
+                           class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200",
                            placeholder: "Add any helpful task details..." %>
       </div>
 
       <div>
         <%= form.label :due_date,
-                       class: "block text-sm font-medium text-gray-700" %>
+                       class: "block text-sm font-medium text-slate-700" %>
 
         <%= form.date_field :due_date,
-                            class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500" %>
+                            class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
       </div>
 
       <div>
         <%= form.label :priority,
-                       class: "block text-sm font-medium text-gray-700" %>
+                       class: "block text-sm font-medium text-slate-700" %>
 
         <%= form.select :priority,
                         Task.priorities.keys.map { |priority| [priority.titleize, priority] },
                         {},
-                        class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500" %>
+                        class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
+      </div>
+
+      <div>
+        <%= form.label :assigned_user_id,
+                       "Assignee",
+                       class: "block text-sm font-medium text-slate-700" %>
+
+        <%= form.collection_select :assigned_user_id,
+                                   @workspace_members,
+                                   :id,
+                                   :full_name,
+                                   {
+                                     include_blank: "Unassigned"
+                                   },
+                                   class: "mt-2 block w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Assign this task to an active member of your workspace.
+        </p>
       </div>
 
       <%= form.hidden_field :status, value: "pending" %>
 
       <%= form.submit "Add task",
-                      class: "w-full cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                      class: "w-full cursor-pointer rounded-xl bg-slate-800 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900" %>
     <% end %>
   </div>
 
   <div class="space-y-4 lg:col-span-2">
-    <div>
-      <h2 class="text-lg font-semibold text-gray-900">
-        Client tasks
-      </h2>
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-stone-500">
+          Tasks
+        </p>
 
-      <p class="mt-1 text-sm text-gray-500">
-        Track follow-ups, deadlines, and completed work.
-      </p>
+        <h2 class="mt-1 text-lg font-semibold text-slate-900">
+          Client tasks
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Track follow-ups, deadlines, assignments, and completed work.
+        </p>
+      </div>
+
+      <%= link_to "View all tasks",
+                  tasks_path,
+                  class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
     </div>
 
     <% if tasks.any? %>
@@ -85,9 +124,17 @@
                    locals: { client: client } %>
       </div>
     <% else %>
-      <div class="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-        <p class="text-gray-600">
-          No tasks have been added for this client.
+      <div class="rounded-2xl border border-dashed border-stone-300 bg-white/40 p-8 text-center">
+        <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+          ✓
+        </div>
+
+        <p class="mt-4 font-medium text-slate-700">
+          No tasks yet
+        </p>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Add the first task for this client using the form.
         </p>
       </div>
     <% end %>

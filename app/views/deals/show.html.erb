@@ -1,15 +1,15 @@
 <div class="space-y-6">
   <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
     <div>
-      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+      <p class="text-sm font-semibold uppercase tracking-wide text-[#55705f]">
         Deal details
       </p>
 
-      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-[#27333e]">
         <%= @deal.title %>
       </h1>
 
-      <p class="mt-2 text-gray-600">
+      <p class="mt-2 text-[#68747e]">
         Opportunity for <%= @deal.client.full_name %>
       </p>
     </div>
@@ -17,7 +17,7 @@
     <div class="flex flex-wrap gap-3">
       <%= link_to "Edit deal",
                   edit_deal_path(@deal),
-                  class: "rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                  class: "rounded-lg border border-[#c8cdd2] bg-white/55 px-5 py-3 text-sm font-semibold text-[#465563] transition hover:bg-white" %>
 
       <%= button_to "Delete deal",
                     deal_path(@deal),
@@ -27,86 +27,86 @@
                         turbo_confirm: "Are you sure you want to delete this deal?"
                       }
                     },
-                    class: "rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-700" %>
+                    class: "rounded-lg bg-[#b54b42] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9d443d]" %>
     </div>
   </section>
 
   <section class="grid gap-6 lg:grid-cols-3">
-    <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2">
-      <h2 class="text-lg font-semibold text-gray-900">
+    <div class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)] lg:col-span-2">
+      <h2 class="text-lg font-semibold text-[#27333e]">
         Opportunity details
       </h2>
 
       <dl class="mt-6 grid gap-6 sm:grid-cols-2">
         <div>
-          <dt class="text-sm font-medium text-gray-500">
+          <dt class="text-sm font-medium text-[#74808b]">
             Client
           </dt>
 
-          <dd class="mt-1 text-base font-semibold text-gray-900">
+          <dd class="mt-1 text-base font-semibold text-[#27333e]">
             <%= @deal.client.full_name %>
           </dd>
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">
+          <dt class="text-sm font-medium text-[#74808b]">
             Stage
           </dt>
 
-          <dd class="mt-1 text-base font-semibold text-gray-900">
+          <dd class="mt-1 text-base font-semibold text-[#27333e]">
             <%= @deal.display_stage %>
           </dd>
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">
+          <dt class="text-sm font-medium text-[#74808b]">
             Value
           </dt>
 
-          <dd class="mt-1 text-base font-semibold text-gray-900">
+          <dd class="mt-1 text-base font-semibold text-[#27333e]">
             <%= number_to_currency(@deal.value, unit: "R", separator: ".", delimiter: ",") %>
           </dd>
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">
+          <dt class="text-sm font-medium text-[#74808b]">
             Expected close date
           </dt>
 
-          <dd class="mt-1 text-base font-semibold text-gray-900">
+          <dd class="mt-1 text-base font-semibold text-[#27333e]">
             <%= @deal.expected_close_date&.strftime("%d %B %Y") || "Not set" %>
           </dd>
         </div>
       </dl>
     </div>
 
-    <aside class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-900">
+    <aside class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+      <h2 class="text-lg font-semibold text-[#27333e]">
         Pipeline
       </h2>
 
-      <p class="mt-2 text-sm text-gray-500">
+      <p class="mt-2 text-sm text-[#68747e]">
         Current position in the sales process.
       </p>
 
-      <div class="mt-6 rounded-lg bg-indigo-50 px-4 py-5 text-center">
-        <p class="text-sm font-medium text-indigo-700">
+      <div class="mt-6 rounded-lg border border-[#cfdccf] bg-[#eef4ed] px-4 py-5 text-center">
+        <p class="text-sm font-medium text-[#55705f]">
           Current stage
         </p>
 
-        <p class="mt-1 text-xl font-bold text-indigo-900">
+        <p class="mt-1 text-xl font-bold text-[#315542]">
           <%= @deal.display_stage %>
         </p>
       </div>
     </aside>
   </section>
 
-  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-gray-900">
+  <section class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+    <h2 class="text-lg font-semibold text-[#27333e]">
       Description
     </h2>
 
-    <p class="mt-4 whitespace-pre-wrap text-gray-600">
+    <p class="mt-4 whitespace-pre-wrap text-[#53606b]">
       <%= @deal.description.presence || "No description has been added for this deal." %>
     </p>
   </section>
@@ -114,6 +114,6 @@
   <div>
     <%= link_to "← Back to deals",
                 deals_path,
-                class: "text-sm font-semibold text-indigo-600 hover:text-indigo-800" %>
+                class: "text-sm font-semibold text-[#416550] transition hover:text-[#315542]" %>
   </div>
 </div>

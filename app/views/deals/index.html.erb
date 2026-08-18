@@ -1,15 +1,15 @@
 <div class="space-y-6">
   <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
     <div>
-      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+      <p class="text-sm font-semibold uppercase tracking-wide text-[#55705f]">
         Deal management
       </p>
 
-      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-[#27333e]">
         Deals
       </h1>
 
-      <p class="mt-2 text-gray-600">
+      <p class="mt-2 text-[#68747e]">
         Track opportunities from prospecting through to won or lost.
       </p>
     </div>
@@ -21,15 +21,15 @@
                     search: params[:search],
                     stage: params[:stage]
                   ),
-                  class: "rounded-lg border border-gray-300 bg-white px-5 py-3 text-center text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50" %>
+                  class: "rounded-lg border border-[#c8cdd2] bg-white/55 px-5 py-3 text-center text-sm font-semibold text-[#465563] transition hover:bg-white" %>
 
       <%= link_to "Add deal",
                   new_deal_path,
-                  class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                  class: "rounded-lg bg-[#25313b] px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#17212a]" %>
     </div>
   </section>
 
-  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+  <section class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
     <%= form_with url: deals_path,
                   method: :get,
                   local: true,
@@ -37,17 +37,17 @@
       <div>
         <%= form.label :search,
                        "Search deals",
-                       class: "block text-sm font-medium text-gray-700" %>
+                       class: "block text-sm font-medium text-[#53606b]" %>
 
         <%= form.search_field :search,
                               value: params[:search],
                               placeholder: "Deal title or client name",
-                              class: "mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
+                              class: "mt-1 block w-full rounded-lg border border-[#c8cdd2] bg-white/70 px-3 py-2 text-[#27333e] shadow-sm outline-none transition placeholder:text-[#8a949d] focus:border-[#488267] focus:ring-2 focus:ring-[#dce8dc]" %>
       </div>
 
       <div>
         <%= form.label :stage,
-                       class: "block text-sm font-medium text-gray-700" %>
+                       class: "block text-sm font-medium text-[#53606b]" %>
 
         <%= form.select(
               :stage,
@@ -56,92 +56,92 @@
                 include_blank: "All stages",
                 selected: params[:stage]
               },
-              class: "mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class: "mt-1 block w-full rounded-lg border border-[#c8cdd2] bg-white/70 px-3 py-2 text-[#27333e] shadow-sm outline-none transition focus:border-[#488267] focus:ring-2 focus:ring-[#dce8dc]"
             ) %>
       </div>
 
       <div class="flex items-end gap-3">
         <%= form.submit "Apply filters",
-                        class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                        class: "cursor-pointer rounded-lg bg-[#25313b] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#17212a]" %>
 
         <% if params[:search].present? || params[:stage].present? %>
           <%= link_to "Clear",
                       deals_path,
-                      class: "rounded-lg border border-gray-300 px-5 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                      class: "rounded-lg border border-[#c8cdd2] bg-white/55 px-5 py-2 text-sm font-semibold text-[#465563] transition hover:bg-white" %>
         <% end %>
       </div>
     <% end %>
   </section>
 
-  <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+  <section class="overflow-hidden rounded-xl border border-[#dedfdf] bg-white/65 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
     <% if @deals.any? %>
-      <div class="border-b border-gray-200 px-6 py-4">
-        <p class="text-sm font-medium text-gray-700">
+      <div class="border-b border-[#dedfdf] px-6 py-4">
+        <p class="text-sm font-medium text-[#53606b]">
           <%= pluralize(@deals.size, "deal") %> on this page
         </p>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+        <table class="min-w-full divide-y divide-[#dedfdf]">
+          <thead class="bg-white/35">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#74808b]">
                 Deal
               </th>
 
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#74808b]">
                 Client
               </th>
 
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#74808b]">
                 Stage
               </th>
 
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#74808b]">
                 Value
               </th>
 
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#74808b]">
                 Expected close
               </th>
 
-              <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[#74808b]">
                 Actions
               </th>
             </tr>
           </thead>
 
-          <tbody class="divide-y divide-gray-200 bg-white">
+          <tbody class="divide-y divide-[#dedfdf]">
             <% @deals.each do |deal| %>
-              <tr class="hover:bg-gray-50">
+              <tr class="transition hover:bg-white/55">
                 <td class="px-6 py-4">
                   <%= link_to deal.title,
                               deal_path(deal),
-                              class: "font-semibold text-gray-900 hover:text-indigo-600" %>
+                              class: "font-semibold text-[#27333e] transition hover:text-[#416550]" %>
 
-                  <p class="mt-1 max-w-sm truncate text-sm text-gray-500">
+                  <p class="mt-1 max-w-sm truncate text-sm text-[#74808b]">
                     <%= deal.description.presence || "No description added" %>
                   </p>
                 </td>
 
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-[#53606b]">
                   <%= deal.client.full_name %>
                 </td>
 
                 <td class="whitespace-nowrap px-6 py-4">
                   <% stage_classes = case deal.stage
                                      when "won"
-                                       "bg-green-50 text-green-700"
+                                       "border border-[#c7d8c9] bg-[#edf4ed] text-[#416550]"
                                      when "lost"
-                                       "bg-red-50 text-red-700"
+                                       "border border-[#ead1ce] bg-[#f8efed] text-[#9d443d]"
                                      when "negotiation"
-                                       "bg-purple-50 text-purple-700"
+                                       "border border-[#d9d3c7] bg-[#f4f1e9] text-[#76674f]"
                                      when "proposal_sent"
-                                       "bg-blue-50 text-blue-700"
+                                       "border border-[#cbd6d8] bg-[#edf2f2] text-[#4e686c]"
                                      when "qualified"
-                                       "bg-cyan-50 text-cyan-700"
+                                       "border border-[#ced9d2] bg-[#edf3ef] text-[#526b5b]"
                                      else
-                                       "bg-amber-50 text-amber-700"
+                                       "border border-[#e1d7bd] bg-[#f7f3e8] text-[#7b6944]"
                                      end %>
 
                   <span class="rounded-full px-3 py-1 text-xs font-semibold <%= stage_classes %>">
@@ -149,7 +149,7 @@
                   </span>
                 </td>
 
-                <td class="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900">
+                <td class="whitespace-nowrap px-6 py-4 text-sm font-semibold text-[#27333e]">
                   <%= number_to_currency(
                         deal.value,
                         unit: "R",
@@ -158,18 +158,18 @@
                       ) %>
                 </td>
 
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-[#53606b]">
                   <%= deal.expected_close_date&.strftime("%d %B %Y") || "—" %>
                 </td>
 
                 <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                   <%= link_to "View",
                               deal_path(deal),
-                              class: "font-semibold text-indigo-600 hover:text-indigo-800" %>
+                              class: "font-semibold text-[#416550] transition hover:text-[#315542]" %>
 
                   <%= link_to "Edit",
                               edit_deal_path(deal),
-                              class: "ml-4 font-semibold text-gray-600 hover:text-gray-900" %>
+                              class: "ml-4 font-semibold text-[#68747e] transition hover:text-[#27333e]" %>
                 </td>
               </tr>
             <% end %>
@@ -180,40 +180,40 @@
       <%= render "shared/pagination", pagy: @pagy %>
     <% elsif params[:search].present? || params[:stage].present? %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
-        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl font-bold text-gray-700">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-[#dedfdf] bg-white/45 text-xl font-bold text-[#53606b]">
           ?
         </div>
 
-        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+        <h2 class="mt-4 text-lg font-semibold text-[#27333e]">
           No matching deals
         </h2>
 
-        <p class="mt-2 max-w-md text-sm text-gray-500">
+        <p class="mt-2 max-w-md text-sm text-[#68747e]">
           Try changing your search or clearing the filters.
         </p>
 
         <%= link_to "Clear filters",
                     deals_path,
-                    class: "mt-6 rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                    class: "mt-6 rounded-lg border border-[#c8cdd2] bg-white/55 px-5 py-3 text-sm font-semibold text-[#465563] transition hover:bg-white" %>
       </div>
     <% else %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
-        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-xl font-bold text-indigo-700">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full border border-[#cfdccf] bg-[#eef4ed] text-xl font-bold text-[#416550]">
           D
         </div>
 
-        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+        <h2 class="mt-4 text-lg font-semibold text-[#27333e]">
           No deals yet
         </h2>
 
-        <p class="mt-2 max-w-md text-sm text-gray-500">
+        <p class="mt-2 max-w-md text-sm text-[#68747e]">
           Create your first deal to begin tracking opportunities through your
           sales pipeline.
         </p>
 
         <%= link_to "Add your first deal",
                     new_deal_path,
-                    class: "mt-6 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                    class: "mt-6 rounded-lg bg-[#25313b] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#17212a]" %>
       </div>
     <% end %>
   </section>

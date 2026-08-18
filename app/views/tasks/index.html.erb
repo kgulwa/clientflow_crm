@@ -1,214 +1,412 @@
-<div class="space-y-8">
-  <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-    <div>
-      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
-        Tasks
-      </p>
+<% content_for :page_title, "Tasks" %>
 
-      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
-        Client tasks
-      </h1>
+<div class="mx-auto max-w-[1480px]">
+  <div class="grid gap-6 xl:grid-cols-[210px_minmax(0,1fr)]">
+    <aside class="self-start rounded-2xl border border-white/70 bg-white/55 p-4 shadow-sm backdrop-blur-xl xl:sticky xl:top-6">
+      <div class="mb-5 flex items-center gap-2 px-1">
+        <svg
+          class="h-5 w-5 text-[#35414d]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 5h16l-6.5 7.5V19l-3 1v-7.5L4 5Z"
+          />
+        </svg>
 
-      <p class="mt-2 text-gray-600">
-        Track follow-ups, deadlines, and work across all your clients.
-      </p>
-    </div>
-
-    <%= link_to "Choose a client",
-                clients_path,
-                class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
-  </section>
-
-  <section class="flex flex-wrap gap-3">
-    <% filters = [
-      ["All", "all", @task_counts[:all]],
-      ["Pending", "pending", @task_counts[:pending]],
-      ["In progress", "in_progress", @task_counts[:in_progress]],
-      ["Completed", "completed", @task_counts[:completed]],
-      ["Overdue", "overdue", @task_counts[:overdue]],
-      ["Due today", "due_today", @task_counts[:due_today]]
-    ] %>
-
-    <% filters.each do |label, filter, count| %>
-      <%= link_to tasks_path(filter: filter),
-                  class: "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition #{@filter == filter ? "border-indigo-600 bg-indigo-600 text-white" : "border-gray-300 bg-white text-gray-700 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"}" do %>
-        <span><%= label %></span>
-
-        <span class="rounded-full px-2 py-0.5 text-xs <%= @filter == filter ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600" %>">
-          <%= count %>
-        </span>
-      <% end %>
-    <% end %>
-  </section>
-
-  <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-    <div class="flex flex-col justify-between gap-3 border-b border-gray-200 px-6 py-5 sm:flex-row sm:items-center">
-      <div>
-        <h2 class="text-lg font-semibold text-gray-900">
-          <%= @filter.humanize %> tasks
+        <h2 class="text-sm font-semibold text-[#17212a]">
+          Filters
         </h2>
-
-        <p class="mt-1 text-sm text-gray-500">
-          <%= pluralize(@tasks.size, "task") %> found.
-        </p>
       </div>
-    </div>
 
-    <% if @tasks.any? %>
-      <div class="divide-y divide-gray-200">
-        <% @tasks.each do |task| %>
-          <% overdue = !task.completed? && task.due_date < Date.current %>
-          <% due_today = !task.completed? && task.due_date == Date.current %>
+      <% filters = [
+        ["My tasks", "my_tasks", @task_counts[:my_tasks]],
+        ["All tasks", "all", @task_counts[:all]],
+        ["Pending", "pending", @task_counts[:pending]],
+        ["In progress", "in_progress", @task_counts[:in_progress]],
+        ["Completed", "completed", @task_counts[:completed]],
+        ["Overdue", "overdue", @task_counts[:overdue]],
+        ["Due today", "due_today", @task_counts[:due_today]]
+      ] %>
 
-          <article class="px-6 py-5">
-            <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
-              <div class="min-w-0 flex-1">
-                <div class="flex flex-wrap items-center gap-2">
-                  <h3 class="font-semibold text-gray-900">
-                    <%= task.title %>
-                  </h3>
+      <div class="space-y-1">
+        <% filters.each do |label, filter, count| %>
+          <%= link_to tasks_path(filter: filter),
+                      class: "flex items-center justify-between rounded-xl px-3 py-2.5 text-sm transition #{@filter == filter ? "bg-[#e5e5e3] font-semibold text-[#17212a] shadow-sm" : "text-[#394653] hover:bg-white/60"}" do %>
+            <span>
+              <%= label %>
+            </span>
 
-                  <% status_classes = case task.status
-                                     when "completed"
-                                       "bg-green-50 text-green-700"
-                                     when "in_progress"
-                                       "bg-blue-50 text-blue-700"
-                                     else
-                                       "bg-amber-50 text-amber-700"
-                                     end %>
-
-                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= status_classes %>">
-                    <%= task.status.humanize %>
-                  </span>
-
-                  <% priority_classes = case task.priority
-                                       when "high"
-                                         "bg-red-50 text-red-700"
-                                       when "low"
-                                         "bg-gray-100 text-gray-700"
-                                       else
-                                         "bg-purple-50 text-purple-700"
-                                       end %>
-
-                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= priority_classes %>">
-                    <%= task.priority.humanize %> priority
-                  </span>
-
-                  <% if overdue %>
-                    <span class="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">
-                      Overdue
-                    </span>
-                  <% elsif due_today %>
-                    <span class="inline-flex rounded-full bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700">
-                      Due today
-                    </span>
-                  <% end %>
-                </div>
-
-                <p class="mt-2 text-sm font-medium text-gray-700">
-                  <%= task.client.full_name %>
-                </p>
-
-                <% if task.client.company_name.present? %>
-                  <p class="mt-1 text-sm text-gray-500">
-                    <%= task.client.company_name %>
-                  </p>
-                <% end %>
-
-                <% if task.description.present? %>
-                  <p class="mt-3 text-sm leading-6 text-gray-600">
-                    <%= task.description %>
-                  </p>
-                <% end %>
-
-                <p class="mt-3 text-sm text-gray-500">
-                  Due <%= task.due_date.strftime("%B %-d, %Y") %>
-                </p>
-              </div>
-
-              <div class="flex shrink-0 flex-wrap items-center gap-2">
-                <%= link_to "View client",
-                            client_path(task.client),
-                            class: "rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
-
-                <% if task.pending? %>
-                  <%= button_to "Start",
-                                client_task_path(task.client, task),
-                                method: :patch,
-                                params: {
-                                  task: {
-                                    status: "in_progress"
-                                  }
-                                },
-                                form: {
-                                  class: "inline"
-                                },
-                                class: "rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100" %>
-                <% end %>
-
-                <% unless task.completed? %>
-                  <%= button_to "Complete",
-                                client_task_path(task.client, task),
-                                method: :patch,
-                                params: {
-                                  task: {
-                                    status: "completed"
-                                  }
-                                },
-                                form: {
-                                  class: "inline"
-                                },
-                                class: "rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 transition hover:bg-green-100" %>
-                <% else %>
-                  <%= button_to "Reopen",
-                                client_task_path(task.client, task),
-                                method: :patch,
-                                params: {
-                                  task: {
-                                    status: "pending"
-                                  }
-                                },
-                                form: {
-                                  class: "inline"
-                                },
-                                class: "rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-100" %>
-                <% end %>
-
-                <%= button_to "Delete",
-                              client_task_path(task.client, task),
-                              method: :delete,
-                              form: {
-                                class: "inline",
-                                data: {
-                                  turbo_confirm: "Are you sure you want to delete this task?"
-                                }
-                              },
-                              class: "rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100" %>
-              </div>
-            </div>
-          </article>
+            <span class="flex h-6 min-w-6 items-center justify-center rounded-full bg-black/[0.035] px-1.5 text-xs text-[#4d5965]">
+              <%= count %>
+            </span>
+          <% end %>
         <% end %>
       </div>
 
-      <%= render "shared/pagination", pagy: @pagy %>
-    <% else %>
-      <div class="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-xl font-semibold text-gray-500">
-          ✓
-        </div>
+      <div class="my-5 border-t border-[#d9d9d6]"></div>
 
-        <h3 class="mt-4 font-semibold text-gray-900">
-          No <%= @filter.humanize.downcase %> tasks
-        </h3>
-
-        <p class="mt-2 max-w-sm text-sm text-gray-500">
-          Tasks created from your client pages will appear here.
+      <div class="px-1">
+        <p class="text-xs font-semibold uppercase tracking-[0.08em] text-[#68737e]">
+          Priority
         </p>
 
-        <%= link_to "View clients",
-                    clients_path,
-                    class: "mt-5 text-sm font-semibold text-indigo-600 hover:text-indigo-800" %>
+        <div class="mt-4 space-y-3">
+          <div class="flex items-center justify-between text-sm text-[#35414d]">
+            <div class="flex items-center gap-3">
+              <span class="h-3 w-3 rounded-full border border-white bg-[#b54b42] shadow-sm"></span>
+
+              High
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-sm text-[#35414d]">
+            <div class="flex items-center gap-3">
+              <span class="h-3 w-3 rounded-full border border-white bg-[#c58a36] shadow-sm"></span>
+
+              Medium
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-sm text-[#35414d]">
+            <div class="flex items-center gap-3">
+              <span class="h-3 w-3 rounded-full border border-white bg-[#488267] shadow-sm"></span>
+
+              Low
+            </div>
+          </div>
+        </div>
       </div>
-    <% end %>
-  </section>
+    </aside>
+
+    <div class="min-w-0">
+      <section class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-[-0.035em] text-[#17212a]">
+            <%= @filter == "my_tasks" ? "My tasks" : @filter.humanize %>
+          </h1>
+
+          <p class="mt-1.5 text-sm text-[#66717c]">
+            <% if @filter == "my_tasks" %>
+              Tasks assigned specifically to you.
+            <% else %>
+              Track follow-ups, deadlines, and work across your workspace.
+            <% end %>
+          </p>
+        </div>
+
+        <%= link_to clients_path,
+                    class: "inline-flex items-center justify-center gap-2 rounded-xl bg-[#25313b] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#17212a]" do %>
+          <span class="text-lg font-light leading-none">
+            +
+          </span>
+
+          New task
+        <% end %>
+      </section>
+
+      <section class="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-7">
+        <% summary_cards = [
+          [
+            "My tasks",
+            @task_counts[:my_tasks],
+            "bg-white/55",
+            "text-[#26333f]"
+          ],
+          [
+            "All tasks",
+            @task_counts[:all],
+            "bg-white/55",
+            "text-[#26333f]"
+          ],
+          [
+            "Pending",
+            @task_counts[:pending],
+            "bg-[#f5ede0]/80",
+            "text-[#9b631e]"
+          ],
+          [
+            "In progress",
+            @task_counts[:in_progress],
+            "bg-[#e8eef5]/80",
+            "text-[#355f8e]"
+          ],
+          [
+            "Completed",
+            @task_counts[:completed],
+            "bg-[#e8efe8]/80",
+            "text-[#35614b]"
+          ],
+          [
+            "Overdue",
+            @task_counts[:overdue],
+            "bg-[#f4e7e5]/80",
+            "text-[#9a443e]"
+          ],
+          [
+            "Due today",
+            @task_counts[:due_today],
+            "bg-white/55",
+            "text-[#394653]"
+          ]
+        ] %>
+
+        <% summary_cards.each do |label, count, background_class, text_class| %>
+          <div class="rounded-2xl border border-white/70 <%= background_class %> p-4 shadow-sm backdrop-blur">
+            <p class="text-2xl font-semibold tracking-tight <%= text_class %>">
+              <%= count %>
+            </p>
+
+            <p class="mt-2 text-sm font-medium text-[#35414d]">
+              <%= label %>
+            </p>
+          </div>
+        <% end %>
+      </section>
+
+      <section class="overflow-hidden rounded-2xl border border-white/70 bg-white/65 shadow-[0_16px_45px_rgba(39,48,58,0.06)] backdrop-blur-xl">
+        <div class="hidden grid-cols-[minmax(0,2.2fr)_minmax(180px,1.15fr)_110px_135px_120px_minmax(230px,auto)] gap-4 border-b border-[#dedfdf] px-7 py-4 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#65717c] lg:grid">
+          <span>
+            Task
+          </span>
+
+          <span>
+            Client
+          </span>
+
+          <span>
+            Priority
+          </span>
+
+          <span>
+            Due date
+          </span>
+
+          <span>
+            Status
+          </span>
+
+          <span class="text-right">
+            Actions
+          </span>
+        </div>
+
+        <% if @tasks.any? %>
+          <div class="divide-y divide-[#dedfdf]">
+            <% @tasks.each do |task| %>
+              <% overdue = !task.completed? &&
+                           task.due_date < Date.current %>
+
+              <% due_today = !task.completed? &&
+                            task.due_date == Date.current %>
+
+              <% priority_classes =
+                   case task.priority
+                   when "high"
+                     "bg-[#f3e3e0] text-[#9d443d]"
+                   when "low"
+                     "bg-[#e5eee8] text-[#3e7157]"
+                   else
+                     "bg-[#f5ead7] text-[#9b661f]"
+                   end %>
+
+              <% status_classes =
+                   case task.status
+                   when "completed"
+                     "bg-[#e2ece5] text-[#39634c]"
+                   when "in_progress"
+                     "bg-[#e3eaf2] text-[#355e89]"
+                   else
+                     "bg-[#f5ead7] text-[#97601d]"
+                   end %>
+
+              <article class="grid gap-5 px-6 py-6 transition hover:bg-white/40 lg:grid-cols-[minmax(0,2.2fr)_minmax(180px,1.15fr)_110px_135px_120px_minmax(230px,auto)] lg:items-center lg:gap-4 lg:px-7">
+                <div class="flex min-w-0 items-start gap-4">
+                  <span class="mt-1.5 h-5 w-5 shrink-0 rounded-full border-2 border-[#c8cdd2] bg-white/70"></span>
+
+                  <div class="min-w-0">
+                    <h3 class="font-semibold text-[#17212a]">
+                      <%= task.title %>
+                    </h3>
+
+                    <% if task.description.present? %>
+                      <p class="mt-1.5 line-clamp-2 text-sm leading-5 text-[#5f6b76]">
+                        <%= task.description %>
+                      </p>
+                    <% end %>
+
+                    <% if task.client.company_name.present? %>
+                      <p class="mt-2 flex items-center gap-1.5 text-xs text-[#7a858f]">
+                        <svg
+                          class="h-3.5 w-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 21V8h16v13M8 8V4h8v4M8 12h2M14 12h2M8 16h2M14 16h2"
+                          />
+                        </svg>
+
+                        <%= task.client.company_name %>
+                      </p>
+                    <% end %>
+
+                    <% if task.assigned_user.present? %>
+                      <p class="mt-2 text-xs text-[#7a858f]">
+                        Assigned to
+                        <span class="font-medium text-[#55616c]">
+                          <%= task.assigned_user.full_name %>
+                        </span>
+                      </p>
+                    <% else %>
+                      <p class="mt-2 text-xs text-[#8a949d]">
+                        Unassigned
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e6e8ea] text-xs font-semibold text-[#28343f]">
+                    <%= avatar_initials(task.client.full_name) %>
+                  </div>
+
+                  <div class="min-w-0">
+                    <%= link_to task.client,
+                                class: "block truncate text-sm font-semibold text-[#27333e] hover:text-black" do %>
+                      <%= task.client.full_name %>
+                    <% end %>
+
+                    <% if task.client.company_name.present? %>
+                      <p class="mt-0.5 truncate text-xs text-[#74808b]">
+                        <%= task.client.company_name %>
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div>
+                  <span class="inline-flex rounded-lg px-2.5 py-1.5 text-xs font-medium <%= priority_classes %>">
+                    <%= task.priority.humanize %>
+                  </span>
+                </div>
+
+                <div>
+                  <p class="text-sm font-medium text-[#35414d]">
+                    <%= task.due_date.strftime("%b %-d, %Y") %>
+                  </p>
+
+                  <% if overdue %>
+                    <p class="mt-1 text-xs text-[#a74a43]">
+                      Overdue
+                    </p>
+                  <% elsif due_today %>
+                    <p class="mt-1 text-xs text-[#986522]">
+                      Due today
+                    </p>
+                  <% end %>
+                </div>
+
+                <div>
+                  <span class="inline-flex rounded-lg px-3 py-1.5 text-xs font-medium <%= status_classes %>">
+                    <%= task.status.humanize %>
+                  </span>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-end gap-1.5">
+                  <% if task.pending? %>
+                    <%= button_to "Start",
+                                  client_task_path(task.client, task),
+                                  method: :patch,
+                                  params: {
+                                    task: {
+                                      status: "in_progress"
+                                    }
+                                  },
+                                  form: {
+                                    class: "inline"
+                                  },
+                                  class: "rounded-lg border border-[#cbd5df] bg-[#e8edf3] px-3 py-1.5 text-xs font-medium text-[#3e5f7d] transition hover:bg-[#dfe7ef]" %>
+                  <% end %>
+
+                  <% unless task.completed? %>
+                    <%= button_to "Complete",
+                                  client_task_path(task.client, task),
+                                  method: :patch,
+                                  params: {
+                                    task: {
+                                      status: "completed"
+                                    }
+                                  },
+                                  form: {
+                                    class: "inline"
+                                  },
+                                  class: "rounded-lg border border-[#cad9ce] bg-[#e7eee9] px-3 py-1.5 text-xs font-medium text-[#416550] transition hover:bg-[#dfe9e2]" %>
+                  <% else %>
+                    <%= button_to "Reopen",
+                                  client_task_path(task.client, task),
+                                  method: :patch,
+                                  params: {
+                                    task: {
+                                      status: "pending"
+                                    }
+                                  },
+                                  form: {
+                                    class: "inline"
+                                  },
+                                  class: "rounded-lg border border-[#d9ccb9] bg-[#f2ece3] px-3 py-1.5 text-xs font-medium text-[#765f42] transition hover:bg-[#ebe2d5]" %>
+                  <% end %>
+
+                  <%= button_to "Delete",
+                                client_task_path(task.client, task),
+                                method: :delete,
+                                form: {
+                                  class: "inline",
+                                  data: {
+                                    turbo_confirm: "Are you sure you want to delete this task?"
+                                  }
+                                },
+                                class: "rounded-lg border border-[#e1cfcc] bg-[#f4eae8] px-3 py-1.5 text-xs font-medium text-[#8a4b46] transition hover:bg-[#eddeda]" %>
+                </div>
+              </article>
+            <% end %>
+          </div>
+
+          <div class="border-t border-[#dedfdf] px-6 py-4 lg:px-7">
+            <%= render "shared/pagination", pagy: @pagy %>
+          </div>
+        <% else %>
+          <div class="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#e7e9ea] text-lg text-[#5d6974]">
+              ✓
+            </div>
+
+            <h3 class="mt-4 font-semibold text-[#17212a]">
+              <% if @filter == "my_tasks" %>
+                No tasks assigned to you
+              <% else %>
+                No <%= @filter.humanize.downcase %> tasks
+              <% end %>
+            </h3>
+
+            <p class="mt-2 max-w-sm text-sm leading-6 text-[#74808b]">
+              Tasks created from your client pages will appear here.
+            </p>
+
+            <%= link_to "View clients",
+                        clients_path,
+                        class: "mt-5 text-sm font-semibold text-[#465563] hover:text-[#17212a]" %>
+          </div>
+        <% end %>
+      </section>
+    </div>
+  </div>
 </div>

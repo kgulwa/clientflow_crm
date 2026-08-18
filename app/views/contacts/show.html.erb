@@ -3,21 +3,21 @@
     <div>
       <%= link_to "← Back to #{@client.full_name}",
                   client_path(@client, anchor: "contacts_section"),
-                  class: "text-sm font-semibold text-indigo-600 hover:text-indigo-800" %>
+                  class: "text-sm font-semibold text-[#416550] transition hover:text-[#315542]" %>
 
       <div class="mt-4 flex flex-wrap items-center gap-3">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">
+        <h1 class="text-3xl font-bold tracking-tight text-[#27333e]">
           <%= @contact.full_name %>
         </h1>
 
         <% if @contact.primary_contact? %>
-          <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
+          <span class="inline-flex rounded-full border border-[#cfdccf] bg-[#eef4ed] px-3 py-1 text-sm font-semibold text-[#416550]">
             Primary contact
           </span>
         <% end %>
       </div>
 
-      <p class="mt-2 text-gray-600">
+      <p class="mt-2 text-[#68747e]">
         <%= @contact.job_title.presence || "No job title provided" %>
       </p>
     </div>
@@ -29,7 +29,7 @@
                     edit_contact: @contact.id,
                     anchor: "contacts_section"
                   ),
-                  class: "rounded-lg border border-gray-300 px-5 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                  class: "rounded-lg border border-[#c8cdd2] bg-white/55 px-5 py-2 text-center text-sm font-semibold text-[#465563] transition hover:bg-white" %>
 
       <%= button_to "Delete contact",
                     client_contact_path(@client, @contact),
@@ -45,86 +45,86 @@
                     data: {
                       turbo_confirm: "Are you sure you want to delete this contact?"
                     },
-                    class: "w-full rounded-lg bg-red-600 px-5 py-2 text-center text-sm font-semibold text-white transition hover:bg-red-700 sm:w-auto" %>
+                    class: "w-full rounded-lg bg-[#b54b42] px-5 py-2 text-center text-sm font-semibold text-white transition hover:bg-[#9d443d] sm:w-auto" %>
     </div>
   </section>
 
-  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-gray-900">
+  <section class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+    <h2 class="text-lg font-semibold text-[#27333e]">
       Contact details
     </h2>
 
     <dl class="mt-6 grid gap-6 sm:grid-cols-2">
       <div>
-        <dt class="text-sm font-medium text-gray-500">
+        <dt class="text-sm font-medium text-[#74808b]">
           Email
         </dt>
 
-        <dd class="mt-1 text-gray-900">
+        <dd class="mt-1 text-[#27333e]">
           <%= mail_to @contact.email, @contact.email %>
         </dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">
+        <dt class="text-sm font-medium text-[#74808b]">
           Phone
         </dt>
 
-        <dd class="mt-1 text-gray-900">
+        <dd class="mt-1 text-[#27333e]">
           <%= @contact.phone.presence || "Not provided" %>
         </dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">
+        <dt class="text-sm font-medium text-[#74808b]">
           Job title
         </dt>
 
-        <dd class="mt-1 text-gray-900">
+        <dd class="mt-1 text-[#27333e]">
           <%= @contact.job_title.presence || "Not provided" %>
         </dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">
+        <dt class="text-sm font-medium text-[#74808b]">
           Department
         </dt>
 
-        <dd class="mt-1 text-gray-900">
+        <dd class="mt-1 text-[#27333e]">
           <%= @contact.department.presence || "Not provided" %>
         </dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">
+        <dt class="text-sm font-medium text-[#74808b]">
           Client
         </dt>
 
         <dd class="mt-1">
           <%= link_to @client.company_name.presence || @client.full_name,
                       client_path(@client, anchor: "contacts_section"),
-                      class: "font-semibold text-indigo-600 hover:text-indigo-800" %>
+                      class: "font-semibold text-[#416550] transition hover:text-[#315542]" %>
         </dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">
+        <dt class="text-sm font-medium text-[#74808b]">
           Added
         </dt>
 
-        <dd class="mt-1 text-gray-900">
+        <dd class="mt-1 text-[#27333e]">
           <%= @contact.created_at.strftime("%B %-d, %Y") %>
         </dd>
       </div>
     </dl>
   </section>
 
-  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-gray-900">
+  <section class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+    <h2 class="text-lg font-semibold text-[#27333e]">
       Notes
     </h2>
 
-    <div class="mt-4 whitespace-pre-wrap text-gray-700">
+    <div class="mt-4 whitespace-pre-wrap text-[#53606b]">
       <%= @contact.notes.presence ||
           "No notes have been added for this contact." %>
     </div>

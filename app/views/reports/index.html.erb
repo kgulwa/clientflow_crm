@@ -1,25 +1,25 @@
 <div class="mx-auto max-w-7xl space-y-8">
   <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
     <div>
-      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+      <p class="text-sm font-semibold uppercase tracking-wide text-[#55705f]">
         Reporting
       </p>
 
-      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-[#27333e]">
         Business overview
       </h1>
 
-      <p class="mt-2 text-sm text-gray-600">
+      <p class="mt-2 text-sm text-[#68747e]">
         Review client, deal, revenue, conversion, and task performance.
       </p>
     </div>
 
-    <div class="rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
-      <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+    <div class="rounded-xl border border-[#dedfdf] bg-white/55 px-5 py-3 shadow-[0_8px_25px_rgba(39,48,58,0.04)]">
+      <p class="text-xs font-semibold uppercase tracking-wide text-[#74808b]">
         Selected period
       </p>
 
-      <p class="mt-1 text-sm font-medium text-gray-900">
+      <p class="mt-1 text-sm font-semibold text-[#27333e]">
         <%= @start_date.strftime("%d %b %Y") %>
         –
         <%= @end_date.strftime("%d %b %Y") %>
@@ -27,98 +27,98 @@
     </div>
   </div>
 
-  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+  <section class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
     <%= form_with url: reports_path,
                   method: :get,
                   class: "flex flex-col gap-4 md:flex-row md:items-end" do |form| %>
       <div class="flex-1">
         <%= form.label :start_date,
                        "Start date",
-                       class: "mb-2 block text-sm font-semibold text-gray-700" %>
+                       class: "mb-2 block text-sm font-semibold text-[#53606b]" %>
 
         <%= form.date_field :start_date,
                             value: @start_date,
                             max: @end_date,
-                            class: "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" %>
+                            class: "w-full rounded-lg border border-[#c8cdd2] bg-white/70 px-3 py-2 text-sm text-[#27333e] shadow-sm outline-none transition focus:border-[#488267] focus:ring-2 focus:ring-[#dce8dc]" %>
       </div>
 
       <div class="flex-1">
         <%= form.label :end_date,
                        "End date",
-                       class: "mb-2 block text-sm font-semibold text-gray-700" %>
+                       class: "mb-2 block text-sm font-semibold text-[#53606b]" %>
 
         <%= form.date_field :end_date,
                             value: @end_date,
                             min: @start_date,
-                            class: "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" %>
+                            class: "w-full rounded-lg border border-[#c8cdd2] bg-white/70 px-3 py-2 text-sm text-[#27333e] shadow-sm outline-none transition focus:border-[#488267] focus:ring-2 focus:ring-[#dce8dc]" %>
       </div>
 
       <%= form.hidden_field :year, value: @selected_year %>
 
       <div class="flex flex-col gap-2 sm:flex-row">
         <%= form.submit "Apply filter",
-                        class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                        class: "cursor-pointer rounded-lg bg-[#25313b] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#17212a]" %>
 
         <%= link_to "This month",
                     reports_path(year: @selected_year),
-                    class: "rounded-lg border border-gray-300 px-5 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                    class: "rounded-lg border border-[#c8cdd2] bg-white/55 px-5 py-2 text-center text-sm font-semibold text-[#465563] transition hover:bg-white" %>
       </div>
     <% end %>
   </section>
 
   <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
-    <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article class="rounded-xl border border-[#dedfdf] bg-white/65 p-5 shadow-[0_10px_30px_rgba(39,48,58,0.04)]">
       <div class="flex items-start justify-between gap-4">
         <div>
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-[#68747e]">
             New clients
           </p>
 
-          <p class="mt-3 text-3xl font-bold text-gray-900">
+          <p class="mt-3 text-3xl font-bold text-[#27333e]">
             <%= @new_clients %>
           </p>
         </div>
 
-        <div class="rounded-lg bg-blue-50 px-3 py-2 text-xl" aria-hidden="true">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-[#d6ded8] bg-[#eff3f0] text-lg" aria-hidden="true">
           👥
         </div>
       </div>
 
-      <p class="mt-4 text-xs text-gray-500">
+      <p class="mt-4 text-xs text-[#74808b]">
         Clients created during this period
       </p>
     </article>
 
-    <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article class="rounded-xl border border-[#dedfdf] bg-white/65 p-5 shadow-[0_10px_30px_rgba(39,48,58,0.04)]">
       <div class="flex items-start justify-between gap-4">
         <div>
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-[#68747e]">
             Closed deals
           </p>
 
-          <p class="mt-3 text-3xl font-bold text-gray-900">
+          <p class="mt-3 text-3xl font-bold text-[#27333e]">
             <%= @closed_deals %>
           </p>
         </div>
 
-        <div class="rounded-lg bg-green-50 px-3 py-2 text-xl" aria-hidden="true">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-[#cfdccf] bg-[#eef4ed] text-lg" aria-hidden="true">
           🤝
         </div>
       </div>
 
-      <p class="mt-4 text-xs text-gray-500">
+      <p class="mt-4 text-xs text-[#74808b]">
         Deals marked as won
       </p>
     </article>
 
-    <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article class="rounded-xl border border-[#dedfdf] bg-white/65 p-5 shadow-[0_10px_30px_rgba(39,48,58,0.04)]">
       <div class="flex items-start justify-between gap-4">
         <div>
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-[#68747e]">
             Revenue
           </p>
 
-          <p class="mt-3 text-3xl font-bold text-gray-900">
+          <p class="mt-3 text-3xl font-bold text-[#27333e]">
             <%= number_to_currency(
                   @revenue,
                   unit: "R",
@@ -128,24 +128,24 @@
           </p>
         </div>
 
-        <div class="rounded-lg bg-emerald-50 px-3 py-2 text-xl" aria-hidden="true">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-[#d3ddcf] bg-[#f0f4ed] text-lg" aria-hidden="true">
           💰
         </div>
       </div>
 
-      <p class="mt-4 text-xs text-gray-500">
+      <p class="mt-4 text-xs text-[#74808b]">
         Total value of won deals
       </p>
     </article>
 
-    <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article class="rounded-xl border border-[#dedfdf] bg-white/65 p-5 shadow-[0_10px_30px_rgba(39,48,58,0.04)]">
       <div class="flex items-start justify-between gap-4">
         <div>
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-[#68747e]">
             Conversion rate
           </p>
 
-          <p class="mt-3 text-3xl font-bold text-gray-900">
+          <p class="mt-3 text-3xl font-bold text-[#27333e]">
             <%= number_to_percentage(
                   @conversion_rate,
                   precision: 1
@@ -153,51 +153,51 @@
           </p>
         </div>
 
-        <div class="rounded-lg bg-purple-50 px-3 py-2 text-xl" aria-hidden="true">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-[#d4d9d6] bg-[#f0f2f1] text-lg" aria-hidden="true">
           📈
         </div>
       </div>
 
-      <p class="mt-4 text-xs text-gray-500">
+      <p class="mt-4 text-xs text-[#74808b]">
         Won deals compared with deals created
       </p>
     </article>
 
-    <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article class="rounded-xl border border-[#dedfdf] bg-white/65 p-5 shadow-[0_10px_30px_rgba(39,48,58,0.04)]">
       <div class="flex items-start justify-between gap-4">
         <div>
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-[#68747e]">
             Tasks completed
           </p>
 
-          <p class="mt-3 text-3xl font-bold text-gray-900">
+          <p class="mt-3 text-3xl font-bold text-[#27333e]">
             <%= @tasks_completed %>
           </p>
         </div>
 
-        <div class="rounded-lg bg-amber-50 px-3 py-2 text-xl" aria-hidden="true">
-          ✅
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-[#ddd8ca] bg-[#f4f1e9] text-lg" aria-hidden="true">
+          ✓
         </div>
       </div>
 
-      <p class="mt-4 text-xs text-gray-500">
+      <p class="mt-4 text-xs text-[#74808b]">
         Tasks completed during this period
       </p>
     </article>
   </section>
 
-  <section class="space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+  <section class="space-y-6 rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
-        <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+        <p class="text-sm font-semibold uppercase tracking-wide text-[#55705f]">
           Revenue trends
         </p>
 
-        <h2 class="mt-1 text-2xl font-bold tracking-tight text-gray-900">
+        <h2 class="mt-1 text-2xl font-bold tracking-tight text-[#27333e]">
           Monthly revenue for <%= @selected_year %>
         </h2>
 
-        <p class="mt-2 text-sm text-gray-600">
+        <p class="mt-2 text-sm text-[#68747e]">
           Revenue is based on deals marked as won during the selected year.
         </p>
       </div>
@@ -211,26 +211,26 @@
         <div>
           <%= form.label :year,
                          "Report year",
-                         class: "mb-2 block text-sm font-semibold text-gray-700" %>
+                         class: "mb-2 block text-sm font-semibold text-[#53606b]" %>
 
           <%= form.select :year,
                           options_for_select(@available_years, @selected_year),
                           {},
-                          class: "rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" %>
+                          class: "rounded-lg border border-[#c8cdd2] bg-white/70 px-3 py-2 text-sm text-[#27333e] shadow-sm outline-none transition focus:border-[#488267] focus:ring-2 focus:ring-[#dce8dc]" %>
         </div>
 
         <%= form.submit "View year",
-                        class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                        class: "cursor-pointer rounded-lg bg-[#25313b] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#17212a]" %>
       <% end %>
     </div>
 
     <div class="grid gap-5 md:grid-cols-3">
-      <article class="rounded-xl border border-gray-200 bg-gray-50 p-5">
-        <p class="text-sm font-medium text-gray-500">
+      <article class="rounded-xl border border-[#dedfdf] bg-white/35 p-5">
+        <p class="text-sm font-medium text-[#68747e]">
           Yearly revenue
         </p>
 
-        <p class="mt-3 text-2xl font-bold text-gray-900">
+        <p class="mt-3 text-2xl font-bold text-[#27333e]">
           <%= number_to_currency(
                 @yearly_revenue,
                 unit: "R",
@@ -239,17 +239,17 @@
               ) %>
         </p>
 
-        <p class="mt-2 text-xs text-gray-500">
+        <p class="mt-2 text-xs text-[#74808b]">
           Total won revenue for <%= @selected_year %>
         </p>
       </article>
 
-      <article class="rounded-xl border border-gray-200 bg-gray-50 p-5">
-        <p class="text-sm font-medium text-gray-500">
+      <article class="rounded-xl border border-[#dedfdf] bg-white/35 p-5">
+        <p class="text-sm font-medium text-[#68747e]">
           Monthly average
         </p>
 
-        <p class="mt-3 text-2xl font-bold text-gray-900">
+        <p class="mt-3 text-2xl font-bold text-[#27333e]">
           <%= number_to_currency(
                 @average_monthly_revenue,
                 unit: "R",
@@ -258,22 +258,22 @@
               ) %>
         </p>
 
-        <p class="mt-2 text-xs text-gray-500">
+        <p class="mt-2 text-xs text-[#74808b]">
           Average across all 12 months
         </p>
       </article>
 
-      <article class="rounded-xl border border-gray-200 bg-gray-50 p-5">
-        <p class="text-sm font-medium text-gray-500">
+      <article class="rounded-xl border border-[#dedfdf] bg-white/35 p-5">
+        <p class="text-sm font-medium text-[#68747e]">
           Best revenue month
         </p>
 
         <% if @best_revenue_month.present? %>
-          <p class="mt-3 text-2xl font-bold text-gray-900">
+          <p class="mt-3 text-2xl font-bold text-[#27333e]">
             <%= @best_revenue_month %>
           </p>
 
-          <p class="mt-2 text-xs text-gray-500">
+          <p class="mt-2 text-xs text-[#74808b]">
             <%= number_to_currency(
                   @best_month_revenue,
                   unit: "R",
@@ -282,45 +282,45 @@
                 ) %>
           </p>
         <% else %>
-          <p class="mt-3 text-2xl font-bold text-gray-900">
+          <p class="mt-3 text-2xl font-bold text-[#27333e]">
             No revenue yet
           </p>
 
-          <p class="mt-2 text-xs text-gray-500">
+          <p class="mt-2 text-xs text-[#74808b]">
             No won deals were recorded for this year
           </p>
         <% end %>
       </article>
     </div>
 
-    <div class="overflow-hidden rounded-xl border border-gray-200">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+    <div class="overflow-hidden rounded-xl border border-[#dedfdf]">
+      <table class="min-w-full divide-y divide-[#dedfdf]">
+        <thead class="bg-white/35">
           <tr>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+              class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#74808b]"
             >
               Month
             </th>
 
             <th
               scope="col"
-              class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500"
+              class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[#74808b]"
             >
               Revenue
             </th>
           </tr>
         </thead>
 
-        <tbody class="divide-y divide-gray-200 bg-white">
+        <tbody class="divide-y divide-[#dedfdf] bg-white/30">
           <% @monthly_revenue.each do |month_number, revenue| %>
-            <tr>
-              <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+            <tr class="transition hover:bg-white/55">
+              <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-[#27333e]">
                 <%= Date::MONTHNAMES[month_number] %>
               </td>
 
-              <td class="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-700">
+              <td class="whitespace-nowrap px-6 py-4 text-right text-sm text-[#53606b]">
                 <%= number_to_currency(
                       revenue,
                       unit: "R",
@@ -332,13 +332,13 @@
           <% end %>
         </tbody>
 
-        <tfoot class="bg-gray-50">
+        <tfoot class="bg-white/45">
           <tr>
-            <td class="px-6 py-4 text-sm font-bold text-gray-900">
+            <td class="px-6 py-4 text-sm font-bold text-[#27333e]">
               Total
             </td>
 
-            <td class="px-6 py-4 text-right text-sm font-bold text-gray-900">
+            <td class="px-6 py-4 text-right text-sm font-bold text-[#27333e]">
               <%= number_to_currency(
                     @yearly_revenue,
                     unit: "R",
@@ -352,12 +352,16 @@
     </div>
   </section>
 
-  <section class="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-    <h2 class="text-lg font-semibold text-gray-900">
+  <section class="rounded-xl border border-dashed border-[#d5d5d2] bg-white/40 p-8 text-center">
+    <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-[#cfdccf] bg-[#eef4ed] text-sm font-bold text-[#416550]">
+      +
+    </div>
+
+    <h2 class="mt-4 text-lg font-semibold text-[#27333e]">
       More reports are coming next
     </h2>
 
-    <p class="mx-auto mt-2 max-w-2xl text-sm text-gray-600">
+    <p class="mx-auto mt-2 max-w-2xl text-sm text-[#68747e]">
       Future reports will include deal-stage breakdowns, conversion funnels,
       client growth, task-performance charts, and downloadable exports.
     </p>

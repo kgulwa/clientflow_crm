@@ -3,13 +3,13 @@
     <div>
       <%= link_to "← Back to leads",
                   leads_path,
-                  class: "text-sm font-semibold text-indigo-600 hover:text-indigo-800" %>
+                  class: "text-sm font-semibold text-[#416550] transition hover:text-[#315542]" %>
 
-      <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900">
+      <h1 class="mt-4 text-3xl font-bold tracking-tight text-[#27333e]">
         <%= @lead.full_name %>
       </h1>
 
-      <p class="mt-2 text-gray-600">
+      <p class="mt-2 text-[#68747e]">
         <%= @lead.company_name.presence || "Independent lead" %>
       </p>
     </div>
@@ -17,7 +17,7 @@
     <div class="flex flex-col gap-3 sm:flex-row">
       <%= link_to "Edit lead",
                   edit_lead_path(@lead),
-                  class: "rounded-lg border border-gray-300 px-5 py-2 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                  class: "rounded-lg border border-[#c8cdd2] bg-white/55 px-5 py-2 text-center text-sm font-semibold text-[#465563] transition hover:bg-white" %>
 
       <%= link_to "Delete lead",
                   lead_path(@lead),
@@ -25,71 +25,75 @@
                     turbo_method: :delete,
                     turbo_confirm: "Are you sure you want to delete this lead?"
                   },
-                  class: "rounded-lg bg-red-600 px-5 py-2 text-center text-sm font-semibold text-white transition hover:bg-red-700" %>
+                  class: "rounded-lg bg-[#b54b42] px-5 py-2 text-center text-sm font-semibold text-white transition hover:bg-[#9d443d]" %>
     </div>
   </section>
 
   <section class="grid gap-6 lg:grid-cols-3">
-    <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2">
-      <h2 class="text-lg font-semibold text-gray-900">
+    <div class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)] lg:col-span-2">
+      <h2 class="text-lg font-semibold text-[#27333e]">
         Contact details
       </h2>
 
       <dl class="mt-6 grid gap-6 sm:grid-cols-2">
         <div>
-          <dt class="text-sm font-medium text-gray-500">Email</dt>
+          <dt class="text-sm font-medium text-[#74808b]">Email</dt>
 
-          <dd class="mt-1 text-gray-900">
+          <dd class="mt-1 text-[#27333e]">
             <%= mail_to @lead.email, @lead.email %>
           </dd>
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">Phone</dt>
+          <dt class="text-sm font-medium text-[#74808b]">Phone</dt>
 
-          <dd class="mt-1 text-gray-900">
+          <dd class="mt-1 text-[#27333e]">
             <%= @lead.phone.presence || "Not provided" %>
           </dd>
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">Company</dt>
+          <dt class="text-sm font-medium text-[#74808b]">Company</dt>
 
-          <dd class="mt-1 text-gray-900">
+          <dd class="mt-1 text-[#27333e]">
             <%= @lead.company_name.presence || "Not provided" %>
           </dd>
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">Added</dt>
+          <dt class="text-sm font-medium text-[#74808b]">Added</dt>
 
-          <dd class="mt-1 text-gray-900">
+          <dd class="mt-1 text-[#27333e]">
             <%= @lead.created_at.strftime("%B %-d, %Y") %>
           </dd>
         </div>
       </dl>
     </div>
 
-    <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-900">
+    <div class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+      <h2 class="text-lg font-semibold text-[#27333e]">
         Lead details
       </h2>
 
       <dl class="mt-6 space-y-5">
         <div>
-          <dt class="text-sm font-medium text-gray-500">Current status</dt>
+          <dt class="text-sm font-medium text-[#74808b]">
+            Current status
+          </dt>
 
           <dd class="mt-2">
-            <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
+            <span class="inline-flex rounded-full border border-[#cfdccf] bg-[#eef4ed] px-3 py-1 text-sm font-semibold text-[#416550]">
               <%= @lead.display_status %>
             </span>
           </dd>
         </div>
 
         <div>
-          <dt class="text-sm font-medium text-gray-500">Source</dt>
+          <dt class="text-sm font-medium text-[#74808b]">
+            Source
+          </dt>
 
-          <dd class="mt-1 text-gray-900">
+          <dd class="mt-1 text-[#27333e]">
             <%= @lead.source == "linkedin" ? "LinkedIn" : @lead.source.titleize %>
           </dd>
         </div>
@@ -97,12 +101,12 @@
     </div>
   </section>
 
-  <section class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-gray-900">
+  <section class="rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+    <h2 class="text-lg font-semibold text-[#27333e]">
       Lead notes
     </h2>
 
-    <div class="mt-4 whitespace-pre-wrap text-gray-700">
+    <div class="mt-4 whitespace-pre-wrap text-[#53606b]">
       <%= @lead.notes.presence || "No notes have been added for this lead." %>
     </div>
   </section>

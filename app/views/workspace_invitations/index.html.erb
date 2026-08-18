@@ -1,17 +1,17 @@
 <div class="mx-auto max-w-6xl space-y-8">
   <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+      <p class="text-sm font-semibold uppercase tracking-wide text-[#55705f]">
         Workspace
       </p>
 
-      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-[#27333e]">
         Team
       </h1>
 
-      <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-600">
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-[#68747e]">
         Manage the people who belong to
-        <span class="font-semibold text-gray-900">
+        <span class="font-semibold text-[#27333e]">
           <%= @workspace.name %>
         </span>
         and invite teammates to collaborate in ClientFlow.
@@ -20,26 +20,26 @@
   </section>
 
   <section class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.7fr)]">
-    <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
-      <div class="border-b border-gray-200 px-6 py-5">
+    <div class="rounded-2xl border border-[#dedfdf] bg-white/65 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+      <div class="border-b border-[#dedfdf] px-6 py-5">
         <div class="flex items-center justify-between gap-4">
           <div>
-            <h2 class="text-lg font-semibold text-gray-900">
+            <h2 class="text-lg font-semibold text-[#27333e]">
               Workspace members
             </h2>
 
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="mt-1 text-sm text-[#68747e]">
               Everyone who currently has access to this workspace.
             </p>
           </div>
 
-          <span class="rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
+          <span class="rounded-full border border-[#cfdccf] bg-[#eef4ed] px-3 py-1 text-sm font-semibold text-[#416550]">
             <%= @workspace_users.count %>
           </span>
         </div>
       </div>
 
-      <div class="divide-y divide-gray-100">
+      <div class="divide-y divide-[#dedfdf]">
         <% @workspace_users.each do |user| %>
           <div class="px-6 py-5">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -50,25 +50,25 @@
 
                 <div class="min-w-0">
                   <div class="flex flex-wrap items-center gap-2">
-                    <p class="truncate font-semibold text-gray-900">
+                    <p class="truncate font-semibold text-[#27333e]">
                       <%= user.full_name %>
                     </p>
 
                     <% if user == current_user %>
-                      <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+                      <span class="rounded-full border border-[#cfdccf] bg-[#eef4ed] px-2 py-0.5 text-xs font-semibold text-[#416550]">
                         You
                       </span>
                     <% end %>
                   </div>
 
-                  <p class="truncate text-sm text-gray-500">
+                  <p class="truncate text-sm text-[#68747e]">
                     <%= user.email %>
                   </p>
                 </div>
               </div>
 
               <div class="flex flex-wrap items-center gap-2">
-                <span class="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+                <span class="shrink-0 rounded-full bg-white/55 px-3 py-1 text-xs font-semibold text-[#53606b]">
                   <%= user.role.titleize %>
                 </span>
 
@@ -87,7 +87,7 @@
                                       turbo_confirm: "Promote #{user.full_name} to Admin?"
                                     }
                                   },
-                                  class: "rounded-lg border border-indigo-200 px-3 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50" %>
+                                  class: "rounded-lg border border-[#cad9ce] bg-[#eef4ed] px-3 py-2 text-xs font-semibold text-[#416550] transition hover:bg-[#dfe9e2]" %>
                   <% else %>
                     <%= button_to "Demote to Member",
                                   workspace_member_path(user),
@@ -102,7 +102,7 @@
                                       turbo_confirm: "Demote #{user.full_name} to Member?"
                                     }
                                   },
-                                  class: "rounded-lg border border-amber-200 px-3 py-2 text-xs font-semibold text-amber-700 transition hover:bg-amber-50" %>
+                                  class: "rounded-lg border border-[#e1d7bd] bg-[#f7f3e8] px-3 py-2 text-xs font-semibold text-[#7b6944] transition hover:bg-[#f1ead9]" %>
                   <% end %>
 
                   <%= button_to "Remove",
@@ -113,7 +113,7 @@
                                     turbo_confirm: "Remove #{user.full_name} from this workspace?"
                                   }
                                 },
-                                class: "rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50" %>
+                                class: "rounded-lg border border-[#ead1ce] bg-[#f8efed] px-3 py-2 text-xs font-semibold text-[#9d443d] transition hover:bg-[#f0ddda]" %>
                 <% end %>
               </div>
             </div>
@@ -123,13 +123,13 @@
     </div>
 
     <div class="space-y-6">
-      <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <section class="rounded-2xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
         <div>
-          <h2 class="text-lg font-semibold text-gray-900">
+          <h2 class="text-lg font-semibold text-[#27333e]">
             Invite teammate
           </h2>
 
-          <p class="mt-1 text-sm leading-6 text-gray-500">
+          <p class="mt-1 text-sm leading-6 text-[#68747e]">
             Send an invitation to someone you want to join this workspace.
           </p>
         </div>
@@ -141,7 +141,7 @@
             ) do |form| %>
 
           <% if @workspace_invitation.errors.any? %>
-            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <div class="rounded-xl border border-[#ead1ce] bg-[#f8efed] px-4 py-3 text-sm text-[#8a4b46]">
               <p class="font-semibold">
                 <%= pluralize(
                       @workspace_invitation.errors.count,
@@ -161,35 +161,35 @@
           <div>
             <%= form.label :email,
                            "Email address",
-                           class: "block text-sm font-semibold text-gray-700" %>
+                           class: "block text-sm font-semibold text-[#53606b]" %>
 
             <%= form.email_field :email,
                                  autofocus: true,
                                  autocomplete: "email",
                                  placeholder: "teammate@example.com",
                                  required: true,
-                                 class: "mt-2 block w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                                 class: "mt-2 block w-full rounded-xl border border-[#c8cdd2] bg-white/70 px-4 py-3 text-sm text-[#27333e] shadow-sm outline-none transition placeholder:text-[#8a949d] focus:border-[#488267] focus:ring-2 focus:ring-[#dce8dc]" %>
           </div>
 
           <%= form.submit "Send invitation",
-                          class: "w-full cursor-pointer rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition duration-200 hover:scale-[1.01] hover:from-indigo-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+                          class: "w-full cursor-pointer rounded-xl bg-[#25313b] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#17212a] focus:outline-none focus:ring-2 focus:ring-[#488267] focus:ring-offset-2" %>
         <% end %>
       </section>
 
-      <section class="rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div class="border-b border-gray-200 px-6 py-5">
+      <section class="rounded-2xl border border-[#dedfdf] bg-white/65 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+        <div class="border-b border-[#dedfdf] px-6 py-5">
           <div class="flex items-center justify-between gap-4">
             <div>
-              <h2 class="text-lg font-semibold text-gray-900">
+              <h2 class="text-lg font-semibold text-[#27333e]">
                 Pending invitations
               </h2>
 
-              <p class="mt-1 text-sm text-gray-500">
+              <p class="mt-1 text-sm text-[#68747e]">
                 Invitations that have not been accepted yet.
               </p>
             </div>
 
-            <span class="rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-700">
+            <span class="rounded-full border border-[#e1d7bd] bg-[#f7f3e8] px-3 py-1 text-sm font-semibold text-[#7b6944]">
               <%= @workspace_invitations.pending.count %>
             </span>
           </div>
@@ -198,15 +198,15 @@
         <% pending_invitations = @workspace_invitations.pending %>
 
         <% if pending_invitations.any? %>
-          <div class="divide-y divide-gray-100">
+          <div class="divide-y divide-[#dedfdf]">
             <% pending_invitations.each do |invitation| %>
               <div class="flex items-center justify-between gap-4 px-6 py-5">
                 <div class="min-w-0">
-                  <p class="truncate font-semibold text-gray-900">
+                  <p class="truncate font-semibold text-[#27333e]">
                     <%= invitation.email %>
                   </p>
 
-                  <p class="mt-1 text-xs text-gray-500">
+                  <p class="mt-1 text-xs text-[#68747e]">
                     Invited by
                     <%= invitation.invited_by.full_name %>
                   </p>
@@ -220,17 +220,17 @@
                                   turbo_confirm: "Remove this invitation?"
                                 }
                               },
-                              class: "shrink-0 rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50" %>
+                              class: "shrink-0 rounded-lg border border-[#ead1ce] bg-[#f8efed] px-3 py-2 text-xs font-semibold text-[#9d443d] transition hover:bg-[#f0ddda]" %>
               </div>
             <% end %>
           </div>
         <% else %>
           <div class="px-6 py-8 text-center">
-            <p class="text-sm font-medium text-gray-700">
+            <p class="text-sm font-medium text-[#53606b]">
               No pending invitations
             </p>
 
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="mt-1 text-sm text-[#68747e]">
               New invitations will appear here.
             </p>
           </div>

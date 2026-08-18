@@ -1,15 +1,15 @@
 <div class="space-y-6">
   <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
     <div>
-      <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+      <p class="text-sm font-semibold uppercase tracking-[0.14em] text-stone-500">
         Client management
       </p>
 
-      <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">
+      <h1 class="mt-1 text-3xl font-bold tracking-tight text-slate-900">
         Clients
       </h1>
 
-      <p class="mt-2 text-gray-600">
+      <p class="mt-2 text-slate-600">
         View and manage the people and companies in your CRM.
       </p>
     </div>
@@ -21,15 +21,15 @@
                     query: @query,
                     status: @status
                   ),
-                  class: "rounded-lg border border-gray-300 bg-white px-5 py-3 text-center text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50" %>
+                  class: "rounded-xl border border-stone-300 bg-white/60 px-5 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-white hover:text-slate-900" %>
 
       <%= link_to "Add client",
                   new_client_path,
-                  class: "rounded-lg bg-indigo-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                  class: "rounded-xl bg-slate-800 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900" %>
     </div>
   </section>
 
-  <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+  <section class="rounded-2xl border border-white/70 bg-white/65 p-5 shadow-sm backdrop-blur">
     <%= form_with url: clients_path,
                   method: :get,
                   local: true,
@@ -37,18 +37,18 @@
       <div class="flex-1">
         <%= form.label :query,
                        "Search clients",
-                       class: "block text-sm font-semibold text-gray-700" %>
+                       class: "block text-sm font-semibold text-slate-700" %>
 
         <%= form.search_field :query,
                               value: @query,
                               placeholder: "Search by name, company, or email",
-                              class: "mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                              class: "mt-2 w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
       </div>
 
       <div class="w-full lg:w-56">
         <%= form.label :status,
                        "Status",
-                       class: "block text-sm font-semibold text-gray-700" %>
+                       class: "block text-sm font-semibold text-slate-700" %>
 
         <%= form.select :status,
                         options_for_select(
@@ -61,65 +61,65 @@
                           @status
                         ),
                         {},
-                        class: "mt-2 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                        class: "mt-2 w-full rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" %>
       </div>
 
       <div class="flex flex-col gap-2 sm:flex-row">
         <%= form.submit "Search",
-                        class: "cursor-pointer rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                        class: "cursor-pointer rounded-xl bg-slate-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900" %>
 
         <% if @filters_applied %>
           <%= link_to "Clear filters",
                       clients_path,
-                      class: "rounded-lg border border-gray-300 px-5 py-3 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                      class: "rounded-xl border border-stone-300 bg-white/50 px-5 py-3 text-center text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-slate-900" %>
         <% end %>
       </div>
     <% end %>
   </section>
 
-  <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+  <section class="overflow-hidden rounded-2xl border border-white/70 bg-white/65 shadow-sm backdrop-blur">
     <% if @clients.any? %>
-      <div class="flex flex-col justify-between gap-2 border-b border-gray-200 px-6 py-4 sm:flex-row sm:items-center">
-        <p class="text-sm font-medium text-gray-700">
+      <div class="flex flex-col justify-between gap-2 border-b border-stone-200 px-6 py-4 sm:flex-row sm:items-center">
+        <p class="text-sm font-medium text-slate-700">
           <%= pluralize(@clients.size, "client") %> on this page
         </p>
 
         <% if @filters_applied %>
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-slate-500">
             Showing filtered results
           </p>
         <% end %>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+        <table class="min-w-full divide-y divide-stone-200">
+          <thead class="bg-white/30">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Client
               </th>
 
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Company
               </th>
 
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Contact
               </th>
 
-              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Status
               </th>
 
-              <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Actions
               </th>
             </tr>
           </thead>
 
-          <tbody class="divide-y divide-gray-200 bg-white">
+          <tbody class="divide-y divide-stone-200 bg-transparent">
             <% @clients.each do |client| %>
-              <tr class="hover:bg-gray-50">
+              <tr class="transition hover:bg-white/40">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
                     <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
@@ -129,31 +129,31 @@
                     <div>
                       <%= link_to client.full_name,
                                   client_path(client),
-                                  class: "font-semibold text-gray-900 hover:text-indigo-600" %>
+                                  class: "font-semibold text-slate-900 transition hover:text-black" %>
 
-                      <p class="mt-1 text-sm text-gray-500">
+                      <p class="mt-1 text-sm text-slate-500">
                         <%= client.email %>
                       </p>
                     </div>
                   </div>
                 </td>
 
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
                   <%= client.company_name.presence || "—" %>
                 </td>
 
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
                   <%= client.phone.presence || "No phone" %>
                 </td>
 
                 <td class="whitespace-nowrap px-6 py-4">
                   <% status_classes = case client.status
                                       when "active"
-                                        "bg-green-50 text-green-700"
+                                        "bg-[#e5eee8] text-[#3e7157]"
                                       when "inactive"
-                                        "bg-gray-100 text-gray-700"
+                                        "bg-slate-100 text-slate-600"
                                       else
-                                        "bg-amber-50 text-amber-700"
+                                        "bg-[#f5ead7] text-[#9b661f]"
                                       end %>
 
                   <span class="rounded-full px-3 py-1 text-xs font-semibold <%= status_classes %>">
@@ -164,11 +164,11 @@
                 <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
                   <%= link_to "View",
                               client_path(client),
-                              class: "font-semibold text-indigo-600 hover:text-indigo-800" %>
+                              class: "font-semibold text-slate-700 transition hover:text-slate-950" %>
 
                   <%= link_to "Edit",
                               edit_client_path(client),
-                              class: "ml-4 font-semibold text-gray-600 hover:text-gray-900" %>
+                              class: "ml-4 font-semibold text-slate-500 transition hover:text-slate-900" %>
                 </td>
               </tr>
             <% end %>
@@ -179,41 +179,41 @@
       <%= render "shared/pagination", pagy: @pagy %>
     <% elsif @filters_applied %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
-        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl font-bold text-gray-600">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-xl font-bold text-slate-600">
           ?
         </div>
 
-        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+        <h2 class="mt-4 text-lg font-semibold text-slate-900">
           No matching clients
         </h2>
 
-        <p class="mt-2 max-w-md text-sm text-gray-500">
+        <p class="mt-2 max-w-md text-sm text-slate-500">
           We could not find any clients matching your current search and
           status filters.
         </p>
 
         <%= link_to "Clear filters",
                     clients_path,
-                    class: "mt-6 rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100" %>
+                    class: "mt-6 rounded-xl border border-stone-300 bg-white/50 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-slate-900" %>
       </div>
     <% else %>
       <div class="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
-        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-xl font-bold text-indigo-600">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-xl font-bold text-slate-700">
           C
         </div>
 
-        <h2 class="mt-4 text-lg font-semibold text-gray-900">
+        <h2 class="mt-4 text-lg font-semibold text-slate-900">
           No clients yet
         </h2>
 
-        <p class="mt-2 max-w-md text-sm text-gray-500">
+        <p class="mt-2 max-w-md text-sm text-slate-500">
           Add your first client to begin tracking relationships, contact
           details, and statuses.
         </p>
 
         <%= link_to "Add your first client",
                     new_client_path,
-                    class: "mt-6 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+                    class: "mt-6 rounded-xl bg-slate-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900" %>
       </div>
     <% end %>
   </section>
