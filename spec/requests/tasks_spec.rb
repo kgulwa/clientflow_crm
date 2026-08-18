@@ -181,6 +181,32 @@ RSpec.describe 'Tasks', type: :request do
         expect(response.body).to include('Completed task')
         expect(response.body).to include('Today task')
       end
+
+      it 'filters tasks assigned to the signed-in user' do
+        assigned_task = create(
+          :task,
+          client: client,
+          assigned_user: user,
+          title: 'My assigned task'
+        )
+
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        teammate_task = create(
+          :task,
+          client: client,
+          assigned_user: teammate,
+          title: 'Teammate assigned task'
+        )
+
+        get tasks_path(filter: :my_tasks)
+
+        expect(response.body).to include(assigned_task.title)
+        expect(response.body).not_to include(teammate_task.title)
+      end
     end
 
     describe 'POST /clients/:client_id/tasks' do
@@ -258,6 +284,66 @@ RSpec.describe 'Tasks', type: :request do
             task: valid_attributes
           }
         end.to change(teammate_client.tasks, :count).by(1)
+      end
+
+      it 'creates a task assigned to an active workspace member' do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        post client_tasks_path(client), params: {
+          task: valid_attributes.merge(
+            assigned_user_id: teammate.id
+          )
+        }
+
+        task = client.tasks.last
+
+        expect(task.assigned_user).to eq(teammate)
+      end
+
+      it 'allows a task to be created without an assignee' do
+        post client_tasks_path(client), params: {
+          task: valid_attributes.merge(
+            assigned_user_id: ''
+          )
+        }
+
+        expect(client.tasks.last.assigned_user).to be_nil
+      end
+
+      it 'does not allow assignment to a user in another workspace' do
+        other_user = create(:user)
+
+        expect do
+          post client_tasks_path(client), params: {
+            task: valid_attributes.merge(
+              assigned_user_id: other_user.id
+            )
+          }
+        end.not_to change(Task, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'does not allow assignment to an inactive workspace member' do
+        inactive_member = create(
+          :user,
+          workspace: user.workspace,
+          active: false,
+          deactivated_at: Time.current
+        )
+
+        expect do
+          post client_tasks_path(client), params: {
+            task: valid_attributes.merge(
+              assigned_user_id: inactive_member.id
+            )
+          }
+        end.not_to change(Task, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
 
@@ -466,6 +552,26 @@ RSpec.describe 'Tasks', type: :request do
         }
 
         expect(task.reload).to be_completed
+      end
+
+      it 'updates the task assignee' do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        task = create(
+          :task,
+          client: client
+        )
+
+        patch client_task_path(client, task), params: {
+          task: {
+            assigned_user_id: teammate.id
+          }
+        }
+
+        expect(task.reload.assigned_user).to eq(teammate)
       end
     end
 
