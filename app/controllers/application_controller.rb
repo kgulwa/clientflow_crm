@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
 
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :set_unread_notifications_count, if: :user_signed_in?
+  before_action :set_notification_header_data, if: :user_signed_in?
 
   protected
 
@@ -24,7 +24,14 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def set_unread_notifications_count
-    @unread_notifications_count = current_user.notifications.unread.count
+  def set_notification_header_data
+    notifications = current_user.notifications
+
+    @unread_notifications_count = notifications.unread.count
+
+    @recent_notifications = notifications
+                            .includes(:actor, task: :client)
+                            .order(created_at: :desc)
+                            .limit(5)
   end
 end
