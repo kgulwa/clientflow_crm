@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_08_17_092849) do
+ActiveRecord::Schema[7.0].define(version: 2026_08_17_101422) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -124,6 +124,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_17_092849) do
     t.datetime "updated_at", null: false
     t.datetime "started_at"
     t.datetime "completed_at"
+    t.bigint "assigned_user_id"
+    t.index ["assigned_user_id"], name: "index_tasks_on_assigned_user_id"
     t.index ["client_id", "due_date"], name: "index_tasks_on_client_id_and_due_date"
     t.index ["client_id", "status"], name: "index_tasks_on_client_id_and_status"
     t.index ["client_id"], name: "index_tasks_on_client_id"
@@ -182,6 +184,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_17_092849) do
   add_foreign_key "tags", "users"
   add_foreign_key "tags", "workspaces"
   add_foreign_key "tasks", "clients"
+  add_foreign_key "tasks", "users", column: "assigned_user_id"
   add_foreign_key "users", "workspaces"
   add_foreign_key "workspace_invitations", "users", column: "invited_by_id"
   add_foreign_key "workspace_invitations", "workspaces"

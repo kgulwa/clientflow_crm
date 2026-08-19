@@ -1,56 +1,209 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Task, type: :model do
-  describe 'associations' do
+  describe "associations" do
     it { is_expected.to belong_to(:client) }
+
+    it do
+      is_expected.to belong_to(:assigned_user)
+        .class_name("User")
+        .optional
+    end
   end
 
-  describe 'validations' do
+  describe "validations" do
     subject(:task) { build(:task) }
 
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_presence_of(:due_date) }
     it { is_expected.to validate_presence_of(:status) }
     it { is_expected.to validate_presence_of(:priority) }
-  end
 
-  describe 'statuses' do
-    it 'defines pending, in progress, and completed statuses' do
-      expect(described_class.statuses).to eq(
-        'pending' => 0,
-        'in_progress' => 1,
-        'completed' => 2
+    it "allows a task to remain unassigned" do
+      task = build(
+        :task,
+        assigned_user: nil
+      )
+
+      expect(task).to be_valid
+    end
+
+    it "allows assignment to an active user in the client's workspace" do
+      workspace = create(:workspace)
+
+      client_owner = create(
+        :user,
+        workspace: workspace
+      )
+
+      client = create(
+        :client,
+        user: client_owner,
+        workspace: workspace
+      )
+
+      assigned_user = create(
+        :user,
+        workspace: workspace,
+        active: true
+      )
+
+      task = build(
+        :task,
+        client: client,
+        assigned_user: assigned_user
+      )
+
+      expect(task).to be_valid
+    end
+
+    it "does not allow assignment to a user in another workspace" do
+      workspace = create(:workspace)
+
+      client_owner = create(
+        :user,
+        workspace: workspace
+      )
+
+      client = create(
+        :client,
+        user: client_owner,
+        workspace: workspace
+      )
+
+      other_workspace_user = create(:user)
+
+      task = build(
+        :task,
+        client: client,
+        assigned_user: other_workspace_user
+      )
+
+      expect(task).not_to be_valid
+
+      expect(task.errors[:assigned_user]).to include(
+        "must belong to the same workspace as the client"
       )
     end
 
-    it 'defaults new tasks to pending' do
+    it "does not allow assignment to an inactive user" do
+      workspace = create(:workspace)
+
+      client_owner = create(
+        :user,
+        workspace: workspace
+      )
+
+      client = create(
+        :client,
+        user: client_owner,
+        workspace: workspace
+      )
+
+      inactive_user = create(
+        :user,
+        workspace: workspace,
+        active: false,
+        deactivated_at: Time.current
+      )
+
+      task = build(
+        :task,
+        client: client,
+        assigned_user: inactive_user
+      )
+
+      expect(task).not_to be_valid
+
+      expect(task.errors[:assigned_user]).to include(
+        "must be active"
+      )
+    end
+  end
+
+  describe "statuses" do
+    it "defines pending, in progress, and completed statuses" do
+      expect(described_class.statuses).to eq(
+        "pending" => 0,
+        "in_progress" => 1,
+        "completed" => 2
+      )
+    end
+
+    it "defaults new tasks to pending" do
       task = described_class.new
 
       expect(task).to be_pending
     end
   end
 
-  describe 'priorities' do
-    it 'defines low, medium, and high priorities' do
+  describe "priorities" do
+    it "defines low, medium, and high priorities" do
       expect(described_class.priorities).to eq(
-        'low' => 0,
-        'medium' => 1,
-        'high' => 2
+        "low" => 0,
+        "medium" => 1,
+        "high" => 2
       )
     end
 
-    it 'defaults new tasks to medium priority' do
+    it "defaults new tasks to medium priority" do
       task = described_class.new
 
       expect(task).to be_medium
     end
   end
 
-  describe 'status history timestamps' do
-    describe 'when a pending task is started' do
-      it 'records when the task was started' do
+  describe ".assigned_to" do
+    it "returns tasks assigned to the supplied user" do
+      workspace = create(:workspace)
+
+      user = create(
+        :user,
+        workspace: workspace
+      )
+
+      client = create(
+        :client,
+        user: user,
+        workspace: workspace
+      )
+
+      assigned_task = create(
+        :task,
+        client: client,
+        assigned_user: user
+      )
+
+      unassigned_task = create(
+        :task,
+        client: client,
+        assigned_user: nil
+      )
+
+      other_user = create(
+        :user,
+        workspace: workspace
+      )
+
+      other_task = create(
+        :task,
+        client: client,
+        assigned_user: other_user
+      )
+
+      result = described_class.assigned_to(user)
+
+      expect(result).to include(assigned_task)
+      expect(result).not_to include(unassigned_task)
+      expect(result).not_to include(other_task)
+    end
+  end
+
+  describe "status history timestamps" do
+    describe "when a pending task is started" do
+      it "records when the task was started" do
         task = create(:task, status: :pending)
         started_time = Time.zone.local(2026, 7, 28, 9, 30)
 
@@ -63,8 +216,8 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'when an in-progress task is completed' do
-      it 'records when the task was completed' do
+    describe "when an in-progress task is completed" do
+      it "records when the task was completed" do
         task = create(:task, status: :pending)
         started_time = Time.zone.local(2026, 7, 28, 9, 30)
         completed_time = Time.zone.local(2026, 7, 28, 11, 45)
@@ -84,8 +237,8 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'when a pending task is completed directly' do
-      it 'records both the started and completed timestamps' do
+    describe "when a pending task is completed directly" do
+      it "records both the started and completed timestamps" do
         task = create(:task, status: :pending)
         completed_time = Time.zone.local(2026, 7, 28, 12, 15)
 
@@ -100,8 +253,8 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'when a completed task is reopened' do
-      it 'clears the completion timestamp' do
+    describe "when a completed task is reopened" do
+      it "clears the completion timestamp" do
         task = create(:task, status: :pending)
         started_time = Time.zone.local(2026, 7, 28, 8, 15)
         completed_time = Time.zone.local(2026, 7, 28, 10, 30)
@@ -122,8 +275,8 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'when a reopened task is started again' do
-      it 'preserves the original started timestamp' do
+    describe "when a reopened task is started again" do
+      it "preserves the original started timestamp" do
         task = create(:task, status: :pending)
         original_started_time = Time.zone.local(2026, 7, 28, 8, 15)
         completed_time = Time.zone.local(2026, 7, 28, 10, 30)
@@ -150,8 +303,8 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'when a reopened task is completed again' do
-      it 'records the latest completion time' do
+    describe "when a reopened task is completed again" do
+      it "records the latest completion time" do
         task = create(:task, status: :pending)
         original_started_time = Time.zone.local(2026, 7, 28, 8, 15)
         original_completed_time = Time.zone.local(2026, 7, 28, 10, 30)
@@ -178,8 +331,8 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'when a task is created in progress' do
-      it 'records the started timestamp' do
+    describe "when a task is created in progress" do
+      it "records the started timestamp" do
         started_time = Time.zone.local(2026, 7, 28, 13, 10)
 
         task = travel_to(started_time) do
@@ -191,8 +344,8 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'when a task is created as completed' do
-      it 'records both history timestamps' do
+    describe "when a task is created as completed" do
+      it "records both history timestamps" do
         completed_time = Time.zone.local(2026, 7, 28, 15, 25)
 
         task = travel_to(completed_time) do

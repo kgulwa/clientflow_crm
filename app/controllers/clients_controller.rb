@@ -101,12 +101,21 @@ class ClientsController < ApplicationController
     @client_notes = @client.client_notes.order(created_at: :desc)
 
     @task = @client.tasks.new
-    @tasks = @client.tasks.order(
-      Arel.sql(
-        "CASE WHEN status = #{Task.statuses[:completed]} THEN 1 ELSE 0 END"
-      ),
-      due_date: :asc,
-      created_at: :desc
+
+    @tasks = @client.tasks
+                    .includes(:assigned_user)
+                    .order(
+                      Arel.sql(
+                        "CASE WHEN status = #{Task.statuses[:completed]} THEN 1 ELSE 0 END"
+                      ),
+                      due_date: :asc,
+                      created_at: :desc
+                    )
+
+    @workspace_members = current_user.workspace.users.active.order(
+      :first_name,
+      :last_name,
+      :email
     )
 
     @tag = current_user.workspace.tags.new(
