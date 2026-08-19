@@ -39,6 +39,7 @@ class TasksController < ApplicationController
     @task = @client.tasks.new(task_params)
 
     if @task.save
+      notify_task_assignment
       prepare_tasks
 
       respond_to do |format|
@@ -70,6 +71,7 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
+      notify_task_assignment if @task.saved_change_to_assigned_user_id?
       prepare_tasks
 
       respond_to do |format|
@@ -197,6 +199,7 @@ class TasksController < ApplicationController
     @tag = current_user.workspace.tags.new(
       user: current_user
     )
+
     @tags = current_user.workspace.tags.order(:name)
     @client_tags = @client.client_tags.includes(:tag)
 
@@ -220,6 +223,13 @@ class TasksController < ApplicationController
       overdue_tasks: client_tasks.overdue.count,
       total_notes: @client.client_notes.count
     }
+  end
+
+  def notify_task_assignment
+    TaskAssignmentNotificationService.new(
+      task: @task,
+      actor: current_user
+    ).call
   end
 
   def task_params

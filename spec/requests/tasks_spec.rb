@@ -303,6 +303,56 @@ RSpec.describe 'Tasks', type: :request do
         expect(task.assigned_user).to eq(teammate)
       end
 
+      it 'notifies the teammate when a task is assigned to them' do
+        teammate = create(
+          :user,
+          workspace: user.workspace,
+          first_name: 'Kuyenzeka',
+          last_name: 'Gulwa'
+        )
+
+        expect do
+          post client_tasks_path(client), params: {
+            task: valid_attributes.merge(
+              assigned_user_id: teammate.id
+            )
+          }
+        end.to change(Notification, :count).by(1)
+
+        task = client.tasks.last
+        notification = Notification.last
+
+        expect(notification.user).to eq(teammate)
+        expect(notification.actor).to eq(user)
+        expect(notification.task).to eq(task)
+        expect(notification.message).to eq(
+          "#{user.full_name} assigned you a task: #{task.title}"
+        )
+        expect(notification.read_at).to be_nil
+      end
+
+      it 'does not create an assignment notification when assigning a task to yourself' do
+        expect do
+          post client_tasks_path(client), params: {
+            task: valid_attributes.merge(
+              assigned_user_id: user.id
+            )
+          }
+        end.not_to change(Notification, :count)
+
+        expect(client.tasks.last.assigned_user).to eq(user)
+      end
+
+      it 'does not create an assignment notification for an unassigned task' do
+        expect do
+          post client_tasks_path(client), params: {
+            task: valid_attributes.merge(
+              assigned_user_id: ''
+            )
+          }
+        end.not_to change(Notification, :count)
+      end
+
       it 'allows a task to be created without an assignee' do
         post client_tasks_path(client), params: {
           task: valid_attributes.merge(
@@ -572,6 +622,92 @@ RSpec.describe 'Tasks', type: :request do
         }
 
         expect(task.reload.assigned_user).to eq(teammate)
+      end
+
+      it 'notifies the new assignee when a task is reassigned' do
+        original_assignee = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        new_assignee = create(
+          :user,
+          workspace: user.workspace,
+          first_name: 'Kuyenzeka',
+          last_name: 'Gulwa'
+        )
+
+        task = create(
+          :task,
+          client: client,
+          assigned_user: original_assignee
+        )
+
+        expect do
+          patch client_task_path(client, task), params: {
+            task: {
+              assigned_user_id: new_assignee.id
+            }
+          }
+        end.to change(Notification, :count).by(1)
+
+        notification = Notification.last
+
+        expect(task.reload.assigned_user).to eq(new_assignee)
+        expect(notification.user).to eq(new_assignee)
+        expect(notification.actor).to eq(user)
+        expect(notification.task).to eq(task)
+        expect(notification.message).to eq(
+          "#{user.full_name} assigned you a task: #{task.title}"
+        )
+      end
+
+      it 'does not create another notification when the assignee does not change' do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        task = create(
+          :task,
+          client: client,
+          assigned_user: teammate,
+          title: 'Original task title'
+        )
+
+        expect do
+          patch client_task_path(client, task), params: {
+            task: {
+              title: 'Updated task title'
+            }
+          }
+        end.not_to change(Notification, :count)
+
+        expect(task.reload.title).to eq('Updated task title')
+        expect(task.assigned_user).to eq(teammate)
+      end
+
+      it 'does not notify the signed-in user when a task is reassigned to them' do
+        teammate = create(
+          :user,
+          workspace: user.workspace
+        )
+
+        task = create(
+          :task,
+          client: client,
+          assigned_user: teammate
+        )
+
+        expect do
+          patch client_task_path(client, task), params: {
+            task: {
+              assigned_user_id: user.id
+            }
+          }
+        end.not_to change(Notification, :count)
+
+        expect(task.reload.assigned_user).to eq(user)
       end
     end
 

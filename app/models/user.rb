@@ -26,6 +26,15 @@ class User < ApplicationRecord
   has_many :tags,
            dependent: :destroy
 
+  has_many :notifications,
+           dependent: :destroy
+
+  has_many :sent_notifications,
+           class_name: "Notification",
+           foreign_key: :actor_id,
+           inverse_of: :actor,
+           dependent: :destroy
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :role, presence: true

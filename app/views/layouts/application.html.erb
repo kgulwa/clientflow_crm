@@ -157,7 +157,42 @@
                 </p>
               </div>
 
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
+                <%= link_to notifications_path,
+                            aria: {
+                              label: @unread_notifications_count.positive? ?
+                                "#{@unread_notifications_count} unread notifications" :
+                                "Notifications"
+                            },
+                            class: "relative flex h-11 w-11 items-center justify-center rounded-xl border transition #{
+                              request.path.start_with?('/notifications') ?
+                                'border-[#bfcfc3] bg-[#e8efe9] text-[#315542]' :
+                                'border-[#d6d3cf] bg-white/55 text-[#465563] hover:bg-white hover:text-[#27333e]'
+                            }" do %>
+                  <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15 17H9m8-6a5 5 0 1 0-10 0c0 5-2 6-2 6h14s-2-1-2-6ZM10 21h4"
+                    />
+                  </svg>
+                  <% if @unread_notifications_count.positive? %>
+                    <span
+                      class="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#f1f0ee] bg-[#55705f] px-1 text-[10px] font-bold leading-none text-white"
+                    >
+                      <%= @unread_notifications_count > 99 ?
+                            "99+" :
+                            @unread_notifications_count %>
+                    </span>
+                  <% end %>
+                <% end %>
                 <%= link_to destroy_user_session_path,
                             data: {
                               turbo_method: :delete

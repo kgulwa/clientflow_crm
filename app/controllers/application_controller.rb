@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
 
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_unread_notifications_count, if: :user_signed_in?
 
   protected
 
@@ -19,5 +20,11 @@ class ApplicationController < ActionController::Base
       :account_update,
       keys: added_attributes
     )
+  end
+
+  private
+
+  def set_unread_notifications_count
+    @unread_notifications_count = current_user.notifications.unread.count
   end
 end

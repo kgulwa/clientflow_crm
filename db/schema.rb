@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_08_17_101422) do
+ActiveRecord::Schema[7.0].define(version: 2026_08_19_175120) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -101,6 +101,19 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_17_101422) do
     t.index ["client_id"], name: "index_notes_on_client_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "actor_id", null: false
+    t.bigint "task_id", null: false
+    t.string "message", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["task_id"], name: "index_notifications_on_task_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "tags", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "name", null: false
@@ -181,6 +194,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_17_101422) do
   add_foreign_key "leads", "users"
   add_foreign_key "leads", "workspaces"
   add_foreign_key "notes", "clients"
+  add_foreign_key "notifications", "tasks"
+  add_foreign_key "notifications", "users"
+  add_foreign_key "notifications", "users", column: "actor_id"
   add_foreign_key "tags", "users"
   add_foreign_key "tags", "workspaces"
   add_foreign_key "tasks", "clients"

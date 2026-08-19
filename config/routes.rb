@@ -2,9 +2,11 @@
 
 Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+
   devise_for :users,
               controllers: {
-                registrations: "users/registrations" }
+                registrations: "users/registrations"
+              }
 
   resources :clients do
     resources :notes, only: %i[create destroy]
@@ -15,12 +17,19 @@ Rails.application.routes.draw do
   end
 
   resources :leads
-
   resources :deals
-
   resources :tasks, only: :index
-
   resources :reports, only: :index
+
+  resources :notifications, only: :index do
+    member do
+      patch :read
+    end
+
+    collection do
+      patch :read_all
+    end
+  end
 
   resources :workspace_invitations, only: %i[index create destroy]
   resources :workspace_members, only: %i[update destroy]

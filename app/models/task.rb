@@ -7,6 +7,9 @@ class Task < ApplicationRecord
              class_name: "User",
              optional: true
 
+  has_many :notifications,
+            dependent: :destroy
+
   enum status: {
     pending: 0,
     in_progress: 1,
