@@ -70,7 +70,7 @@
             <%= link_to clients_path,
                         class: "group flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition #{request.path.start_with?("/clients") ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/[0.07] hover:text-white"}" do %>
               <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 1 0 7.75" />
               </svg>
 
               Clients
@@ -125,8 +125,83 @@
             <% end %>
           </nav>
 
-          <div class="relative hidden p-4 lg:block">
-            <div class="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-3.5">
+          <div
+            class="relative hidden p-4 lg:block"
+            data-controller="account-dropdown"
+          >
+            <div
+              data-account-dropdown-target="panel"
+              class="absolute bottom-full left-4 right-4 z-50 mb-3 hidden overflow-hidden rounded-2xl border border-white/[0.08] bg-[#202c36]/95 shadow-[0_22px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl"
+            >
+              <div class="border-b border-white/[0.07] px-4 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white">
+                    <%= avatar_initials(current_user.full_name) %>
+                  </div>
+
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-semibold text-white">
+                      <%= current_user.full_name %>
+                    </p>
+
+                    <p class="mt-0.5 truncate text-xs text-slate-400">
+                      <%= current_user.email %>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-2">
+                <%= link_to edit_user_registration_path,
+                            class: "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/[0.07] hover:text-white" do %>
+                  <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 21a8 8 0 0 1 16 0" />
+                  </svg>
+
+                  Account settings
+                <% end %>
+
+                <%= link_to destroy_user_session_path,
+                            data: {
+                              turbo_method: :delete
+                            },
+                            class: "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/[0.07] hover:text-white" do %>
+                  <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 17l5-5-5-5M15 12H3M14 4h5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-5" />
+                  </svg>
+
+                  Sign out
+                <% end %>
+              </div>
+
+              <div class="border-t border-white/[0.07] p-2">
+                <%= button_to registration_path(:user),
+                              method: :delete,
+                              data: {
+                                turbo_confirm: "Are you sure you want to delete your account? You will be signed out immediately."
+                              },
+                              form: {
+                                class: "w-full"
+                              },
+                              class: "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-[#e3a7a0] transition hover:bg-[#8a4038]/15 hover:text-[#f0b8b1]" do %>
+                  <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3" />
+                  </svg>
+
+                  Delete account
+                <% end %>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              aria-expanded="false"
+              aria-haspopup="true"
+              data-account-dropdown-target="button"
+              data-action="click->account-dropdown#toggle"
+              class="w-full rounded-2xl border border-white/[0.07] bg-white/[0.04] p-3.5 text-left transition hover:border-white/[0.12] hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-white/10"
+            >
               <div class="flex items-center gap-3">
                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white">
                   <%= avatar_initials(current_user.full_name) %>
@@ -142,9 +217,18 @@
                   </p>
                 </div>
 
-                <span class="text-slate-500">⌄</span>
+                <svg
+                  data-account-dropdown-target="chevron"
+                  class="h-4 w-4 text-slate-500 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                </svg>
               </div>
-            </div>
+            </button>
           </div>
         </aside>
 
@@ -350,14 +434,6 @@
                     </div>
                   </div>
                 </div>
-
-                <%= link_to destroy_user_session_path,
-                            data: {
-                              turbo_method: :delete
-                            },
-                            class: "rounded-xl border border-[#d6d3cf] bg-white/55 px-4 py-2.5 text-sm font-medium text-[#35414d] transition hover:bg-white" do %>
-                  Sign out
-                <% end %>
               </div>
             </div>
           </header>

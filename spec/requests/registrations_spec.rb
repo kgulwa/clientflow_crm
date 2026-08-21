@@ -218,4 +218,116 @@ RSpec.describe "Registrations", type: :request do
       expect(response).to redirect_to(new_user_registration_path)
     end
   end
+
+  describe "account settings" do
+    let(:user) do
+      create(
+        :user,
+        first_name: "Konke",
+        last_name: "Gulwa",
+        email: "konke@example.com",
+        password: "Password123!",
+        password_confirmation: "Password123!"
+      )
+    end
+
+    before do
+      sign_in user
+    end
+
+    it "shows the account settings page" do
+      get edit_user_registration_path
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("Account settings")
+      expect(response.body).to include("Konke")
+      expect(response.body).to include("Gulwa")
+      expect(response.body).to include("konke@example.com")
+    end
+
+    it "updates the user's account details" do
+      patch user_registration_path, params: {
+        user: {
+          first_name: "Konke Updated",
+          last_name: "Gulwa",
+          email: "konke.updated@example.com",
+          current_password: "Password123!"
+        }
+      }
+
+      user.reload
+
+      expect(user.first_name).to eq("Konke Updated")
+      expect(user.last_name).to eq("Gulwa")
+      expect(user.email).to eq("konke.updated@example.com")
+    end
+
+    it "does not update account details with an incorrect current password" do
+      patch user_registration_path, params: {
+        user: {
+          first_name: "Changed",
+          last_name: "Name",
+          email: "changed@example.com",
+          current_password: "WrongPassword!"
+        }
+      }
+
+      user.reload
+
+      expect(user.first_name).to eq("Konke")
+      expect(user.last_name).to eq("Gulwa")
+      expect(user.email).to eq("konke@example.com")
+    end
+
+    it "updates the user's password" do
+      patch user_registration_path, params: {
+        user: {
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          password: "NewPassword123!",
+          password_confirmation: "NewPassword123!",
+          current_password: "Password123!"
+        }
+      }
+
+      user.reload
+
+      expect(user.valid_password?("NewPassword123!")).to be(true)
+    end
+  end
+
+  describe "account deletion" do
+    let(:user) do
+      create(
+        :user,
+        active: true,
+        password: "Password123!",
+        password_confirmation: "Password123!"
+      )
+    end
+
+    before do
+      sign_in user
+    end
+
+    it "deactivates the user instead of destroying the record" do
+      expect do
+        delete user_registration_path
+      end.not_to change(User, :count)
+
+      user.reload
+
+      expect(user).not_to be_active
+      expect(user.deactivated_at).to be_present
+    end
+
+    it "signs the user out after account deletion" do
+      delete user_registration_path
+
+      get root_path
+
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
 end

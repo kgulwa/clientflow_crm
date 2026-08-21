@@ -1,42 +1,176 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<% content_for :page_title, "Account settings" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+<div class="mx-auto max-w-5xl">
+  <div class="mb-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[#8b755d]">
+      Settings
+    </p>
+
+    <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] text-[#17212a]">
+      Account settings
+    </h1>
+
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-[#68747e]">
+      Manage your personal details, login information, and account access.
+    </p>
+  </div>
+
   <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+  <div class="space-y-6">
+    <section class="overflow-hidden rounded-2xl border border-[#d8d9dc] bg-white/70 shadow-sm backdrop-blur-xl">
+      <div class="border-b border-[#e1e2e3] px-6 py-5 sm:px-8">
+        <h2 class="text-lg font-semibold text-[#27333e]">
+          Profile
+        </h2>
+
+        <p class="mt-1 text-sm text-[#68747e]">
+          Update the personal information shown across ClientFlow.
+        </p>
+      </div>
+
+      <div class="px-6 py-6 sm:px-8">
+        <%= form_for(
+              resource,
+              as: resource_name,
+              url: registration_path(resource_name),
+              html: {
+                method: :put,
+                class: "space-y-6"
+              }
+            ) do |f| %>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <%= f.label :first_name,
+                          class: "mb-2 block text-sm font-medium text-[#35414d]" %>
+
+              <%= f.text_field :first_name,
+                               autocomplete: "given-name",
+                               class: "w-full rounded-xl border border-[#d6d3cf] bg-white/80 px-4 py-3 text-sm text-[#27333e] outline-none transition placeholder:text-[#9aa2a9] focus:border-[#8fa596] focus:ring-2 focus:ring-[#d9e3dc]" %>
+            </div>
+
+            <div>
+              <%= f.label :last_name,
+                          class: "mb-2 block text-sm font-medium text-[#35414d]" %>
+
+              <%= f.text_field :last_name,
+                               autocomplete: "family-name",
+                               class: "w-full rounded-xl border border-[#d6d3cf] bg-white/80 px-4 py-3 text-sm text-[#27333e] outline-none transition placeholder:text-[#9aa2a9] focus:border-[#8fa596] focus:ring-2 focus:ring-[#d9e3dc]" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :email,
+                        class: "mb-2 block text-sm font-medium text-[#35414d]" %>
+
+            <%= f.email_field :email,
+                              autocomplete: "email",
+                              class: "w-full rounded-xl border border-[#d6d3cf] bg-white/80 px-4 py-3 text-sm text-[#27333e] outline-none transition placeholder:text-[#9aa2a9] focus:border-[#8fa596] focus:ring-2 focus:ring-[#d9e3dc]" %>
+
+            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <p class="mt-2 text-xs text-[#8b755d]">
+                Waiting for confirmation of
+                <%= resource.unconfirmed_email %>.
+              </p>
+            <% end %>
+          </div>
+
+          <div class="border-t border-[#e5e5e2] pt-6">
+            <h3 class="text-sm font-semibold text-[#27333e]">
+              Change password
+            </h3>
+
+            <p class="mt-1 text-xs leading-5 text-[#68747e]">
+              Leave these fields blank if you don't want to change your password.
+            </p>
+          </div>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <%= f.label :password,
+                          "New password",
+                          class: "mb-2 block text-sm font-medium text-[#35414d]" %>
+
+              <%= f.password_field :password,
+                                   autocomplete: "new-password",
+                                   class: "w-full rounded-xl border border-[#d6d3cf] bg-white/80 px-4 py-3 text-sm text-[#27333e] outline-none transition focus:border-[#8fa596] focus:ring-2 focus:ring-[#d9e3dc]" %>
+
+              <% if @minimum_password_length %>
+                <p class="mt-2 text-xs text-[#8a949d]">
+                  <%= @minimum_password_length %> characters minimum
+                </p>
+              <% end %>
+            </div>
+
+            <div>
+              <%= f.label :password_confirmation,
+                          "Confirm new password",
+                          class: "mb-2 block text-sm font-medium text-[#35414d]" %>
+
+              <%= f.password_field :password_confirmation,
+                                   autocomplete: "new-password",
+                                   class: "w-full rounded-xl border border-[#d6d3cf] bg-white/80 px-4 py-3 text-sm text-[#27333e] outline-none transition focus:border-[#8fa596] focus:ring-2 focus:ring-[#d9e3dc]" %>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-[#e2ddd7] bg-[#f7f4f0]/75 p-5">
+            <%= f.label :current_password,
+                        class: "mb-2 block text-sm font-medium text-[#35414d]" %>
+
+            <p class="mb-3 text-xs leading-5 text-[#68747e]">
+              Enter your current password to confirm any account changes.
+            </p>
+
+            <%= f.password_field :current_password,
+                                 autocomplete: "current-password",
+                                 class: "w-full rounded-xl border border-[#d6d3cf] bg-white/90 px-4 py-3 text-sm text-[#27333e] outline-none transition focus:border-[#8fa596] focus:ring-2 focus:ring-[#d9e3dc]" %>
+          </div>
+
+          <div class="flex flex-col-reverse gap-3 border-t border-[#e5e5e2] pt-6 sm:flex-row sm:items-center sm:justify-end">
+            <%= link_to "Cancel",
+                        root_path,
+                        class: "inline-flex justify-center rounded-xl border border-[#d6d3cf] bg-white/60 px-5 py-3 text-sm font-semibold text-[#465563] transition hover:bg-white" %>
+
+            <%= f.submit "Save changes",
+                         class: "cursor-pointer rounded-xl bg-[#1f2d44] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#18243a]" %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="overflow-hidden rounded-2xl border border-[#e2c8c4] bg-[#fffafa]/75 shadow-sm">
+      <div class="border-b border-[#ecd8d5] px-6 py-5 sm:px-8">
+        <h2 class="text-lg font-semibold text-[#7b3f39]">
+          Danger zone
+        </h2>
+
+        <p class="mt-1 text-sm text-[#8b625e]">
+          Actions in this section affect your access to ClientFlow.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-5 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <div class="max-w-2xl">
+          <h3 class="text-sm font-semibold text-[#633a36]">
+            Delete your account
+          </h3>
+
+          <p class="mt-1 text-sm leading-6 text-[#8b625e]">
+            Your account will be deactivated immediately and you will be
+            signed out. Existing CRM records will be retained so workspace
+            history is not lost.
+          </p>
+        </div>
+
+        <%= button_to "Delete account",
+                      registration_path(resource_name),
+                      method: :delete,
+                      data: {
+                        turbo_confirm: "Are you sure you want to delete your account? You will be signed out immediately."
+                      },
+                      class: "shrink-0 rounded-xl border border-[#d8a9a3] bg-[#f8e8e5] px-5 py-3 text-sm font-semibold text-[#8a4038] transition hover:bg-[#f3dcd8]" %>
+      </div>
+    </section>
   </div>
-
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
-
-  <div class="field">
-    <p><%= f.label :password %> <i>(leave blank if you don't want to change it)</i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> characters minimum</em></p>
-    <% end %>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

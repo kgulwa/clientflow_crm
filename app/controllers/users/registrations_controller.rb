@@ -3,6 +3,7 @@
 module Users
   class RegistrationsController < Devise::RegistrationsController
     before_action :set_workspace_invitation, only: %i[new create]
+    before_action :configure_account_update_params, only: :update
 
     def new
       if invitation_token_supplied? && @workspace_invitation.blank?
@@ -31,7 +32,34 @@ module Users
       end
     end
 
+    def destroy
+      current_user.deactivate!
+
+      Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
+
+      redirect_to new_user_session_path,
+                  status: :see_other,
+                  notice: "Your account has been deleted."
+    end
+
+    protected
+
+    def update_resource(resource, params)
+      resource.update_with_password(params)
+    end
+
+    def after_update_path_for(_resource)
+      edit_user_registration_path
+    end
+
     private
+
+    def configure_account_update_params
+      devise_parameter_sanitizer.permit(
+        :account_update,
+        keys: %i[first_name last_name]
+      )
+    end
 
     def create_standard_user
       build_resource(sign_up_params)
