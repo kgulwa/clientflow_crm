@@ -10,7 +10,7 @@
       </h1>
 
       <p class="mt-2 text-slate-600">
-        Here is an overview of your clients, leads, and upcoming work.
+        Here is an overview of your clients, leads, deals, and upcoming work.
       </p>
     </div>
 
@@ -66,7 +66,7 @@
       </div>
 
       <p class="mt-4 text-sm text-slate-500">
-        Potential clients already tracked as client records.
+        Potential clients tracked as client records.
       </p>
     </article>
 
@@ -115,98 +115,177 @@
     </article>
   </section>
 
-  <section class="grid gap-6 xl:grid-cols-3">
-    <div class="rounded-2xl border border-white/70 bg-white/65 shadow-sm backdrop-blur xl:col-span-2">
+  <section class="grid gap-6 xl:grid-cols-2">
+    <div class="rounded-2xl border border-white/70 bg-white/65 shadow-sm backdrop-blur">
       <div class="flex items-center justify-between border-b border-stone-200 px-6 py-5">
         <div>
           <h2 class="text-lg font-semibold text-slate-900">
-            Recent leads
+            Overdue tasks
           </h2>
 
           <p class="mt-1 text-sm text-slate-500">
-            Your five most recently added sales opportunities.
+            Tasks that need your immediate attention.
           </p>
         </div>
 
-        <%= link_to "View all leads",
-                    leads_path,
-                    class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
+        <span class="rounded-full bg-[#f3e3e0] px-3 py-1 text-sm font-semibold text-[#9d443d]">
+          <%= pluralize(@overdue_tasks_count, "overdue task") %>
+        </span>
       </div>
 
-      <% if @recent_leads.any? %>
+      <% if @overdue_tasks.any? %>
         <div class="divide-y divide-stone-200">
-          <% @recent_leads.each do |lead| %>
-            <% status_classes = case lead.status
-                                when "qualified"
-                                  "bg-[#e5eee8] text-[#3e7157]"
-                                when "contacted"
-                                  "bg-[#e8edf3] text-[#3e5f7d]"
-                                when "lost"
-                                  "bg-[#f3e3e0] text-[#9d443d]"
-                                when "converted"
-                                  "bg-[#ecebea] text-[#55616c]"
-                                else
-                                  "bg-[#f5ead7] text-[#9b661f]"
-                                end %>
-
+          <% @overdue_tasks.each do |task| %>
             <article class="flex flex-col justify-between gap-4 px-6 py-5 sm:flex-row sm:items-center">
               <div>
                 <div class="flex flex-wrap items-center gap-2">
                   <h3 class="font-semibold text-slate-900">
-                    <%= lead.full_name %>
+                    <%= task.title %>
                   </h3>
 
-                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= status_classes %>">
-                    <%= lead.display_status %>
+                  <span class="inline-flex rounded-full bg-[#f3e3e0] px-2.5 py-1 text-xs font-semibold text-[#9d443d]">
+                    Overdue
+                  </span>
+
+                  <% priority_classes = case task.priority
+                                        when "high"
+                                          "bg-[#f3e3e0] text-[#9d443d]"
+                                        when "low"
+                                          "bg-[#e5eee8] text-[#3e7157]"
+                                        else
+                                          "bg-[#f5ead7] text-[#9b661f]"
+                                        end %>
+
+                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= priority_classes %>">
+                    <%= task.priority.titleize %> priority
                   </span>
                 </div>
 
                 <p class="mt-2 text-sm text-slate-500">
-                  <%= lead.company_name.presence || "No company added" %>
+                  <%= task.client.full_name %>
                   ·
-                  <%= lead.source == "linkedin" ? "LinkedIn" : lead.source.titleize %>
+                  Due <%= task.due_date.strftime("%B %-d, %Y") %>
                 </p>
               </div>
 
-              <%= link_to "View lead",
-                          lead_path(lead),
+              <%= link_to "View client",
+                          client_path(task.client),
                           class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
             </article>
           <% end %>
         </div>
       <% else %>
-        <div class="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#f5ead7] text-xl font-semibold text-[#9b661f]">
-            L
+        <div class="flex min-h-56 flex-col items-center justify-center px-6 py-12 text-center">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#e5eee8] text-xl font-semibold text-[#3e7157]">
+            ✓
           </div>
 
           <h3 class="mt-4 font-semibold text-slate-900">
-            No leads yet
+            No overdue tasks
           </h3>
 
           <p class="mt-2 max-w-sm text-sm text-slate-500">
-            Add your first lead to begin tracking new sales opportunities.
+            Everything is currently on schedule.
           </p>
-
-          <%= link_to "Add your first lead",
-                      new_lead_path,
-                      class: "mt-5 text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
         </div>
       <% end %>
     </div>
 
     <div class="rounded-2xl border border-white/70 bg-white/65 shadow-sm backdrop-blur">
-      <div class="border-b border-stone-200 px-6 py-5">
-        <h2 class="text-lg font-semibold text-slate-900">
-          Lead summary
-        </h2>
+      <div class="flex items-center justify-between border-b border-stone-200 px-6 py-5">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">
+            Recently added clients
+          </h2>
 
-        <p class="mt-1 text-sm text-slate-500">
-          A quick look at your current lead pipeline.
-        </p>
+          <p class="mt-1 text-sm text-slate-500">
+            Your five newest client records.
+          </p>
+        </div>
+
+        <%= link_to "View all clients",
+                    clients_path,
+                    class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
       </div>
 
-      <div class="space-y-4 p-6">
+      <% if @recent_clients.any? %>
+        <div class="divide-y divide-stone-200">
+          <% @recent_clients.each do |client| %>
+            <article class="flex flex-col justify-between gap-4 px-6 py-5 sm:flex-row sm:items-center">
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="font-semibold text-slate-900">
+                    <%= client.full_name %>
+                  </h3>
+
+                  <% client_status_classes = case client.status
+                                             when "active"
+                                               "bg-[#e5eee8] text-[#3e7157]"
+                                             when "inactive"
+                                               "bg-[#ecebea] text-[#55616c]"
+                                             else
+                                               "bg-[#f5ead7] text-[#9b661f]"
+                                             end %>
+
+                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= client_status_classes %>">
+                    <%= client.status.titleize %>
+                  </span>
+                </div>
+
+                <p class="mt-2 text-sm text-slate-500">
+                  <%= client.company_name.presence || "No company added" %>
+                  ·
+                  Added <%= time_ago_in_words(client.created_at) %> ago
+                </p>
+              </div>
+
+              <%= link_to "View client",
+                          client_path(client),
+                          class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex min-h-56 flex-col items-center justify-center px-6 py-12 text-center">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl font-semibold text-slate-600">
+            C
+          </div>
+
+          <h3 class="mt-4 font-semibold text-slate-900">
+            No clients yet
+          </h3>
+
+          <p class="mt-2 max-w-sm text-sm text-slate-500">
+            Add your first client to start building your CRM.
+          </p>
+
+          <%= link_to "Add your first client",
+                      new_client_path,
+                      class: "mt-5 text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="grid gap-6 xl:grid-cols-2">
+    <div class="rounded-2xl border border-white/70 bg-white/65 shadow-sm backdrop-blur">
+      <div class="flex items-center justify-between border-b border-stone-200 px-6 py-5">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">
+            Leads by status
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            A complete view of your current lead pipeline.
+          </p>
+        </div>
+
+        <%= link_to "View leads",
+                    leads_path,
+                    class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
+      </div>
+
+      <div class="space-y-3 p-6">
         <div class="flex items-center justify-between rounded-xl bg-slate-100/80 px-4 py-3">
           <span class="text-sm font-medium text-slate-600">
             Total leads
@@ -217,44 +296,95 @@
           </span>
         </div>
 
-        <div class="flex items-center justify-between rounded-xl bg-[#f5ead7] px-4 py-3">
-          <span class="text-sm font-medium text-[#9b661f]">
-            New
-          </span>
+        <% @lead_status_counts.each do |status, count| %>
+          <% status_classes = case status
+                              when "qualified"
+                                "bg-[#e5eee8] text-[#3e7157]"
+                              when "contacted"
+                                "bg-[#e8edf3] text-[#3e5f7d]"
+                              when "converted"
+                                "bg-[#ecebea] text-[#55616c]"
+                              when "lost"
+                                "bg-[#f3e3e0] text-[#9d443d]"
+                              else
+                                "bg-[#f5ead7] text-[#9b661f]"
+                              end %>
 
-          <span class="text-lg font-bold text-[#9b661f]">
-            <%= @new_leads %>
-          </span>
+          <div class="flex items-center justify-between rounded-xl px-4 py-3 <%= status_classes %>">
+            <span class="text-sm font-medium">
+              <%= status == "new_lead" ? "New" : status.humanize %>
+            </span>
+
+            <span class="text-lg font-bold">
+              <%= count %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-white/70 bg-white/65 shadow-sm backdrop-blur">
+      <div class="flex items-center justify-between border-b border-stone-200 px-6 py-5">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">
+            Deals by stage
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Track opportunities as they move through your pipeline.
+          </p>
         </div>
 
-        <div class="flex items-center justify-between rounded-xl bg-[#e5eee8] px-4 py-3">
-          <span class="text-sm font-medium text-[#3e7157]">
-            Qualified
-          </span>
+        <%= link_to "View deals",
+                    deals_path,
+                    class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
+      </div>
 
-          <span class="text-lg font-bold text-[#3e7157]">
-            <%= @qualified_leads %>
-          </span>
+      <div class="p-6">
+        <div class="rounded-xl bg-[#e8edf3] p-5">
+          <p class="text-sm font-medium text-[#3e5f7d]">
+            Open pipeline value
+          </p>
+
+          <p class="mt-2 text-3xl font-bold text-slate-900">
+            <%= number_to_currency(
+                  @open_pipeline_value,
+                  unit: "R",
+                  delimiter: ",",
+                  separator: "."
+                ) %>
+          </p>
+
+          <p class="mt-2 text-sm text-[#3e5f7d]">
+            Excludes won and lost deals.
+          </p>
         </div>
 
-        <div class="flex items-center justify-between rounded-xl bg-[#ecebea] px-4 py-3">
-          <span class="text-sm font-medium text-[#55616c]">
-            Converted
-          </span>
+        <div class="mt-5 space-y-3">
+          <% @deal_stage_counts.each do |stage, count| %>
+            <% stage_classes = case stage
+                               when "won"
+                                 "bg-[#e5eee8] text-[#3e7157]"
+                               when "lost"
+                                 "bg-[#f3e3e0] text-[#9d443d]"
+                               when "negotiation"
+                                 "bg-[#ecebea] text-[#55616c]"
+                               when "proposal_sent"
+                                 "bg-[#e8edf3] text-[#3e5f7d]"
+                               else
+                                 "bg-slate-100 text-slate-700"
+                               end %>
 
-          <span class="text-lg font-bold text-[#55616c]">
-            <%= @converted_leads %>
-          </span>
-        </div>
+            <div class="flex items-center justify-between rounded-xl px-4 py-3 <%= stage_classes %>">
+              <span class="text-sm font-medium">
+                <%= stage.humanize %>
+              </span>
 
-        <div class="grid gap-3 pt-2">
-          <%= link_to "Add a new lead",
-                      new_lead_path,
-                      class: "block w-full rounded-xl bg-slate-800 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-900" %>
-
-          <%= link_to "View all leads",
-                      leads_path,
-                      class: "block w-full rounded-xl border border-stone-300 bg-white/50 px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-slate-900" %>
+              <span class="text-lg font-bold">
+                <%= count %>
+              </span>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
@@ -269,20 +399,18 @@
           </h2>
 
           <p class="mt-1 text-sm text-slate-500">
-            Your next client follow-ups and deadlines.
+            Your next scheduled client follow-ups and deadlines.
           </p>
         </div>
 
-        <%= link_to "View clients",
-                    clients_path,
+        <%= link_to "View all tasks",
+                    tasks_path,
                     class: "text-sm font-semibold text-slate-700 transition hover:text-slate-950" %>
       </div>
 
       <% if @upcoming_tasks.any? %>
         <div class="divide-y divide-stone-200">
           <% @upcoming_tasks.each do |task| %>
-            <% overdue = task.due_date < Date.current %>
-
             <% priority_classes = case task.priority
                                   when "high"
                                     "bg-[#f3e3e0] text-[#9d443d]"
@@ -303,11 +431,9 @@
                     <%= task.priority.titleize %> priority
                   </span>
 
-                  <% if overdue %>
-                    <span class="inline-flex rounded-full bg-[#f3e3e0] px-2.5 py-1 text-xs font-semibold text-[#9d443d]">
-                      Overdue
-                    </span>
-                  <% end %>
+                  <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                    <%= task.status.humanize %>
+                  </span>
                 </div>
 
                 <p class="mt-2 text-sm text-slate-500">
@@ -325,16 +451,16 @@
         </div>
       <% else %>
         <div class="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
-          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl font-semibold text-slate-500">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#e5eee8] text-xl font-semibold text-[#3e7157]">
             ✓
           </div>
 
           <h3 class="mt-4 font-semibold text-slate-900">
-            You are all caught up
+            No upcoming tasks
           </h3>
 
           <p class="mt-2 max-w-sm text-sm text-slate-500">
-            Pending and in-progress client tasks will appear here.
+            You have no pending or in-progress tasks scheduled for today or later.
           </p>
         </div>
       <% end %>
@@ -370,8 +496,12 @@
                     clients_path,
                     class: quick_action_classes %>
 
-        <%= link_to "Manage client tasks",
-                    clients_path,
+        <%= link_to "View all deals",
+                    deals_path,
+                    class: quick_action_classes %>
+
+        <%= link_to "Manage tasks",
+                    tasks_path,
                     class: quick_action_classes %>
       </div>
     </div>
