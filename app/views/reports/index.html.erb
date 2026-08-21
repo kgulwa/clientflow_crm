@@ -352,6 +352,124 @@
     </div>
   </section>
 
+  <section class="space-y-6 rounded-xl border border-[#dedfdf] bg-white/65 p-6 shadow-[0_12px_35px_rgba(39,48,58,0.05)]">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-[#55705f]">
+        Client growth
+      </p>
+
+      <h2 class="mt-1 text-2xl font-bold tracking-tight text-[#27333e]">
+        Monthly new clients for <%= @selected_year %>
+      </h2>
+
+      <p class="mt-2 text-sm text-[#68747e]">
+        Track how many new clients were added during each month of the selected year.
+      </p>
+    </div>
+
+    <div class="grid gap-5 md:grid-cols-3">
+      <article class="rounded-xl border border-[#dedfdf] bg-white/35 p-5">
+        <p class="text-sm font-medium text-[#68747e]">
+          New clients this year
+        </p>
+
+        <p class="mt-3 text-2xl font-bold text-[#27333e]">
+          <%= @yearly_client_growth %>
+        </p>
+
+        <p class="mt-2 text-xs text-[#74808b]">
+          Total clients added in <%= @selected_year %>
+        </p>
+      </article>
+
+      <article class="rounded-xl border border-[#dedfdf] bg-white/35 p-5">
+        <p class="text-sm font-medium text-[#68747e]">
+          Monthly average
+        </p>
+
+        <p class="mt-3 text-2xl font-bold text-[#27333e]">
+          <%= @average_monthly_client_growth %>
+        </p>
+
+        <p class="mt-2 text-xs text-[#74808b]">
+          Average across all 12 months
+        </p>
+      </article>
+
+      <article class="rounded-xl border border-[#dedfdf] bg-white/35 p-5">
+        <p class="text-sm font-medium text-[#68747e]">
+          Best growth month
+        </p>
+
+        <% if @best_growth_month.present? %>
+          <p class="mt-3 text-2xl font-bold text-[#27333e]">
+            <%= @best_growth_month %>
+          </p>
+
+          <p class="mt-2 text-xs text-[#74808b]">
+            <%= pluralize(@best_growth_count, "new client") %>
+          </p>
+        <% else %>
+          <p class="mt-3 text-2xl font-bold text-[#27333e]">
+            No clients yet
+          </p>
+
+          <p class="mt-2 text-xs text-[#74808b]">
+            No clients were added during this year
+          </p>
+        <% end %>
+      </article>
+    </div>
+
+    <div class="overflow-hidden rounded-xl border border-[#dedfdf]">
+      <table class="min-w-full divide-y divide-[#dedfdf]">
+        <thead class="bg-white/35">
+          <tr>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#74808b]"
+            >
+              Month
+            </th>
+
+            <th
+              scope="col"
+              class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[#74808b]"
+            >
+              New clients
+            </th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-[#dedfdf] bg-white/30">
+          <% @monthly_client_growth.each do |month_number, client_count| %>
+            <tr class="transition hover:bg-white/55">
+              <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-[#27333e]">
+                <%= Date::MONTHNAMES[month_number] %>
+              </td>
+
+              <td class="whitespace-nowrap px-6 py-4 text-right text-sm text-[#53606b]">
+                <%= client_count %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+
+        <tfoot class="bg-white/45">
+          <tr>
+            <td class="px-6 py-4 text-sm font-bold text-[#27333e]">
+              Total
+            </td>
+
+            <td class="px-6 py-4 text-right text-sm font-bold text-[#27333e]">
+              <%= @yearly_client_growth %>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
   <section class="rounded-xl border border-dashed border-[#d5d5d2] bg-white/40 p-8 text-center">
     <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-[#cfdccf] bg-[#eef4ed] text-sm font-bold text-[#416550]">
       +
@@ -363,7 +481,7 @@
 
     <p class="mx-auto mt-2 max-w-2xl text-sm text-[#68747e]">
       Future reports will include deal-stage breakdowns, conversion funnels,
-      client growth, task-performance charts, and downloadable exports.
+      task-performance charts, and downloadable exports.
     </p>
   </section>
 </div>

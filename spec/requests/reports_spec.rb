@@ -421,6 +421,148 @@ RSpec.describe "Reports", type: :request do
           "Monthly revenue for #{Date.current.year}"
         )
       end
+
+      it "displays the client growth section" do
+        get reports_path
+
+        expect(response.body).to include("Client growth")
+        expect(response.body).to include(
+          "Monthly new clients for #{Date.current.year}"
+        )
+        expect(response.body).to include("New clients this year")
+        expect(response.body).to include("Best growth month")
+      end
+
+      it "groups new clients by month for the selected year" do
+        january = Time.zone.local(Date.current.year, 1, 15, 12)
+        march = Time.zone.local(Date.current.year, 3, 15, 12)
+
+        create(
+          :client,
+          user: user,
+          first_name: "January",
+          last_name: "Client",
+          email: "january-growth@example.com",
+          created_at: january
+        )
+
+        create(
+          :client,
+          user: user,
+          first_name: "March",
+          last_name: "Client One",
+          email: "march-one@example.com",
+          created_at: march
+        )
+
+        create(
+          :client,
+          user: user,
+          first_name: "March",
+          last_name: "Client Two",
+          email: "march-two@example.com",
+          created_at: march
+        )
+
+        get reports_path, params: { year: Date.current.year }
+
+        expect(response.body).to match(
+          /Client growth.*?January.*?1/m
+        )
+
+        expect(response.body).to match(
+          /Client growth.*?March.*?2/m
+        )
+
+        expect(response.body).to match(
+          /New clients this year.*?3/m
+        )
+      end
+
+      it "does not include another user's clients in client growth" do
+        create(
+          :client,
+          created_at: Date.current.noon
+        )
+
+        get reports_path, params: { year: Date.current.year }
+
+        expect(response.body).to match(
+          /New clients this year.*?0/m
+        )
+      end
+
+      it "supports selecting a previous client growth year" do
+        selected_year = Date.current.year - 1
+        june = Time.zone.local(selected_year, 6, 15, 12)
+
+        create(
+          :client,
+          user: user,
+          first_name: "Previous",
+          last_name: "Year Client",
+          email: "previous-growth@example.com",
+          created_at: june
+        )
+
+        get reports_path, params: { year: selected_year }
+
+        expect(response.body).to include(
+          "Monthly new clients for #{selected_year}"
+        )
+
+        expect(response.body).to match(
+          /Client growth.*?June.*?1/m
+        )
+      end
+
+      it "calculates the client growth average and best month" do
+        february = Time.zone.local(Date.current.year, 2, 15, 12)
+        april = Time.zone.local(Date.current.year, 4, 15, 12)
+
+        create(
+          :client,
+          user: user,
+          first_name: "February",
+          last_name: "Client",
+          email: "february-growth@example.com",
+          created_at: february
+        )
+
+        3.times do |index|
+          create(
+            :client,
+            user: user,
+            first_name: "April",
+            last_name: "Client #{index + 1}",
+            email: "april-growth-#{index + 1}@example.com",
+            created_at: april
+          )
+        end
+
+        get reports_path, params: { year: Date.current.year }
+
+        expect(response.body).to match(
+          /Client growth.*?Monthly average.*?0\.3/m
+        )
+
+        expect(response.body).to match(
+          /Best growth month.*?April.*?3 new clients/m
+        )
+      end
+
+      it "shows an empty client growth state when no clients exist for the year" do
+        get reports_path, params: { year: Date.current.year - 1 }
+
+        expect(response.body).to match(
+          /Client growth.*?New clients this year.*?0/m
+        )
+
+        expect(response.body).to include("No clients yet")
+        expect(response.body).to include(
+          "No clients were added during this year"
+        )
+      end
     end
   end
 end
